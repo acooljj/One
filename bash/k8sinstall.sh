@@ -43,12 +43,12 @@ gpgcheck=0
 EOF
     yum -y install kubelet kubeadm kubectl kubernetes-cni socat
     #设置kube的cgroup-driver和docker一致，此处为cgroupfs
-    #sed -i 's/cgroup-driver=systemd/cgroup-driver=cgroupfs/' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    sed -i 's/cgroup-driver=systemd/cgroup-driver=cgroupfs/' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
     #设置pause的仓库地址，否则每次创建pod都无法创建成功
-    #if ! grep -q KUBELET_POD_INFRA_CONTAINER;then
-        #sed -i '/Service/a\Environment="KUBELET_POD_INFRA_CONTAINER=--pod-infra-container-image=registry.cn-hangzhou.aliyuncs.com/google-containers/pause-amd64:3.0"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-        #sed -i 's#ExecStart=/usr/bin/kubelet.*$#& $KUBELET_POD_INFRA_CONTAINER#' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf  
-    #fi
+    if ! grep -q KUBELET_POD_INFRA_CONTAINER;then
+        sed -i '/Service/a\Environment="KUBELET_POD_INFRA_CONTAINER=--pod-infra-container-image=registry.cn-hangzhou.aliyuncs.com/google-containers/pause-amd64:3.0"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+        sed -i 's#ExecStart=/usr/bin/kubelet.*$#& $KUBELET_POD_INFRA_CONTAINER#' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf  
+    fi
     systemctl daemon-reload && systemctl restart kubelet
 }
 
