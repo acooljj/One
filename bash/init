@@ -1,2 +1,2 @@
 #centos 7
-yum -y install wget tree vim lrzsz mlocate gcc gcc-c++ make cmake zlib zlib-devel openssl openssl-devel nss telnet nmap iotop strace net-tools lsof git rsync gdb bzip2
+yum -y install wget tree vim lrzsz mlocate gcc gcc-c++ make cmake zlib zlib-devel openssl openssl-devel nss telnet nmap iotop strace net-tools lsof git rsync gdb bzip2 expat-devel libtool
