@@ -25,7 +25,7 @@ wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar
 
 install_apr (){
 #安装apr
-if [ -d /usr/local/apr ]; then
+if [ ! -d /usr/local/apr ]; then
 tar -zxf apr-${apr}.tar.gz
 cd apr-${apr}
 ./configure --prefix=/usr/local/apr
@@ -37,7 +37,7 @@ fi
 
 install_apr_util (){
 #安装apr-util
-if [ -d /usr/local/apr-util ]; then
+if [ ! -d /usr/local/apr-util ]; then
 tar -zxf apr-util-${apr_util}.tar.gz
 cd apr-util-${apr_util}
 ./configure --prefix=/usr/local/apr-util --with-apr=/usr/local/apr
@@ -49,7 +49,7 @@ fi
 
 install_pcre (){
 #安装pcre
-if [ -d /usr/local/pcre ]; then
+if [ ! -d /usr/local/pcre ]; then
 tar -zxf pcre-${pcre}.tar.gz
 cd pcre-${pcre}
 ./configure --prefix=/usr/local/pcre 
@@ -61,7 +61,7 @@ fi
 
 install_apache (){
 #安装apache
-if [ -d /home/apache2 ]; then
+if [ ! -d /home/apache2 ]; then
 tar -jxf httpd-${httpd}.tar.bz2
 cd httpd-${httpd}
 ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate
