@@ -9,6 +9,7 @@ make_num=$(grep "processor" /proc/cpuinfo  -c)
 cmake_install (){
 make -j ${make_num}
 make install
+cd -
 }
 
 init (){
