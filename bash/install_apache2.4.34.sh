@@ -9,6 +9,7 @@ make_num=$(grep "processor" /proc/cpuinfo  -c)
 cmake_install (){
 make -j ${make_num}
 make install
+echo -n "cd "
 cd -
 }
 
@@ -31,7 +32,7 @@ cd apr-${apr}
 ./configure --prefix=/usr/local/apr
 cmake_install
 else
- echo "apr exites..."
+ echo "apr exists..."
 fi
 }
 
@@ -43,7 +44,7 @@ cd apr-util-${apr_util}
 ./configure --prefix=/usr/local/apr-util --with-apr=/usr/local/apr
 cmake_install
 else
- echo "apr-util exites..."
+ echo "apr-util exists..."
 fi
 }
 
@@ -55,7 +56,7 @@ cd pcre-${pcre}
 ./configure --prefix=/usr/local/pcre 
 cmake_install
 else
- echo "pcre exites..."
+ echo "pcre exists..."
 fi
 }
 
@@ -67,7 +68,7 @@ cd httpd-${httpd}
 ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate
 cmake_install
 else
- echo "apache exites..."
+ echo "apache exists..."
 fi
 }
 
@@ -83,21 +84,23 @@ cmake_install
 
 check_security (){
 #check
+echo "/home/apache2/modules/ : "
 ls /home/apache2/modules/
 /home/apache2/bin/apachectl configtest
-if [ $? -eq '0' ];then countinue; else echo "apachectl check filed";exit 1;fi
+if [ $? -eq '0' ];then :; else echo "apachectl check filed";exit 1;fi
 cp ModSecurity/modsecurity.conf-recommended  /home/apache2/conf/modsecurity.conf
-cat >> /home/apache2/conf/httpd.conf << EOF
-#必须在ModSecurity之前加载libxml2和lua5.1
-LoadFile /usr/lib64/libxml2.so
-LoadFile /usr/lib64/liblua-5.1.so
-#加载ModSecurity模块
-LoadModule security2_module modules/mod_security2.so
-EOF
+grep '#必须在ModSecurity之前加载libxml2和lua5.1' /home/apache2/conf/httpd.conf || echo '#必须在ModSecurity之前加载libxml2和lua5.1' >> /home/apache2/conf/httpd.conf
+grep 'LoadFile /usr/lib64/libxml2.so' /home/apache2/conf/httpd.conf || echo 'LoadFile /usr/lib64/libxml2.so' >> /home/apache2/conf/httpd.conf
+grep 'LoadFile /usr/lib64/liblua-5.1.so' /home/apache2/conf/httpd.conf || echo 'LoadFile /usr/lib64/liblua-5.1.so' >> /home/apache2/conf/httpd.conf
+grep '#加载ModSecurity模块' /home/apache2/conf/httpd.conf || echo '#加载ModSecurity模块' >> /home/apache2/conf/httpd.conf
+grep 'LoadModule security2_module modules/mod_security2.so' /home/apache2/conf/httpd.conf || echo 'LoadModule security2_module modules/mod_security2.so' >> /home/apache2/conf/httpd.conf
 
-cd /home/apache2
-sed -i s/ServerName/ServerName 0.0.0.0/g httpd.conf
-sed -i s/SecUnicodeMapFile/#SecUnicodeMapFile/g modsecurity.conf
+
+cd /home/apache2/conf
+echo "cd $(pwd)"
+line_num=$(grep -n "ServerName" httpd.conf | awk -F ':' '{print $1}' | head -1)
+grep '^ServerName 0.0.0.0' httpd.conf || sed -i "${line_num}a\ServerName 0.0.0.0" httpd.conf
+sed -i s/^SecUnicodeMapFile/#SecUnicodeMapFile/g modsecurity.conf
 /home/apache2/bin/apachectl configtest
 ./bin/apachectl/httpd -V
 }
