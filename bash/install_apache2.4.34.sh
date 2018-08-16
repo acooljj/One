@@ -86,23 +86,22 @@ check_security (){
 #check
 echo "/home/apache2/modules/ : "
 ls /home/apache2/modules/
+line_num=$(grep -n "ServerName" /home/apache2/conf/httpd.conf | awk -F ':' '{print $1}' | head -1)
+grep '^ServerName 0.0.0.0' httpd.conf || sed -i "${line_num}a\ServerName 0.0.0.0" /home/apache2/conf/httpd.conf
 /home/apache2/bin/apachectl configtest
 if [ $? -eq '0' ];then :; else echo "apachectl check filed";exit 1;fi
+
 cp ModSecurity/modsecurity.conf-recommended  /home/apache2/conf/modsecurity.conf
+cd /home/apache2/conf
+echo "cd $(pwd)"
 grep '#必须在ModSecurity之前加载libxml2和lua5.1' /home/apache2/conf/httpd.conf || echo '#必须在ModSecurity之前加载libxml2和lua5.1' >> /home/apache2/conf/httpd.conf
 grep 'LoadFile /usr/lib64/libxml2.so' /home/apache2/conf/httpd.conf || echo 'LoadFile /usr/lib64/libxml2.so' >> /home/apache2/conf/httpd.conf
 grep 'LoadFile /usr/lib64/liblua-5.1.so' /home/apache2/conf/httpd.conf || echo 'LoadFile /usr/lib64/liblua-5.1.so' >> /home/apache2/conf/httpd.conf
 grep '#加载ModSecurity模块' /home/apache2/conf/httpd.conf || echo '#加载ModSecurity模块' >> /home/apache2/conf/httpd.conf
 grep 'LoadModule security2_module modules/mod_security2.so' /home/apache2/conf/httpd.conf || echo 'LoadModule security2_module modules/mod_security2.so' >> /home/apache2/conf/httpd.conf
-
-
-cd /home/apache2/conf
-echo "cd $(pwd)"
-line_num=$(grep -n "ServerName" httpd.conf | awk -F ':' '{print $1}' | head -1)
-grep '^ServerName 0.0.0.0' httpd.conf || sed -i "${line_num}a\ServerName 0.0.0.0" httpd.conf
 sed -i s/^SecUnicodeMapFile/#SecUnicodeMapFile/g modsecurity.conf
 /home/apache2/bin/apachectl configtest
-./bin/apachectl/httpd -V
+if [ $? -eq '0' ];then /home/apache2/bin/apachectl/httpd -V; else echo "apachectl check filed";exit 1;fi
 }
 
 cd /tmp
