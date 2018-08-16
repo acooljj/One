@@ -92,6 +92,7 @@ if [ $? -eq '0' ];then :; else echo "apachectl check filed";exit 1;fi
 echo "/home/apache2/modules/ : "
 ls /home/apache2/modules/ | grep mod_security2.so
 cp ModSecurity/modsecurity.conf-recommended  /home/apache2/conf/modsecurity.conf
+cd /home/apache2/conf
 echo "cd $(pwd)"
 grep '#必须在ModSecurity之前加载libxml2和lua5.1' /home/apache2/conf/httpd.conf || echo '#必须在ModSecurity之前加载libxml2和lua5.1' >> /home/apache2/conf/httpd.conf
 grep 'LoadFile /usr/lib64/libxml2.so' /home/apache2/conf/httpd.conf || echo 'LoadFile /usr/lib64/libxml2.so' >> /home/apache2/conf/httpd.conf
