@@ -101,7 +101,7 @@ grep '#加载ModSecurity模块' /home/apache2/conf/httpd.conf || echo '#加载Mo
 grep 'LoadModule security2_module modules/mod_security2.so' /home/apache2/conf/httpd.conf || echo 'LoadModule security2_module modules/mod_security2.so' >> /home/apache2/conf/httpd.conf
 sed -i s/^SecUnicodeMapFile/#SecUnicodeMapFile/g modsecurity.conf
 /home/apache2/bin/apachectl configtest
-if [ $? -eq '0' ];then /home/apache2/bin/apachectl/httpd -V; else echo "apachectl check filed";exit 1;fi
+if [ $? -eq '0' ];then /home/apache2/bin/httpd -V; else echo "apachectl check filed";exit 1;fi
 }
 
 cd /tmp
