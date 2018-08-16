@@ -84,9 +84,8 @@ cmake_install
 
 check_security (){
 #check
-cd /home/apache2/conf
 line_num=$(grep -n "ServerName" /home/apache2/conf/httpd.conf | awk -F ':' '{print $1}' | head -1)
-grep '^ServerName 0.0.0.0' httpd.conf || sed -i "${line_num}a\ServerName 0.0.0.0" /home/apache2/conf/httpd.conf
+grep '^ServerName 0.0.0.0' /home/apache2/conf/httpd.conf || sed -i "${line_num}a\ServerName 0.0.0.0" /home/apache2/conf/httpd.conf
 /home/apache2/bin/apachectl configtest
 if [ $? -eq '0' ];then :; else echo "apachectl check filed";exit 1;fi
 
