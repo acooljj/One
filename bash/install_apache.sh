@@ -133,6 +133,7 @@ cd /tmp
 init
 awget
 install_apache
+install_modsecurity
 }
 
 if [ "${httpd}" == "2.2.34" ]; then
