@@ -1,5 +1,5 @@
 #!/bin/bash
-httpd=2.4.34
+httpd=2.2.34
 apr=1.6.3
 apr_util=1.6.1
 pcre=8.41
@@ -18,7 +18,7 @@ curl https://raw.githubusercontent.com/mainiubaba/One/master/bash/init_apache | 
 }
 
 awget (){
-wget -c -q -O httpd-${httpd}.tar.bz2 http://mirrors.shu.edu.cn/apache//httpd/httpd-${httpd}.tar.bz2
+wget -c -q -O httpd-${httpd}.tar.gz http://archive.apache.org/dist/httpd/httpd-${httpd}.tar.gz
 wget -c -q -O apr-${apr}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-${apr}.tar.gz
 wget -c -q -O apr-util-${apr_util}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-util-${apr_util}.tar.gz
 wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar.gz
@@ -63,7 +63,7 @@ fi
 install_apache (){
 #安装apache
 if [ ! -d /home/apache2 ]; then
-tar -jxf httpd-${httpd}.tar.bz2
+tar -jxf httpd-${httpd}.tar.gz
 cd httpd-${httpd}
 ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate
 cmake_install
