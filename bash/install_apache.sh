@@ -9,8 +9,8 @@ make_num=$(grep "processor" /proc/cpuinfo  -c)
 cmake_install (){
 make -j ${make_num}
 make install
-echo -n "cd "
-cd -
+echo -n "cd $(pwd)"
+cd /tmp
 }
 
 init (){
@@ -53,7 +53,7 @@ install_pcre (){
 if [ ! -d /usr/local/pcre ]; then
 tar -zxf pcre-${pcre}.tar.gz
 cd pcre-${pcre}
-./configure --prefix=/usr/local/pcre 
+./configure --prefix=/usr/local/pcre
 cmake_install
 else
  echo "pcre exists..."
@@ -63,7 +63,7 @@ fi
 install_apache (){
 #安装apache
 if [ ! -d /home/apache2 ]; then
-tar -jxf httpd-${httpd}.tar.gz
+tar -zxf httpd-${httpd}.tar.gz
 cd httpd-${httpd}
 ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate
 cmake_install
