@@ -37,16 +37,22 @@ echo "$(pip -V | awk '{print $1,$2}')"
 echo "Supervisor $(supervisord -v)"
 pwd
 }
-system_version=$(uname -r | awk -F "." '{print $(NF-1)}'
-)
+
+
+system_version=$(lsb_release -is)
+system_version_num=$(uname -r | awk -F "." '{print $(NF-1)}')
 case ${system_version} in
-  el7)
-  funtion_censot7
-  ;;
-  el6)
-  funtion_centos6
-  ;;
+  CentOS)
+    case ${system_version_num} in
+      el7)
+      funtion_censot7
+      ;;
+      el6)
+      funtion_centos6
+      ;;
+      *)
+      echo "check system in [ CentOS7 | CentOS6 ]";;
   *)
-  echo "check system in [ centos7 | cnetos6 ]";;
+  echo "you system version is ${system_version}, check system in [ CentOS ]";;
 esac
 
