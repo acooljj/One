@@ -19,13 +19,9 @@ curl https://raw.githubusercontent.com/mainiubaba/One/master/bash/init_apache | 
 
 awget (){
 wget -c -q -O httpd-${httpd}.tar.gz http://archive.apache.org/dist/httpd/httpd-${httpd}.tar.gz
-if [ "${httpd}" == "2.2.34" ]; then
-  :
-else
-  wget -c -q -O apr-${apr}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-${apr}.tar.gz
-  wget -c -q -O apr-util-${apr_util}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-util-${apr_util}.tar.gz
-  wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar.gz
-fi
+wget -c -q -O apr-${apr}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-${apr}.tar.gz
+wget -c -q -O apr-util-${apr_util}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-util-${apr_util}.tar.gz
+wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar.gz
 }
 
 install_apr (){
@@ -67,16 +63,17 @@ fi
 install_apache (){
 #安装apache
 if [ ! -d /home/apache2 ]; then
-tar -zxf httpd-${httpd}.tar.gz
-cd httpd-${httpd}
-if [ "${httpd}" == "2.2.34" ]; then
-  ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite
-else
-  ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate
-fi
-cmake_install
-else
- echo "apache exists..."
+  tar -zxf httpd-${httpd}.tar.gz
+  cd httpd-${httpd}
+  if [ "${httpd}" == "2.2.34" ]; then
+    ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite
+  else
+    ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate
+  fi
+    cmake_install
+    ln -s /lib64/libexpat.so.1 /usr/lib64/libexpat.so.0
+  else
+   echo "apache exists..."
 fi
 }
 
@@ -132,6 +129,9 @@ install_apache2.2 (){
 cd /tmp
 init
 awget
+install_apr
+install_apr_util
+install_pcre
 install_apache
 install_modsecurity
 }
