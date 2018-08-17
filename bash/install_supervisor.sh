@@ -38,8 +38,33 @@ echo "Supervisor $(supervisord -v)"
 pwd
 }
 
-
-system_version=$(lsb_release -is)
+Get_System_Name (){
+    if grep -Eqii "CentOS" /etc/issue || grep -Eq "CentOS" /etc/*-release; then
+        system_version='CentOS'
+        PM='yum'
+    elif grep -Eqi "Red Hat Enterprise Linux Server" /etc/issue || grep -Eq "Red Hat Enterprise Linux Server" /etc/*-release; then
+        system_version='RHEL'
+        PM='yum'
+    elif grep -Eqi "Aliyun" /etc/issue || grep -Eq "Aliyun" /etc/*-release; then
+        system_version='Aliyun'
+        PM='yum'
+    elif grep -Eqi "Fedora" /etc/issue || grep -Eq "Fedora" /etc/*-release; then
+        system_version='Fedora'
+        PM='yum'
+    elif grep -Eqi "Debian" /etc/issue || grep -Eq "Debian" /etc/*-release; then
+        system_version='Debian'
+        PM='apt'
+    elif grep -Eqi "Ubuntu" /etc/issue || grep -Eq "Ubuntu" /etc/*-release; then
+        system_version='Ubuntu'
+        PM='apt'
+    elif grep -Eqi "Raspbian" /etc/issue || grep -Eq "Raspbian" /etc/*-release; then
+        system_version='Raspbian'
+        PM='apt'
+    else
+        system_version='unknow'
+    fi
+}
+Get_System_Name #system_version
 system_version_num=$(uname -r | awk -F "." '{print $(NF-1)}')
 case ${system_version} in
   CentOS)
@@ -52,6 +77,8 @@ case ${system_version} in
       ;;
       *)
       echo "check system in [ CentOS7 | CentOS6 ]";;
+    esac
+  ;;
   *)
   echo "you system version is ${system_version}, check system in [ CentOS ]";;
 esac
