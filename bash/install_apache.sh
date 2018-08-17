@@ -19,9 +19,13 @@ curl https://raw.githubusercontent.com/mainiubaba/One/master/bash/init_apache | 
 
 awget (){
 wget -c -q -O httpd-${httpd}.tar.gz http://archive.apache.org/dist/httpd/httpd-${httpd}.tar.gz
-wget -c -q -O apr-${apr}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-${apr}.tar.gz
-wget -c -q -O apr-util-${apr_util}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-util-${apr_util}.tar.gz
-wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar.gz
+if [ "${httpd}" == "2.2.34" ]; then
+  :
+else
+  wget -c -q -O apr-${apr}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-${apr}.tar.gz
+  wget -c -q -O apr-util-${apr_util}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-util-${apr_util}.tar.gz
+  wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar.gz
+fi
 }
 
 install_apr (){
@@ -65,7 +69,11 @@ install_apache (){
 if [ ! -d /home/apache2 ]; then
 tar -zxf httpd-${httpd}.tar.gz
 cd httpd-${httpd}
-./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate
+if [ "${httpd}" == "2.2.34" ]; then
+  ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite
+else
+  ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate
+fi
 cmake_install
 else
  echo "apache exists..."
@@ -90,7 +98,11 @@ grep '^ServerName 0.0.0.0' /home/apache2/conf/httpd.conf || sed -i "${line_num}a
 if [ $? -eq '0' ];then :; else echo "apachectl check filed";exit 1;fi
 
 echo "/home/apache2/modules/ : "
-ls /home/apache2/modules/ | grep mod_security2.so
+if [ "${httpd}" == "2.2.34" ]; then
+  if [ -f /home/apache2/modules/mod_security.so ];then echo mod_security.so;else echo "mod_security2.so File not exists";fi
+else
+  if [ -f /home/apache2/modules/mod_security2.so ];then echo mod_security2.so;else echo "mod_security2.so File not exists";fi
+fi
 cp ModSecurity/modsecurity.conf-recommended  /home/apache2/conf/modsecurity.conf
 cd /home/apache2/conf
 echo "cd $(pwd)"
@@ -104,6 +116,7 @@ sed -i s/^SecUnicodeMapFile/#SecUnicodeMapFile/g modsecurity.conf
 if [ $? -eq '0' ];then /home/apache2/bin/httpd -V; else echo "apachectl check filed";exit 1;fi
 }
 
+install_apache2.4 (){
 cd /tmp
 init
 awget
@@ -113,3 +126,17 @@ install_pcre
 install_apache
 install_modsecurity
 check_security
+}
+
+install_apache2.2 (){
+cd /tmp
+init
+awget
+install_apache
+}
+
+if [ "${httpd}" == "2.2.34" ]; then
+  install_apache2.2
+else
+  install_apache2.4
+fi
