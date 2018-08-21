@@ -124,8 +124,6 @@ install_apr
 install_apr_util
 install_pcre
 install_apache
-install_modsecurity
-check_security
 }
 
 if [ "${httpd}" == "2.2.34" ]; then

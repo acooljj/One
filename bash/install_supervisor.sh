@@ -3,7 +3,7 @@ funtion_centos6 (){
 ##Centos 6
 yum -y install libevent memcached libmemcached libmemcached-devel gcc gcc-c++ nss zlib zlib-devel openssl openssl-devel python-devel --skip-broken
 #升级Python
-wget -P /tmp https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz 
+wget -P /tmp https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz
 tar -zxvf  /tmp/Python-2.7.11.tgz -C  /tmp/
 cd  /tmp/Python-2.7.11 && ./configure
 make -j 4 && make install
@@ -17,7 +17,7 @@ pip install supervisor
 dir=`find / -name echo_supervisord_conf`
 $dir > /etc/supervisord.conf
 echo -n "$(python -V)"
-echo "$(pip -V | awk '{print $1,$2}')" 
+echo "$(pip -V | awk '{print $1,$2}')"
 echo "Supervisor $(supervisord -v)"
 pwd
 }
@@ -32,8 +32,9 @@ pip install --upgrade pip
 pip install supervisor
 dir=`find / -name echo_supervisord_conf`
 $dir > /etc/supervisord.conf
+wget -q -O /usr/lib/systemd/system/supervisord.service https://raw.githubusercontent.com/mainiubaba/ansible_plus/master/roles/supervisor/templates/supervisord_systemctl.j2
 echo -n "$(python -V)"
-echo "$(pip -V | awk '{print $1,$2}')" 
+echo "$(pip -V | awk '{print $1,$2}')"
 echo "Supervisor $(supervisord -v)"
 pwd
 }
@@ -82,4 +83,3 @@ case ${system_version} in
   *)
   echo "you system version is ${system_version}, check system in [ CentOS ]";;
 esac
-
