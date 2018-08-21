@@ -65,14 +65,14 @@ Get_System_Name (){
     fi
 }
 Get_System_Name #system_version
-system_version_num=$(uname -r | awk -F "." '{print $(NF-1)}')
+system_version_num=$(uname -r | awk -F "el" '{print $2}' |  awk -F '.' '{print $1}')
 case ${system_version} in
   CentOS)
     case ${system_version_num} in
-      el7)
+      7)
       funtion_censot7
       ;;
-      el6)
+      6)
       funtion_centos6
       ;;
       *)

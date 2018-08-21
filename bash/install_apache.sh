@@ -89,7 +89,7 @@ if [ $? -eq '0' ];then :; else echo "apachectl check filed";exit 1;fi
 
 echo "/home/apache2/modules/ : "
 if [ "${httpd}" == "2.2.34" ]; then
-  if [ -f /home/apache2/modules/mod_security.so ];then echo mod_security.so;else echo "mod_security2.so File not exists";fi
+  if [ -f /home/apache2/modules/mod_security.so ];then echo mod_security.so;else echo "mod_security.so File not exists";fi
 else
   if [ -f /home/apache2/modules/mod_security2.so ];then echo mod_security2.so;else echo "mod_security2.so File not exists";fi
 fi
@@ -125,6 +125,7 @@ install_apr_util
 install_pcre
 install_apache
 install_modsecurity
+check_security
 }
 
 if [ "${httpd}" == "2.2.34" ]; then
