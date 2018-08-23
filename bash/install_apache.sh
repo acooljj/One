@@ -18,10 +18,10 @@ curl https://raw.githubusercontent.com/mainiubaba/One/master/bash/init_apache | 
 }
 
 awget (){ # test wget
-  wget -c -q -O apr-${apr}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-${apr}.tar.gz
-  wget -c -q -O apr-util-${apr_util}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-util-${apr_util}.tar.gz
-  wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar.gz
-  wget -c -q -O httpd-${httpd}.tar.gz http://archive.apache.org/dist/httpd/httpd-${httpd}.tar.gz
+  ls /tmp | grep apr-${apr}.tar.gz || wget -c -q -O apr-${apr}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-${apr}.tar.gz
+  ls /tmp | grep apr-util-${apr_util}.tar.gz || wget -c -q -O apr-util-${apr_util}.tar.gz http://mirrors.shu.edu.cn/apache//apr/apr-util-${apr_util}.tar.gz
+  ls /tmp | grep pcre-${pcre}.tar.gz || wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar.gz
+  ls /tmp | grep httpd-${httpd}.tar.gz || wget -c -q -O httpd-${httpd}.tar.gz http://archive.apache.org/dist/httpd/httpd-${httpd}.tar.gz
 }
 install_apr (){
 #安装apr
