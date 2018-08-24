@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 elk_user=elk
 useradd (){
   useradd ${elk_user}

@@ -1,4 +1,5 @@
 #/bin/bash
+set -e
 #创建rsyncd.conf这是rsync服务器的配置文件
 touch /etc/rsyncd.conf
 #创建rsyncd.secrets 这是用户密码文件

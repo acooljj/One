@@ -1,5 +1,7 @@
 #!/bin/sh
 # 一键安装docker环境
+set -e
+
 u=$USER
 r=$(lsb_release -cs)
 listfile=/etc/apt/sources.list

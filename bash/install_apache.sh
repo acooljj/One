@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 httpd=2.2.34
 apr=1.6.3
 apr_util=1.6.1

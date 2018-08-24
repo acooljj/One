@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 funtion_centos6 (){
 ##Centos 6
 yum -y install libevent memcached libmemcached libmemcached-devel gcc gcc-c++ nss zlib zlib-devel openssl openssl-devel python-devel --skip-broken
