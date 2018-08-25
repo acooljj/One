@@ -21,8 +21,8 @@ install_logstash (){
 
 if [ 0 -eq $(grep ${elk_user} /etc/passwd | wc -l ) ]; then
   useradd
-  create elk_user ${elk_user}
+  echo "create elk_user ${elk_user}"
 else 
-  elk_user ${elk_user} exists
+  echo "elk_user ${elk_user} exists"
 fi
 install_logstash
