@@ -41,6 +41,19 @@ echo "Supervisor $(supervisord -v)"
 pwd
 }
 
+fun_init (){
+  supervisord_conf=/etc/supervisord.conf
+  inet_num=$(grep -n "\[inet_http_server\]" /etc/supervisord.conf | awk -F ":" '{print $1}')
+  grep "^\[inet_http_server\]" ${supervisord_conf} || sed -i 's/;\[inet_http_server\]/\[inet_http_server\]/g' ${supervisord_conf}
+  grep "^password" ${supervisord_conf} || sed -i "${inet_num}a\password=1234567" ${supervisord_conf}
+  grep "^username" ${supervisord_conf} || sed -i "${inet_num}a\username=admin" ${supervisord_conf}
+  grep "^port=127.0.0.1:9001" ${supervisord_conf} || sed -i "${inet_num}a\port=0.0.0.0:9901" ${supervisord_conf}
+  grep "^user" ${supervisord_conf} || sed -i "s/;user=chrism/user=${running_user}/g" ${supervisord_conf}
+  grep "^\[include\]" ${supervisord_conf} || sed -i 's/;\[include\]/\[include\]/g' ${supervisord_conf}
+  grep "^files" ${supervisord_conf} || sed -i 's/\;files \= relative\/directory\/\*.ini/files \= \/etc\/supervisor\/conf.d\/\*.ini/g' ${supervisord_conf}
+  if [ ! -d /etc/supervisor/conf.d ];then mkdir -pv /etc/supervisor/conf.d/;else :;fi
+}
+
 Get_System_Name (){
     if grep -Eqii "CentOS" /etc/issue || grep -Eq "CentOS" /etc/*-release; then
         system_version='CentOS'
@@ -67,8 +80,10 @@ Get_System_Name (){
         system_version='unknow'
     fi
 }
+
 Get_System_Name #system_version
 system_version_num=$(uname -r | awk -F "el" '{print $2}' |  awk -F '.' '{print $1}')
+running_user=elk
 case ${system_version} in
   CentOS)
     case ${system_version_num} in
@@ -81,7 +96,7 @@ case ${system_version} in
       *)
       echo "check system in [ CentOS7 | CentOS6 ]";;
     esac
-  ;;
+    fun_init;;
   *)
   echo "you system version is ${system_version}, check system in [ CentOS ]";;
 esac
