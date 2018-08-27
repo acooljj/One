@@ -3,7 +3,7 @@ set -e
 
 funtion_centos6 (){
 ##Centos 6
-yum -y install libevent memcached libmemcached libmemcached-devel gcc gcc-c++ nss zlib zlib-devel openssl openssl-devel python-devel --skip-broken
+yum -y install libevent memcached libmemcached libmemcached-devel gcc gcc-c++ nss zlib zlib-devel openssl openssl-devel python-devel wget --skip-broken
 #升级Python
 wget -P /tmp https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz
 tar -zxvf  /tmp/Python-2.7.11.tgz -C  /tmp/
@@ -26,7 +26,7 @@ pwd
 
 funtion_censot7 (){
 ##Centos 7
-yum -y install libevent memcached libmemcached libmemcached-devel gcc gcc-c++ nss zlib zlib-devel openssl openssl-devel python-devel
+yum -y install libevent memcached libmemcached libmemcached-devel gcc gcc-c++ nss zlib zlib-devel openssl openssl-devel python-devel wget
 #Install pip
 curl https://bootstrap.pypa.io/get-pip.py | python
 pip install --upgrade pip
