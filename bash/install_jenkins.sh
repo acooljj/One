@@ -1,5 +1,6 @@
 #!/bin/bash
-set -e
+set -e 
+curl https://raw.githubusercontent.com/mainiubaba/One/master/bash/init | bash
 wget -O /tmp/check_system_version.sh https://raw.githubusercontent.com/mainiubaba/One/master/bash/check_system_version.sh --no-check-certificate
 source /tmp/check_system_version.sh
 
@@ -21,7 +22,7 @@ fun_jenkins (){
   jenkins_pass=$(cat /var/lib/jenkins/secrets/initialAdminPassword)
   echo "#Jenkins AdminPassword : ${jenkins_pass}"
   MyIP=$(ip r | grep $(ip r | grep default |awk '{print $5}') | grep -v default | awk '{print $9}' | head -1)
-  echo "#Serving HTTP on ${MyIP}  port 8000 ..."
+  echo "#Serving HTTP on ${MyIP}  port 8080 ..."
 }
 
 case ${system_version} in

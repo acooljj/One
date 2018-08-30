@@ -16,7 +16,7 @@ cd /tmp
 }
 
 init (){
-curl https://raw.githubusercontent.com/mainiubaba/One/master/bash/init_apache | bash
+curl https://raw.githubusercontent.com/mainiubaba/One/master/bash/init | bash
 }
 
 awget (){ # test wget
