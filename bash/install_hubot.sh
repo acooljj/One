@@ -14,13 +14,14 @@ function node_install (){
     xz -d /tmp/node-v${node_version}-linux-x64.tar.xz
     tar -xf /tmp/node-v${node_version}-linux-x64.tar
     mv node-v${node_version}-linux-x64/ ${node_home_path}/node
-  else
     grep "export NODE_HOME=${node_home_path}/node" /etc/profile || echo "export NODE_HOME=${node_home_path}/node" >> /etc/profile
     grep 'export PATH=$NODE_HOME/bin:$PATH' /etc/profile ||  echo 'export PATH=$NODE_HOME/bin:$PATH' >> /etc/profile
     source /etc/profile
     echo "node : $(node -v)"
     echo "npm : $(npm -v)"
     echo "Node Install Finished: SUCCESS"
+  else
+    :
   fi
 }
 
