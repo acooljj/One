@@ -27,7 +27,7 @@ function node_install (){
 
 function Hubot_install (){
   echo "Install Hubot..."
-  #npm install -g yo generator-hubot
+  npm install -g yo generator-hubot
   if [ $USER == "root" ];then
     chmod g+rwx -R /root /root/.config 
     chmod 775 -R /root/.config/configstore/
