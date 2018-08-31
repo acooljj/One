@@ -41,7 +41,7 @@ function Hubot_install (){
   chmod g+rwx ${node_data}
   cd ${node_data}
   echo "++根据提示填写相关信息: [Email, HuhotName, Bs]"
-  yo hubot --adapter=slack
+  yo hubot --adapter=slack || chmod g+rwx -R /root/.config/insight-nodejs  && yo hubot --adapter=slack
   echo "Hubot Install Finished: SUCCESS"
   sleep 1
   echo "++输入机器人连接Slack的Token："
