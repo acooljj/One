@@ -16,7 +16,7 @@ fun_centos7 (){
 }
 
 fun_centos6 (){
-  yum -y install jenkins dejavu-sans-fonts
+  yum -y install jenkins dejavu-sans-fonts java-1.8.0
   service jenkins start
 }
 
