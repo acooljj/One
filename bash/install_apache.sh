@@ -64,15 +64,25 @@ else
 fi
 }
 
+check_system (){
+  local bash_file=/tmp/check_system_version.sh
+  wget -qO ${bash_file} https://github.com/mainiubaba/One/raw/master/bash/check_system_version.sh
+  source ${bash_file}
+}
+
 install_apache (){
 #安装apache
 if [ ! -d /home/apache2 ]; then
   ls /tmp | grep httpd-${httpd}.tar.gz || wget -c -q -O httpd-${httpd}.tar.gz http://archive.apache.org/dist/httpd/httpd-${httpd}.tar.gz
   tar -zxf httpd-${httpd}.tar.gz
   cd httpd-${httpd}
-  ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate
+  check_system
+  if [[ ${system_version} == "Centos" ]];then
+   [[ ${system_version_num} -eq 7 ]] && ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate
+   [[ ${system_version_num} -eq 6 ]] && ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate --with-included-apr ap_cv_void_ptr_lt_long=no
+  else echo "system_version is ${system_version}, choose Centos";fi
   cmake_install
-  ln -s /lib64/libexpat.so.1 /usr/lib64/libexpat.so.0
+  [[ -f /usr/lib64/libexpat.so.0 ]] || ln -s /lib64/libexpat.so.1 /usr/lib64/libexpat.so.0
 else
    echo "apache exists..."
 fi
