@@ -77,10 +77,10 @@ if [ ! -d /home/apache2 ]; then
   tar -zxf httpd-${httpd}.tar.gz
   cd httpd-${httpd}
   check_system
-  if [[ ${system_version} == "Centos" ]];then
+  if [[ ${system_version} == "CentOS" ]];then
    [[ ${system_version_num} -eq 7 ]] && ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate
    [[ ${system_version_num} -eq 6 ]] && ./configure --prefix=/home/apache2  --enable-cgi --enable-cgid --enable-ssl --enable-rewrite --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr  --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mods-shared=most  --enable-mpms-shared=all --with-mpm=event --with-mpm=event --enable-proxy --enable-proxy-fcgi --enable-expires --enable-deflate --with-included-apr ap_cv_void_ptr_lt_long=no
-  else echo "system_version is ${system_version}, choose Centos";fi
+  else echo "system_version is ${system_version}, choose CentOS"; exit 1;fi
   cmake_install
   [[ -f /usr/lib64/libexpat.so.0 ]] || ln -s /lib64/libexpat.so.1 /usr/lib64/libexpat.so.0
 else
