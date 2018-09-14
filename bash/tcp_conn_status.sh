@@ -95,6 +95,6 @@ case $metric in
           fi
          ;;
          *)
-          echo -e "\e[033mUsage: sh  $0 [closed|closing|closewait|synrecv|synsent|finwait1|finwait2|listen|established|lastack|timewait]\e[0m"
+          echo -e "\e[033mUsage: sh  $0 [CLOSED|LISTEN|SYN-RECV|SYN-SENT|ESTAB|TIME-WAIT|CLOSING|CLOSE-WAIT|LAST-ACK|FIN-WAIT-1|FIN-WAIT-2]\e[0m"
    
 esac
