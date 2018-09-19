@@ -5,7 +5,7 @@ if [ "$USER" == "root" ]; then
  cp /etc/filebeat/filebeat.yml /etc/filebeat/filebeat.ybak
  if [ $? -eq 0 ];then filebeat version;else echo "filebeat install filed.";fi
 else
- echo "User not is $USER, placse use root install."
+ echo -e "User is \e[033m$USER\e[0m, placse use \e[035mroot\e[0m install."
  exit
 fi
 
