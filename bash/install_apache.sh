@@ -88,8 +88,8 @@ else
 fi
 }
 
-install_modsecurity (){
-#安装modsecurity
+install_modsecurity2 (){
+#安装modsecurity2.x
 #https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-%28v2.x%29#Installation_for_Apache
 git clone git://github.com/SpiderLabs/ModSecurity.git
 cd ModSecurity
@@ -131,7 +131,7 @@ install_apr
 install_apr_util
 install_pcre
 install_apache
-install_modsecurity
+install_modsecurity2
 check_security
 }
 
