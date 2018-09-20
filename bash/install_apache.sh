@@ -73,6 +73,7 @@ check_system (){
 install_apache (){
 #安装apache
 if [ ! -d /home/apache2 ]; then
+  echo "Download apache package..."
   ls /tmp | grep httpd-${httpd}.tar.gz || wget -c -q -O httpd-${httpd}.tar.gz http://archive.apache.org/dist/httpd/httpd-${httpd}.tar.gz
   tar -zxf httpd-${httpd}.tar.gz
   cd httpd-${httpd}
