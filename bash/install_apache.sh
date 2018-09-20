@@ -7,6 +7,7 @@ apr_util=1.6.1
 pcre=8.41
 make_num=$(grep "processor" /proc/cpuinfo  -c)
 web_ins_dir=/tmp/apache_install
+[[ ! -d ${web_ins_dir} ]] && mkdir -vp ${web_ins_dir}
 
 
 cmake_install (){
@@ -21,7 +22,6 @@ curl https://raw.githubusercontent.com/mainiubaba/One/master/bash/init | bash
 }
 
 awget (){ # test wget
-  [[ ! -d ${web_ins_dir} ]] && mkdir -vp ${web_ins_dir}
   if [ -f ${web_ins_dir}/apr-${apr}.tar.gz ];then :; else wget -c -q -O apr-${apr}.tar.gz http://mirrors.shu.edu.cn/apache/apr/apr-${apr}.tar.gz;fi
   if [ -f ${web_ins_dir}/apr-util-${apr_util}.tar.gz ];then :; else wget -c -q -O apr-util-${apr_util}.tar.gz http://mirrors.shu.edu.cn/apache/apr/apr-util-${apr_util}.tar.gz;fi
   if [ -f ${web_ins_dir}/pcre-${pcre}.tar.gz ];then :; else wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar.gz;fi
