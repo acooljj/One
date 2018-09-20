@@ -6,13 +6,14 @@ apr=1.6.3
 apr_util=1.6.1
 pcre=8.41
 make_num=$(grep "processor" /proc/cpuinfo  -c)
+web_ins_dir=/tmp/apache_install
 
 
 cmake_install (){
 make -j ${make_num}
 make install
 echo -n "cd $(pwd)"
-cd /tmp
+cd ${web_ins_dir}
 }
 
 init (){
@@ -20,15 +21,16 @@ curl https://raw.githubusercontent.com/mainiubaba/One/master/bash/init | bash
 }
 
 awget (){ # test wget
-  if [ -f /tmp/apr-${apr}.tar.gz ];then :; else wget -c -q -O apr-${apr}.tar.gz http://mirrors.shu.edu.cn/apache/apr/apr-${apr}.tar.gz;fi
-  if [ -f /tmp/apr-util-${apr_util}.tar.gz ];then :; else wget -c -q -O apr-util-${apr_util}.tar.gz http://mirrors.shu.edu.cn/apache/apr/apr-util-${apr_util}.tar.gz;fi
-  if [ -f /tmp/pcre-${pcre}.tar.gz ];then :; else wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar.gz;fi
-  if [ -f httpd-${httpd}.tar.gz ];then :; else wget -c -q -O httpd-${httpd}.tar.gz http://archive.apache.org/dist/httpd/httpd-${httpd}.tar.gz;fi
+  [[ ! -d ${web_ins_dir} ]] && mkdir -vp ${web_ins_dir}
+  if [ -f ${web_ins_dir}/apr-${apr}.tar.gz ];then :; else wget -c -q -O apr-${apr}.tar.gz http://mirrors.shu.edu.cn/apache/apr/apr-${apr}.tar.gz;fi
+  if [ -f ${web_ins_dir}/apr-util-${apr_util}.tar.gz ];then :; else wget -c -q -O apr-util-${apr_util}.tar.gz http://mirrors.shu.edu.cn/apache/apr/apr-util-${apr_util}.tar.gz;fi
+  if [ -f ${web_ins_dir}/pcre-${pcre}.tar.gz ];then :; else wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar.gz;fi
+  if [ -f ${web_ins_dir}/httpd-${httpd}.tar.gz ];then :; else wget -c -q -O httpd-${httpd}.tar.gz http://archive.apache.org/dist/httpd/httpd-${httpd}.tar.gz;fi
 }
 install_apr (){
 #安装apr
 if [ ! -d /usr/local/apr ]; then
-  ls /tmp | grep apr-${apr}.tar.gz || wget -c -q -O apr-${apr}.tar.gz http://mirrors.shu.edu.cn/apache/apr/apr-${apr}.tar.gz
+  ls ${web_ins_dir} | grep apr-${apr}.tar.gz || wget -c -q -O apr-${apr}.tar.gz http://mirrors.shu.edu.cn/apache/apr/apr-${apr}.tar.gz
   tar -zxf apr-${apr}.tar.gz
   cd apr-${apr}
   ./configure --prefix=/usr/local/apr
@@ -41,7 +43,7 @@ fi
 install_apr_util (){
 #安装apr-util
 if [ ! -d /usr/local/apr-util ]; then
-  ls /tmp | grep apr-util-${apr_util}.tar.gz || wget -c -q -O apr-util-${apr_util}.tar.gz http://mirrors.shu.edu.cn/apache/apr/apr-util-${apr_util}.tar.gz
+  ls ${web_ins_dir} | grep apr-util-${apr_util}.tar.gz || wget -c -q -O apr-util-${apr_util}.tar.gz http://mirrors.shu.edu.cn/apache/apr/apr-util-${apr_util}.tar.gz
   tar -zxf apr-util-${apr_util}.tar.gz
   cd apr-util-${apr_util}
   ./configure --prefix=/usr/local/apr-util --with-apr=/usr/local/apr
@@ -54,7 +56,7 @@ fi
 install_pcre (){
 #安装pcre
 if [ ! -d /usr/local/pcre ]; then
-  ls /tmp | grep pcre-${pcre}.tar.gz || wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar.gz
+  ls ${web_ins_dir} | grep pcre-${pcre}.tar.gz || wget -c -q -O pcre-${pcre}.tar.gz https://ftp.pcre.org/pub/pcre/pcre-${pcre}.tar.gz
   tar -zxf pcre-${pcre}.tar.gz
   cd pcre-${pcre}
   ./configure --prefix=/usr/local/pcre
@@ -65,7 +67,7 @@ fi
 }
 
 check_system (){
-  local bash_file=/tmp/check_system_version.sh
+  local bash_file=${web_ins_dir}/check_system_version.sh
   wget -qO ${bash_file} https://github.com/mainiubaba/One/raw/master/bash/check_system_version.sh
   source ${bash_file}
 }
@@ -74,7 +76,7 @@ install_apache (){
 #安装apache
 if [ ! -d /home/apache2 ]; then
   echo "Download apache package..."
-  ls /tmp | grep httpd-${httpd}.tar.gz || wget -c -q -O httpd-${httpd}.tar.gz http://archive.apache.org/dist/httpd/httpd-${httpd}.tar.gz
+  ls ${web_ins_dir} | grep httpd-${httpd}.tar.gz || wget -c -q -O httpd-${httpd}.tar.gz http://archive.apache.org/dist/httpd/httpd-${httpd}.tar.gz
   tar -zxf httpd-${httpd}.tar.gz
   cd httpd-${httpd}
   check_system
@@ -125,8 +127,11 @@ sed -i s/^SecUnicodeMapFile/#SecUnicodeMapFile/g modsecurity.conf
 if [ $? -eq '0' ];then /home/apache2/bin/httpd -V; else echo "apachectl check filed";exit 1;fi
 }
 
+clean_file (){
+  rm -rf ${web_ins_dir}
+}
 install_apache2.4 (){
-cd /tmp
+cd ${web_ins_dir}
 init
 install_apr
 install_apr_util
@@ -137,7 +142,7 @@ check_security
 }
 
 install_apache2.2 (){
-cd /tmp
+cd ${web_ins_dir}
 init
 install_apr
 install_apr_util
@@ -150,3 +155,5 @@ if [ "${httpd}" == "2.2.34" ]; then
 else
   install_apache2.4
 fi
+
+[[ $? eq 0 ]] && trap clean_file EXIT
