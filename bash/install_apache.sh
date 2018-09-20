@@ -156,4 +156,4 @@ else
   install_apache2.4
 fi
 
-[[ $? eq 0 ]] && trap clean_file EXIT
+[[ $? == 0 ]] && trap clean_file EXIT
