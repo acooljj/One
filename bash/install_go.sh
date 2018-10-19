@@ -1,9 +1,10 @@
 #!/bin/bash
 
-proFile=/etc/proFile
+proFile=/etc/profile
 goPath=/usr/local
 goVersion=1.11.1
 goDownloadPath=https://dl.google.com/go/go${goVersion}.linux-amd64.tar.gz
+
 
 centosGoInstall (){
   #安装go
