@@ -60,7 +60,7 @@ if [[ ! -d ${tomcat_path}/${app_id} ]];then
    echo "Exit."
    exit 2
 else 
-   tomcat_server=$(ps -ef | grep ${tomcat_path}/${app_id}/bin | grep -v grep | awk '{print $1}')
+   tomcat_server=$(ps -ef | grep ${tomcat_path}/${app_id}/bin | grep Djava | grep -v grep | awk '{print $1}')
    if [[ ${suM} -lt 1 ]];then
       :
    else

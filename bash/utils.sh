@@ -4,7 +4,8 @@
 
 countCpu=$(grep -c "processor" /proc/cpuinfo)
 proFile=/etc/profile
-goPath=/usr/local
+goRoot=/usr/local
+goPath=/tmp
 goVersion=1.11.1
 goDownloadPath=https://dl.google.com/go/go${goVersion}.linux-amd64.tar.gz
 glicVersion=2.16.0
@@ -69,12 +70,13 @@ centos7YumApache (){
 #Path
 centosInstallGo (){
   installEcho Go
-  cd ${goPath}
+  cd ${goRoot}
   wget -N ${goDownloadPath} 2> /dev/null
-  [[ -d ${goPath}/go ]] || sudo tar -C ${goPath} -zxf go${goVersion}.linux-amd64.tar.gz
+  [[ -d ${goRoot}/go ]] || sudo tar -C ${goRoot} -zxf go${goVersion}.linux-amd64.tar.gz
   grep '#go path' ${proFile} > /dev/null|| echo '#go path' >> ${proFile}
+  grep "export GOROOT=${goRoot}/go"  ${proFile} > /dev/null|| echo "export GOROOT=${goRoot}/go" >> ${proFile}
   grep "export GOPATH=${goPath}/go"  ${proFile} > /dev/null|| echo "export GOPATH=${goPath}/go" >> ${proFile}
-  grep 'export PATH=$PATH:$GOPATH/bin' ${proFile} > /dev/null|| echo 'export PATH=$PATH:$GOPATH/bin' >> ${proFile}
+  grep 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' ${proFile} > /dev/null|| echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> ${proFile}
   source ${proFile}
   go version
   echo -e "...\ngo install successful."
@@ -94,3 +96,5 @@ centosinstallGlibc (){
   ldd -version
 }
 
+
+centosInstallGo
