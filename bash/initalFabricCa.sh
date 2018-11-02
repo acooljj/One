@@ -389,7 +389,7 @@ fabricPeerConfigClean (){
 fabricOrdererConfigMerge (){
   local cryptoName=crypto-config-orderer
   directiryCd ${cryptogenDirectory}
-  [ -d crypto-config-new ] && mv crypto-config-new crypto-config-new.$(date +%FT%T) || directiryCheck crypto-config-new
+  [ -d crypto-config-new ] && mv crypto-config-new crypto-config-new.bak$(date '+%FT%T') || directiryCheck crypto-config-new
   [ -d crypto-config-new/ordererOrganizations ] || directiryCheck crypto-config-new/ordererOrganizations
   directiryCd ${cryptogenDirectory}/${cryptoName}
   cp -r ${caDeployDirectory}/${domainName}/msp/* ./ordererOrganizations/${domainName}/msp
