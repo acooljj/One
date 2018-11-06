@@ -22,10 +22,12 @@ adminDirectory=${caDeployDirectory}/admin
 ordererDirectory=${caDeployDirectory}/${domainName}
 ordererAdminDirectory=${ordererDirectory}/admin
 ordererOrdererDirectory=${ordererDirectory}/orderer
-cryptogenDirectory=/home/${USER}/fabric-samples/balance-transfer/artifacts/channel
+fabricDirectory=/home/${USER}/fabric-samples
+cryptogenDirectory=${fabricDirectory}/balance-transfer/artifacts/channel
 cryptogenConfig=cryptogen.yaml
 fabricCaClientPath=${adminDirectory}
 fabricCaClientConfig=fabric-ca-client-config.yaml
+fabricNetworkConfigName=network-config.yaml
 
 idSecret=password
 adminUser=admin
@@ -43,9 +45,20 @@ directiryCd (){
   local dirName=${1}
   cd ${dirName}
   echo "进入目录： ${dirName}"
-
 }
 
+#机构首字母大写转换
+fabricOrg (){
+  Org=$(echo $org | sed 's/^[a-z]/\U&/')
+}
+
+fabricFor (){
+  funName=${1}
+  for org in ${newOrg[@]}
+  do
+    ${funName}
+  done
+}
 ####################初始化配置####################
 #获取ca Server命令行代码
 fabricCaCmd (){
@@ -255,6 +268,279 @@ fabricConfigureBottom (){
   echo "            keystore: msp/keystore"
 }
 
+#network-config.yaml配置文件7-1
+fabricNetworkConfigHeader (){
+  echo "---"
+  echo "name: \"balance-transfer\""
+  echo "x-type: \"hlfv1\""
+  echo "description: \"Balance Transfer Network\""
+  echo "version: \"1.0\""
+  echo "channels:"
+  echo "  mychannel:"
+  echo "    orderers:"
+  echo "      - ${ordererDomainName}"
+  echo "    peers:"
+}
+
+#network-config.yaml配置文件7-2
+fabricNetworkConfigPeers (){
+  echo "      peer0.${org}.${domainName}:"
+  echo "        endorsingPeer: true"
+  echo "        chaincodeQuery: true"
+  echo "        ledgerQuery: true"
+  echo "        eventSource: true"
+  echo "      peer1.${org}.${domainName}:"
+  echo "        endorsingPeer: false"
+  echo "        chaincodeQuery: true"
+  echo "        ledgerQuery: true"
+  echo "        eventSource: false"
+}
+
+#network-config.yaml配置文件7-3
+fabricNetworkConfigChaincode (){
+  echo "    chaincodes:"
+  echo "      - mycc:v0"
+  echo "organizations:"
+}
+
+#network-config.yaml配置文件7-4
+fabricNetworkConfigOrgs (){
+  fabricOrg
+  local sk_ii=$(ls ${balanceDeployDirectory}/artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/users/Admin@${org}.${domainName}/msp/keystore/)
+  echo "  ${Org}:"
+  echo "    mspid: ${Org}MSP"
+  echo "    peers:"
+  echo "      - peer0.${org}.${domainName}"
+  echo "      - peer1.${org}.${domainName}"
+  echo "    certificateAuthorities:"
+  echo "      - ca"
+  echo "    adminPrivateKey:"
+  echo "      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/users/Admin@${org}.${domainName}/msp/keystore/${sk_ii}"
+  echo "    signedCert:"
+  echo "      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/users/Admin@${org}.${domainName}/msp/signcerts/cert.pem"
+}
+
+#network-config.yaml配置文件7-5
+fabricNetworkConfigOrderer (){
+  echo "orderers:"
+  echo "  ${ordererDomainName}:"
+  echo "    url: grpcs://localhost:7050"
+  echo "    grpcOptions:"
+  echo "      ssl-target-name-override: ${ordererDomainName}"
+  echo "    tlsCACerts:"
+  echo "      path: artifacts/channel/crypto-config/ordererOrganizations/${domainName}/orderers/${ordererDomainName}/tls/ca.crt"
+  echo "peers:"
+}
+
+#network-config.yaml配置文件7-6
+fabricNetworkConfigOrgPeers (){
+  echo "  peer0.${org}.${domainName}:"
+  echo "    url: grpcs://localhost:7051"
+  echo "    grpcOptions:"
+  echo "      ssl-target-name-override: peer0.${org}.${domainName}"
+  echo "    tlsCACerts:"
+  echo "      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/tls/ca.crt"
+  echo "  peer1.${org}.${domainName}:"
+  echo "    url: grpcs://localhost:7056"
+  echo "    grpcOptions:"
+  echo "      ssl-target-name-override: peer1.${org}.${domainName}"
+  echo "    tlsCACerts:"
+  echo "      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer1.${org}.${domainName}/tls/ca.crt"
+}
+
+#network-config.yaml配置文件7-7
+fabricNetworkConfigBottom (){
+  echo "certificateAuthorities:"
+  echo "  ca:"
+  echo "    url: http://localhost:7054"
+  echo "    httpOptions:"
+  echo "      verify: false"
+  echo "    registrar:"
+  echo "      - enrollId: ${adminUser}"
+  echo "        enrollSecret: ${adminPass}"
+  echo "    caName: ca"
+}
+
+#org[x].yaml配置文件
+fabricOrgYaml (){
+  fabricOrg
+  echo "---"
+  echo "name: \"balance-transfer-${org}\""
+  echo "x-type: \"hlfv1\""
+  echo "description: \"Balance Transfer Network - client definition for ${Org}\""
+  echo "version: \"1.0\""
+  echo "client:"
+  echo "  organization: ${Org}"
+  echo "  credentialStore:"
+  echo "    path: \"./fabric-client-kv-${org}\""
+  echo "    cryptoStore:"
+  echo "      path: \"/tmp/fabric-client-kv-${org}\""
+  echo "    wallet: wallet-name"
+}
+
+#docker-compose.yaml配置文件3-1
+fabricDockerComposeConfigOrderer (){
+  echo "version: '2'"
+  echo "services:"
+  echo "  ${ordererDomainName}:"
+  echo "    container_name: ${ordererDomainName}"
+  echo "    image: hyperledger/fabric-orderer"
+  echo "    environment:"
+  echo "      - ORDERER_GENERAL_LOGLEVEL=debug"
+  echo "      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0"
+  echo "      - ORDERER_GENERAL_GENESISMETHOD=file"
+  echo "      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block"
+  echo "      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP"
+  echo "      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/crypto/orderer/msp"
+  echo "      - ORDERER_GENERAL_TLS_ENABLED=true"
+  echo "      - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/crypto/orderer/tls/server.key"
+  echo "      - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/crypto/orderer/tls/server.crt"
+  echo "      - ORDERER_GENERAL_TLS_ROOTCAS=[/etc/hyperledger/crypto/orderer/tls/ca.crt]"
+  echo "    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers"
+  echo "    command: orderer"
+  echo "    ports:"
+  echo "      - 7050:7050"
+  echo "    volumes:"
+  echo "        - ./channel:/etc/hyperledger/configtx"
+  echo "        - ./channel/crypto-config/ordererOrganizations/${domainName}/orderers/${ordererDomainName}/:/etc/hyperledger/crypto/orderer"
+}
+
+#docker-compose.yaml配置文件3-2
+fabricDockerComposeConfigOrgVolumes (){
+  fabricOrg
+  echo "        - ./channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/:/etc/hyperledger/crypto/peer${Org}"
+}
+
+#docker-compose.yaml配置文件3-3
+fabricDockerComposeConfigPeers (){
+  fabricOrg
+  echo "  peer0.${org}.${domainName}:"
+  echo "    container_name: peer0.${org}.${domainName}"
+  echo "    extends:"
+  echo "      file:   base.yaml"
+  echo "      service: peer-base"
+  echo "    environment:"
+  echo "      - CORE_PEER_ID=peer0.${org}.${domainName}"
+  echo "      - CORE_PEER_LOCALMSPID=${Org}MSP"
+  echo "      - CORE_PEER_ADDRESS=peer0.${org}.${domainName}:7051"
+  echo "    ports:"
+  echo "      - 7051:7051"
+  echo "      - 7053:7053"
+  echo "    volumes:"
+  echo "        - ./channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/:/etc/hyperledger/crypto/peer"
+  echo "    depends_on:"
+  echo "      - ${ordererDomainName}"
+  echo "  peer1.${org}.${domainName}:"
+  echo "    container_name: peer1.${org}.${domainName}"
+  echo "    extends:"
+  echo "      file:   base.yaml"
+  echo "      service: peer-base"
+  echo "    environment:"
+  echo "      - CORE_PEER_ID=peer1.${org}.${domainName}"
+  echo "      - CORE_PEER_LOCALMSPID=${Org}MSP"
+  echo "      - CORE_PEER_ADDRESS=peer1.${org}.${domainName}:7051"
+  echo "    ports:"
+  echo "      - 7056:7051"
+  echo "      - 7058:7053"
+  echo "    volumes:"
+  echo "        - ./channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer1.${org}.${domainName}/:/etc/hyperledger/crypto/peer"
+  echo "    depends_on:"
+  echo "      - ${ordererDomainName}"
+}
+
+#channel/configtx.yaml配置文件6-1
+fabricChannelConfigtxConfigureHeader (){
+  echo "---"
+  echo "Organizations:"
+  echo "    - &OrdererOrg"
+  echo "        Name: OrdererMSP"
+  echo "        ID: OrdererMSP"
+  echo "        MSPDir: crypto-config/ordererOrganizations/${domainName}/msp"
+}
+
+#channel/configtx.yaml配置文件6-2
+fabricChannelConfigtxConfigureOrgs (){
+  fabricOrg
+  echo "    - &${Org}"
+  echo "        Name: ${Org}MSP"
+  echo "        ID: ${Org}MSP"
+  echo "        MSPDir: crypto-config/peerOrganizations/${org}.${domainName}/msp"
+  echo "        AnchorPeers:"
+  echo "            - Host: peer0.${org}.${domainName}"
+  echo "              Port: 7051"
+}
+
+#channel/configtx.yaml配置文件6-3
+fabricChannelConfigtxConfigureApplicationOrderer (){
+  echo "Application: &ApplicationDefaults"
+  echo "    Organizations:"
+  echo "Orderer: &OrdererDefaults"
+  echo "    OrdererType: solo"
+  echo "    Addresses:"
+  echo "        - ${ordererDomainName}:7050"
+  echo "    BatchTimeout: 2s"
+  echo "    BatchSize:"
+  echo "        MaxMessageCount: 10"
+  echo "        AbsoluteMaxBytes: 98 MB"
+  echo "        PreferredMaxBytes: 512 KB"
+  echo "    Kafka:"
+  echo "        Brokers:"
+  echo "            - 127.0.0.1:9092"
+  echo "    Organizations:"
+  echo "Profiles:"
+  echo "    TwoOrgsOrdererGenesis:"
+  echo "        Orderer:"
+  echo "            <<: *OrdererDefaults"
+  echo "            Organizations:"
+  echo "                - *OrdererOrg"
+  echo "        Consortiums:"
+  echo "            SampleConsortium:"
+  echo "                Organizations:"
+}
+
+#channel/configtx.yaml配置文件6-4
+fabricChannelConfigtxConfigureOrgsOrdererGenesis (){
+  fabricOrg
+  echo "                    - *${Org}"
+}
+
+#channel/configtx.yaml配置文件6-5
+fabricChannelConfigtxConfigureApplicationOrg (){
+  echo "    TwoOrgsChannel:"
+  echo "        Consortium: SampleConsortium"
+  echo "        Application:"
+  echo "            <<: *ApplicationDefaults"
+  echo "            Organizations:"
+}
+
+#channel/configtx.yaml配置文件6-6
+fabricChannelConfigtxConfigureOrgsChannels (){
+  fabricOrg
+  echo "                - *${Org}"
+}
+
+#config.js 配置文件3-1
+fabricConfigJsHeader (){
+	echo "var util = require('util');"
+	echo "var path = require('path');"
+	echo "var hfc = require('fabric-client');"
+	echo "var file = 'network-config%s.yaml';"
+	echo "var env = process.env.TARGET_NETWORK;"
+	echo "if (env)"
+	echo "	file = util.format(file, '-' + env);"
+	echo "else"
+	echo "	file = util.format(file, '');"
+	echo "hfc.setConfigSetting('network-connection-profile-path',path.join(__dirname, 'artifacts' ,file));"
+}
+#config.js 配置文件3-2
+fabricConfigJsOrgs (){
+  fabricOrg
+	echo "hfc.setConfigSetting('${Org}-connection-profile-path',path.join(__dirname, 'artifacts', '${org}.yaml'));"
+}
+#config.js 配置文件3-3
+fabricConfigJsBottom (){
+	echo "hfc.addConfigFile(path.join(__dirname, 'config.json'));"
+}
 ####################合并文件配置####################
 #生成Orderer CA configure
 fabricOrdererCaConfigure (){
@@ -289,6 +575,46 @@ fabricPeer1Configure (){
   fabricConfigureHead Admin@${org}.${domainName}
   fabricConfigurePeer1Body
   fabricConfigureBottom
+}
+
+#生成network-config.yaml configure
+fabricNetworkConfig (){
+  fabricNetworkConfigHeader
+  # for org in ${newOrg[@]};do fabricNetworkConfigPeers;done
+  fabricFor fabricNetworkConfigPeers
+  fabricNetworkConfigChaincode
+  # for org in ${newOrg[@]};do fabricNetworkConfigOrgs;done
+  fabricFor fabricNetworkConfigOrgs
+  fabricNetworkConfigOrderer
+  # for org in ${newOrg[@]};do fabricNetworkConfigOrgPeers;done
+  fabricFor fabricNetworkConfigOrgPeers
+  fabricNetworkConfigBottom
+}
+
+#生成docker-compose.yaml configure
+fabricDockerComposeConfig (){
+  fabricDockerComposeConfigOrderer
+  # for org in ${newOrg[@]};do fabricDockerComposeConfigOrgVolumes;done
+  fabricFor fabricDockerComposeConfigOrgVolumes
+  # for org in ${newOrg[@]};do fabricDockerComposeConfigPeers;done
+  fabricFor fabricDockerComposeConfigPeers
+}
+
+#生成configtx.yaml configure
+fabricConfigtxConfig (){
+  fabricChannelConfigtxConfigureHeader
+  fabricFor fabricChannelConfigtxConfigureOrgs
+  fabricChannelConfigtxConfigureApplicationOrderer
+  fabricFor fabricChannelConfigtxConfigureOrgsOrdererGenesis
+  fabricChannelConfigtxConfigureApplicationOrg
+  fabricFor fabricChannelConfigtxConfigureOrgsChannels
+}
+
+#生成config.js configure
+fabricConfigJsConfig (){
+  fabricConfigJsHeader
+  fabricFor fabricConfigJsOrgs
+  fabricConfigJsBottom
 }
 
 ####################生成证书配置####################
@@ -366,7 +692,31 @@ fabricNewOrgPeer1 (){
   cp ${orgAdminDirectory}/msp/signcerts/cert.pem ${orgDirectory}/peer1/msp/admincerts/
 }
 
-####################证书合并配置####################
+#开始操作network-config文件生成
+fabricNewNetworkConfig (){
+    fabricNetworkConfig > ${balanceDeployDirectory}/artifacts/${fabricNetworkConfigName}
+}
+
+#开始操作生成org[x].yaml configure
+fabricNewOrgYaml (){
+  for org in ${newOrg[@]};do fabricOrgYaml > ${balanceDeployDirectory}/artifacts/${org}.yaml;done
+}
+
+#开始操作docker-compose.yaml文件生成
+fabricNewDockerComposeConfig (){
+  fabricDockerComposeConfig > ${balanceDeployDirectory}/artifacts/docker-compose.yaml
+}
+
+#开始操作configtx.yaml文件生成
+fabricNewConfigtxConfig (){
+  fabricConfigtxConfig > ${balanceDeployDirectory}/artifacts/channel/configtx.yaml
+}
+
+#开始操作config.js 文件生成
+fabricNewConfigJsConfig (){
+  fabricConfigJsConfig > ${balanceDeployDirectory}/config.js
+}
+####################证书清理配置####################
 #清理自动生成的认证文件
 fabricOrdererConfigClean (){
   local cryptoName=crypto-config-orderer
@@ -385,11 +735,12 @@ fabricPeerConfigClean (){
   rm -r ./peerOrganizations/${org}.${domainName}/users/Admin@${org}.${domainName}/msp/{admincerts,cacerts,keystore,signcerts}
 }
 
+####################证书合并配置####################
 #合并：将手工生成的和自动生成的合并
 fabricOrdererConfigMerge (){
   local cryptoName=crypto-config-orderer
   directiryCd ${cryptogenDirectory}
-  [ -d crypto-config-new ] && mv crypto-config-new crypto-config-new.bak$(date '+%FT%T') || directiryCheck crypto-config-new
+  [ -d crypto-config-new ] && mv crypto-config-new crypto-config-new.$(date +%FT%T) || directiryCheck crypto-config-new
   [ -d crypto-config-new/ordererOrganizations ] || directiryCheck crypto-config-new/ordererOrganizations
   directiryCd ${cryptogenDirectory}/${cryptoName}
   cp -r ${caDeployDirectory}/${domainName}/msp/* ./ordererOrganizations/${domainName}/msp
@@ -410,7 +761,14 @@ fabricPeerConfigMerge (){
   cp -r ./peerOrganizations/${org}.${domainName} ../crypto-config-new/peerOrganizations
 }
 
-
+#创世纪块文件重新生成
+fabricRebrithBlock (){
+  directiryCd ${balanceDeployDirectory}/artifacts/channel
+  mv genesis.block genesis.block.bak
+  mv mychannel.tx mychannel.tx.bak
+  configtxgen -profile TwoOrgsOrdererGenesis -outputBlock genesis.block
+  configtxgen -profile TwoOrgsChannel -outputCreateChannelTx mychannel.tx -channelID mychannel
+}
 ####################修改秘钥配置####################
 #查找要替换的SK文件
 fabricChangeSk (){
@@ -447,7 +805,7 @@ fabricInitalOrderer (){
 
 #3.org ca --> peer0 AND peer1
 fabricInitalOrg (){
-  Org=$(echo $org | sed 's/^[a-z]/\U&/')
+  fabricOrg
   orgDomainName=${org}.${domainName}
   orgDirectory=${caDeployDirectory}/${org}.${domainName}
   orgAdminDirectory=${orgDirectory}/admin
@@ -462,17 +820,42 @@ fabricInitalOrg (){
   fabricPeerConfigMerge
 }
 
+#4.configure ---> runApp AND testAPIs
+fabricInitalRunApp (){
+  balanceDeployDirectory=${fabricDirectory}/balance-$(date '+%FT%H-%M-%S')
+
+  cp -r ${fabricDirectory}/balance-transfer ${balanceDeployDirectory}
+  directiryCd ${balanceDeployDirectory}/artifacts/channel
+  echo
+  echo "Clean cryptogen-config directory..."
+  rm -r $(ls -F | grep "/$" | grep -v "new/")
+  mv crypto-config-new crypto-config
+  echo "Clean succeed.Rename cryptogen-config"
+  echo
+  directiryCd ${balanceDeployDirectory}
+  sed -i "s/example.com/${domainName}/g" testAPIs.sh
+  sed -i "s/affiliation: userOrg.toLowerCase() + '.department1'/affiliation: \'${unionOrderer}.\' + userOrg.toLowerCase()/" app/helper.js
+  sed -i "s/60000/600000/" app/instantiate-chaincode.js
+
+  fabricNewNetworkConfig
+  fabricNewDockerComposeConfig
+  fabricNewOrgYaml
+  fabricNewConfigtxConfig
+  fabricNewConfigJsConfig
+  fabricRebrithBlock
+}
 ####################调用运行####################
 #fabric
 #声明org机构
-newOrg=('org1' 'org2')
-#1.admin
+newOrg=('org1' 'org2' 'gro3')
+# 1.admin
 fabricInitalAdmin
-#2.orderer
+# 2.orderer
 fabricInitalOrderer
-#3.org
+# 3.org
 for org in ${newOrg[@]}
 do
   fabricInitalOrg
 done
-
+# 4.runapp && testapi
+fabricInitalRunApp
