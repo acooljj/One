@@ -1,5 +1,39 @@
 #!/bin/bash
-set -xe
+#配置文件参数化，实现n家证书生成，合并并进行创世纪块的重新生成
+################################################################################
+# #MySQL方式启动
+# #准备好fabric-ca使用的mysql数据库
+# cat >>/etc/mysql/my.cnf<<EOF
+# [mysqld]
+# sql_mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+# EOF
+#
+# #启动mysql
+# docker run -d \
+# -e MYSQL_ROOT_PASSWORD=123456 \
+# -p 3306:3306 \
+# --name fabric-mysql \
+# mysql:5.7
+#
+# #MySQL启动fabric-ca
+# nohup ./fabric-ca-server start \
+# --db.datasource "root:123456@tcp(localhost:3306)/fabric_ca?parseTime=true" \
+# --db.type mysql \
+# --ca.name ca \
+# -b admin:adminpw \
+# --cfg.affiliations.allowremove \
+# --cfg.identities.allowremove &
+#
+# #SQLite方式启动
+# #SQLite启动fabric-ca
+# nohup ./fabric-ca-server start \
+# --ca.name ca \
+# -b admin:adminpw \
+# --cfg.affiliations.allowremove \
+# --cfg.identities.allowremove &
+################################################################################
+
+set -e
 #var
 # unichain.org.cn
 # orderer.unichain.org.cn
@@ -33,6 +67,7 @@ idSecret=password
 adminUser=admin
 adminPass=adminpw
 
+listFile=~/test/a
 ####################基础配置####################
 #创建目录
 directiryCheck (){
@@ -52,13 +87,30 @@ fabricOrg (){
   Org=$(echo $org | sed 's/^[a-z]/\U&/')
 }
 
+# fabricFor (){
+#   funName=${1}
+#   for org in ${newOrg[@]}
+#   do
+#     ${funName}
+#   done
+# }
+
 fabricFor (){
   funName=${1}
-  for org in ${newOrg[@]}
+  grep '' ${listFile} | while read line
   do
+    org=$(echo ${line} | awk -F ";" '{print $1}')
+    peer0=$(echo ${line} | awk -F ";" '{print $2}' | awk '{print $2}')
+    peer0_1=$(echo ${peer0} | awk -F "," '{print $1}' )
+    peer0_2=$(echo ${peer0} | awk -F "," '{print $2}' )
+    peer1=$(echo ${line} | awk -F ";" '{print $3}' | awk '{print $2}')
+    peer1_1=$(echo ${peer1} | awk -F "," '{print $1}' )
+    peer1_2=$(echo ${peer1} | awk -F "," '{print $2}' )
     ${funName}
   done
 }
+
+
 ####################初始化配置####################
 #获取ca Server命令行代码
 fabricCaCmd (){
@@ -88,7 +140,7 @@ fabricCreateAdmin (){
   fabric-ca-client -H ${adminDirectory} affiliation add ${unionRootCa}
   fabric-ca-client -H ${adminDirectory} affiliation add ${unionSecond}
   fabric-ca-client -H ${adminDirectory} affiliation list
-  sleep 3
+  #sleep 3
 }
 
 #create orderer msp
@@ -335,13 +387,13 @@ fabricNetworkConfigOrderer (){
 #network-config.yaml配置文件7-6
 fabricNetworkConfigOrgPeers (){
   echo "  peer0.${org}.${domainName}:"
-  echo "    url: grpcs://localhost:7051"
+  echo "    url: grpcs://localhost:${peer0_1}"
   echo "    grpcOptions:"
   echo "      ssl-target-name-override: peer0.${org}.${domainName}"
   echo "    tlsCACerts:"
   echo "      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/tls/ca.crt"
   echo "  peer1.${org}.${domainName}:"
-  echo "    url: grpcs://localhost:7056"
+  echo "    url: grpcs://localhost:${peer1_1}"
   echo "    grpcOptions:"
   echo "      ssl-target-name-override: peer1.${org}.${domainName}"
   echo "    tlsCACerts:"
@@ -424,8 +476,8 @@ fabricDockerComposeConfigPeers (){
   echo "      - CORE_PEER_LOCALMSPID=${Org}MSP"
   echo "      - CORE_PEER_ADDRESS=peer0.${org}.${domainName}:7051"
   echo "    ports:"
-  echo "      - 7051:7051"
-  echo "      - 7053:7053"
+  echo "      - ${peer0_1}:7051"
+  echo "      - ${peer0_2}:7053"
   echo "    volumes:"
   echo "        - ./channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/:/etc/hyperledger/crypto/peer"
   echo "    depends_on:"
@@ -440,8 +492,8 @@ fabricDockerComposeConfigPeers (){
   echo "      - CORE_PEER_LOCALMSPID=${Org}MSP"
   echo "      - CORE_PEER_ADDRESS=peer1.${org}.${domainName}:7051"
   echo "    ports:"
-  echo "      - 7056:7051"
-  echo "      - 7058:7053"
+  echo "      - ${peer1_1}:7051"
+  echo "      - ${peer1_2}:7053"
   echo "    volumes:"
   echo "        - ./channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer1.${org}.${domainName}/:/etc/hyperledger/crypto/peer"
   echo "    depends_on:"
@@ -617,6 +669,9 @@ fabricConfigJsConfig (){
   fabricConfigJsBottom
 }
 
+fabricOrgYamlConfig (){
+  fabricOrgYaml > ${balanceDeployDirectory}/artifacts/${org}.yaml
+}
 ####################生成证书配置####################
 #cryptogen生成证书 Orderer
 fabricCryptogenOrderer (){
@@ -699,7 +754,7 @@ fabricNewNetworkConfig (){
 
 #开始操作生成org[x].yaml configure
 fabricNewOrgYaml (){
-  for org in ${newOrg[@]};do fabricOrgYaml > ${balanceDeployDirectory}/artifacts/${org}.yaml;done
+  fabricFor fabricOrgYamlConfig
 }
 
 #开始操作docker-compose.yaml文件生成
@@ -847,15 +902,13 @@ fabricInitalRunApp (){
 ####################调用运行####################
 #fabric
 #声明org机构
-newOrg=('org1' 'org2' 'gro3')
+#newOrg=('org1' 'org2' 'gro3')
 # 1.admin
 fabricInitalAdmin
 # 2.orderer
 fabricInitalOrderer
 # 3.org
-for org in ${newOrg[@]}
-do
-  fabricInitalOrg
-done
+fabricFor fabricInitalOrg
 # 4.runapp && testapi
 fabricInitalRunApp
+
