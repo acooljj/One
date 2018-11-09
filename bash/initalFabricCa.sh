@@ -1,5 +1,15 @@
 #!/bin/bash
+set -e
 #配置文件参数化，实现n家证书生成，合并并进行创世纪块的重新生成
+#合并了动态加org脚本的一部分，包括：文件系统上的配置文件生成，org容器和cli容器的启动，
+#以及cli内部添加org操作的脚本。
+#cli内部添加org的脚本是通过cli的docker-compose文件，以volumes的方式挂载到了cli容器里，
+#可以通过执行docker exec cli bash xxx/xxx.sh，来进行新org的签名，更新。
+#xxx.json文件同样通过cli的docker-compose文件，用volumes定义，挂载在了容器里
+################################################################################
+#Use:
+#1. ./script inital
+#2. ./script dynamic
 ################################################################################
 # #MySQL方式启动
 # #准备好fabric-ca使用的mysql数据库
@@ -33,7 +43,6 @@
 # --cfg.identities.allowremove &
 ################################################################################
 
-set -e
 #var
 # unichain.org.cn
 # orderer.unichain.org.cn
@@ -46,9 +55,9 @@ ordererDomainName=orderer.${domainName}
 # cn.org
 # cn.org.unichain
 # cn.org.unichain.org[n]]
-unionRootCa=cn
-unionSecond=${unionRootCa}.org
-unionOrderer=${unionSecond}.unichain
+unionRootCa=$(echo $domainName | awk -F "." '{print $NF}')
+unionSecond=${unionRootCa}.$(echo $domainName | awk -F "." '{print $(NF-1)}')
+unionOrderer=${unionSecond}.$(echo $domainName | awk -F "." '{print $(NF-2)}')
 
 deployDirectory=~/fabric-deploy
 caDeployDirectory=${deployDirectory}/fabric-ca-files
@@ -62,12 +71,38 @@ cryptogenConfig=cryptogen.yaml
 fabricCaClientPath=${adminDirectory}
 fabricCaClientConfig=fabric-ca-client-config.yaml
 fabricNetworkConfigName=network-config.yaml
+balanceDeployDirectory=${fabricDirectory}/balance-dynamic
+staticFile=~/orgList
+dynamicFile=~/dynamicList
 
 idSecret=password
 adminUser=admin
 adminPass=adminpw
 
-listFile=~/test/a
+CHANNEL_NAME="$1"
+DELAY="$2"
+LANGUAGE="$3"
+TIMEOUT="$4"
+VERBOSE="$5"
+: ${CHANNEL_NAME:="mychannel"}
+: ${DELAY:="3"}
+: ${LANGUAGE:="golang"}
+: ${TIMEOUT:="10"}
+: ${VERBOSE:="false"}
+LANGUAGE=`echo "$LANGUAGE" | tr [:upper:] [:lower:]`
+COUNTER=1
+MAX_RETRY=5
+
+CC_SRC_PATH="github.com/chaincode/chaincode_example02/go/"
+if [ "$LANGUAGE" = "node" ]; then
+        CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/chaincode_example02/node/"
+fi
+
+listFile=${staticFile}
+
+# ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/${domainName}/orderers/${ordererDomainName}/msp/tlscacerts/tlsca.${domainName}-cert.pem
+
+
 ####################基础配置####################
 #创建目录
 directiryCheck (){
@@ -140,7 +175,7 @@ fabricCreateAdmin (){
   fabric-ca-client -H ${adminDirectory} affiliation add ${unionRootCa}
   fabric-ca-client -H ${adminDirectory} affiliation add ${unionSecond}
   fabric-ca-client -H ${adminDirectory} affiliation list
-  #sleep 3
+  sleep 3
 }
 
 #create orderer msp
@@ -824,19 +859,170 @@ fabricRebrithBlock (){
   configtxgen -profile TwoOrgsOrdererGenesis -outputBlock genesis.block
   configtxgen -profile TwoOrgsChannel -outputCreateChannelTx mychannel.tx -channelID mychannel
 }
-####################修改秘钥配置####################
-#查找要替换的SK文件
-fabricChangeSk (){
-  local cryptoName=crypto-config
-  directiryCd ${cryptogenDirectory}/${cryptoName}
-  echo "network-config.yaml"
-  grep -nEv "#|^$" ../../network-config.yaml  | grep sk | awk -F "/" '{print $NF}'
-  echo
-  echo "Org1 `ls peerOrganizations/org1.${domainName}/users/Admin@org1.${domainName}/msp/keystore/`"
-  echo "Org2 `ls peerOrganizations/org2.${domainName}/users/Admin@org2.${domainName}/msp/keystore/`"
+
+###################################################################
+###############START---动态执行文件---START#########################
+###################################################################
+dockerCli (){
+  Cmd=$@
+  docker exec cli ${Cmd}
 }
 
-####################总体配置####################
+#新org configtx配置文件 | bash
+fabricConfigtxNewOrg (){
+  fabricOrg
+  echo "Organizations:"
+  echo "    - &${Org}"
+  echo "        Name: ${Org}MSP"
+  echo "        ID: ${Org}MSP"
+  echo "        MSPDir: crypto-config/peerOrganizations/${org}.${domainName}/msp"
+  echo "        AnchorPeers:"
+  echo "            - Host: peer0.${org}.${domainName}"
+  echo "              Port: 7051"
+}
+
+#new org docker-compose configure file | bash
+fabricConfigDockerCompose (){
+  fabricOrg
+  echo "version: '2'"
+  echo "services:"
+  echo "  peer0.${org}.${domainName}:"
+  echo "    container_name: peer0.${org}.${domainName}"
+  echo "    extends:"
+  echo "      file:   base.yaml"
+  echo "      service: peer-base"
+  echo "    environment:"
+  echo "      - CORE_PEER_ID=peer0.${org}.${domainName}"
+  echo "      - CORE_PEER_LOCALMSPID=${Org}MSP"
+  echo "      - CORE_PEER_ADDRESS=peer0.${org}.${domainName}:7051"
+  echo "    ports:"
+  echo "      - ${peer0_1}:7051"
+  echo "      - ${peer0_2}:7053"
+  echo "    volumes:"
+  echo "        - ./channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/:/etc/hyperledger/crypto/peer"
+  echo "  peer1.${org}.${domainName}:"
+  echo "    container_name: peer1.${org}.${domainName}"
+  echo "    extends:"
+  echo "      file:   base.yaml"
+  echo "      service: peer-base"
+  echo "    environment:"
+  echo "      - CORE_PEER_ID=peer1.${org}.${domainName}"
+  echo "      - CORE_PEER_LOCALMSPID=${Org}MSP"
+  echo "      - CORE_PEER_ADDRESS=peer1.${org}.${domainName}:7051"
+  echo "    ports:"
+  echo "      - ${peer1_1}:7051"
+  echo "      - ${peer1_2}:7053"
+  echo "    volumes:"
+  echo "        - ./channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer1.${org}.${domainName}/:/etc/hyperledger/crypto/peer"
+}
+
+#docker-compose-cli configure file | bash
+fabricCliConfigure (){
+  echo "version: '2'"
+  echo "services:"
+  echo "  cli:"
+  echo "    container_name: cli"
+  echo "    image: hyperledger/fabric-tools"
+  echo "    tty: true"
+  echo "    stdin_open: true"
+  echo "    environment:"
+  echo "      - GOPATH=/opt/gopath"
+  echo "      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock"
+  echo "      - CORE_LOGGING_LEVEL=INFO"
+  echo "      - CORE_PEER_ID=cli"
+  echo "      - CORE_PEER_ADDRESS=peer0.org1.${domainName}:7051"
+  echo "      - CORE_PEER_LOCALMSPID=Org1MSP"
+  echo "      - CORE_PEER_TLS_ENABLED=true"
+  echo "      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.${domainName}/peers/peer0.org1.${domainName}/tls/server.crt"
+  echo "      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.${domainName}/peers/peer0.org1.${domainName}/tls/server.key"
+  echo "      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.${domainName}/peers/peer0.org1.${domainName}/tls/ca.crt"
+  echo "      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.${domainName}/users/Admin@org1.${domainName}/msp"
+  echo "    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer"
+  echo "    command: /bin/bash"
+  echo "    volumes:"
+  echo "        - /var/run/:/host/var/run/"
+  echo "        - ./channel/crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/"
+  echo "        - ./channel/${org}.json:/opt/gopath/src/github.com/hyperledger/fabric/peer/${org}/${org}.json"
+  echo "        - ./channel/${org}.sh:/opt/gopath/src/github.com/hyperledger/fabric/peer/${org}/${org}.sh"
+}
+
+fabricNewCliConfig (){
+  fabricCliConfigure > ./artifacts/docker-compose-cli.yaml
+}
+
+fabricCli (){
+  directiryCd ${balanceDeployDirectory}
+  fabricNewCliConfig
+  docker-compose -f ./artifacts/docker-compose-cli.yaml up -d
+  if [ $? != 0 ];then
+    echo "docker-compose-cli start failure."
+    exit 1
+  fi
+}
+
+#新configtx配置生成json | bash
+fabricNewConfigtxNewOrg (){
+  [ -f configtx.yaml ] && mv configtx.yaml configtx.yaml.$(date '+%FT%H-%M-%S')
+  fabricConfigtxNewOrg > configtx.yaml
+  configtxgen -printOrg ${Org}MSP > ./${org}.json
+}
+
+fabricBashAddOrgCa (){
+  #合并证书
+  cp -r ${cryptogenDirectory}/crypto-config-new/peerOrganizations/${org}.${domainName} ./artifacts/channel/crypto-config/peerOrganizations
+}
+
+fabricCliBashFileWget (){
+  wget -N https://zbx-fabric.oss-cn-beijing.aliyuncs.com/dynamicAddOrg.sh
+  mv dynamicAddOrg.sh ${org}.sh
+  sed -i "s/ORGNAME/${org}/" ./${org}.sh
+  sed -i "s/DOMAINNAME/${domainName}/" ./${org}.sh
+}
+
+fabricNetworkConfigNewOrgConfig (){
+  fabricOrg
+  local sk_ii=$(ls ${balanceDeployDirectory}/artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/users/Admin@${org}.${domainName}/msp/keystore/)
+
+  Peers="      peer0.${org}.${domainName}:\n        endorsingPeer: true\n        chaincodeQuery: true\n        ledgerQuery: true\n        eventSource: true\n      peer1.${org}.${domainName}:\n        endorsingPeer: false\n        chaincodeQuery: true\n        ledgerQuery: true\n        eventSource: false"
+  Orgs="  ${Org}:\n    mspid: ${Org}MSP\n    peers:\n      - peer0.${org}.${domainName}\n      - peer1.${org}.${domainName}\n    certificateAuthorities:\n      - ca\n    adminPrivateKey:\n      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/users/Admin@${org}.${domainName}/msp/keystore/${sk_ii}\n    signedCert:\n      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/users/Admin@${org}.${domainName}/msp/signcerts/cert.pem"
+  OrgPeers="  peer0.${org}.${domainName}:\n    url: grpcs://localhost:${peer0_1}\n    grpcOptions:\n      ssl-target-name-override: peer0.${org}.${domainName}\n    tlsCACerts:\n      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/tls/ca.crt\n  peer1.${org}.${domainName}:\n    url: grpcs://localhost:${peer1_1}\n    grpcOptions:\n      ssl-target-name-override: peer1.${org}.${domainName}\n    tlsCACerts:\n      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer1.${org}.${domainName}/tls/ca.crt"
+}
+
+fabricBashAddOrgConfigure (){
+  fabricNetworkConfigNewOrgConfig
+  # 修改network-config，增加新org
+  networkConfig=./artifacts/network-config.yaml
+  addNetworkPeerNum=$(grep -n "chaincodes" ${networkConfig} | awk -F ":" '{print $1}') #在行号之前添加
+  sed -i "${addNetworkPeerNum}i\\${Peers}" ${networkConfig}
+  addNetworkOrgNum=$(grep -n "orderers" ${networkConfig} | head -n 2 | tail -n 1 | awk -F ":" '{print $1}') #在行号之前添加
+  sed -i "${addNetworkOrgNum}i\\${Orgs}" ${networkConfig}
+  addNetworkPeerOrgNum=$(grep -n "certificateAuthorities" ${networkConfig} | tail -n 1 | awk -F ":" '{print $1}') #在行号之前添加
+  sed -i "${addNetworkPeerOrgNum}i\\${OrgPeers}" ${networkConfig}
+
+  # 创建新org的docker-compose
+  fabricConfigDockerCompose > ./artifacts/docker-compose-${org}.yaml
+  docker-compose -f ./artifacts/docker-compose-${org}.yaml up -d
+
+  # 修改config.js，增加新org
+  addConfigOrgNum=$(grep -n '' config.js | awk -F ":" END'{print $1}') #在行号之前添加
+  fabricConfigJsOrgs
+  grep "$(eval fabricConfigJsOrgs)" config.js >/dev/null ||  sed -i "${addConfigOrgNum}i\\$(eval fabricConfigJsOrgs)" config.js
+
+  # 拷贝出新org.yaml文件
+  fabricConfigtxNewOrg > artifacts/channel/configtx.${org}.yaml
+  mv artifacts/channel/configtx.yaml artifacts/channel/configtx.yaml.bak
+  mv artifacts/channel/configtx.${org}.yaml artifacts/channel/configtx.yaml
+  # 生成新org的json文件
+  directiryCd artifacts/channel
+  configtxgen -profile configtx.yaml -printOrg ${Org}MSP > ./${org}.json
+  fabricCliBashFileWget
+}
+
+###################################################################
+#################END---动态执行文件---END###########################
+###################################################################
+
+######################初始化总体配置################################
 #1.admin
 fabricInitalAdmin (){
   #获取ca server cmd
@@ -877,8 +1063,6 @@ fabricInitalOrg (){
 
 #4.configure ---> runApp AND testAPIs
 fabricInitalRunApp (){
-  balanceDeployDirectory=${fabricDirectory}/balance-$(date '+%FT%H-%M-%S')
-
   cp -r ${fabricDirectory}/balance-transfer ${balanceDeployDirectory}
   directiryCd ${balanceDeployDirectory}/artifacts/channel
   echo
@@ -890,7 +1074,7 @@ fabricInitalRunApp (){
   directiryCd ${balanceDeployDirectory}
   sed -i "s/example.com/${domainName}/g" testAPIs.sh
   sed -i "s/affiliation: userOrg.toLowerCase() + '.department1'/affiliation: \'${unionOrderer}.\' + userOrg.toLowerCase()/" app/helper.js
-  sed -i "s/60000/600000/" app/instantiate-chaincode.js
+  sed -i "s/60000/600000/g" app/instantiate-chaincode.js
 
   fabricNewNetworkConfig
   fabricNewDockerComposeConfig
@@ -899,16 +1083,53 @@ fabricInitalRunApp (){
   fabricNewConfigJsConfig
   fabricRebrithBlock
 }
-####################调用运行####################
-#fabric
-#声明org机构
-#newOrg=('org1' 'org2' 'gro3')
-# 1.admin
-fabricInitalAdmin
-# 2.orderer
-fabricInitalOrderer
-# 3.org
-fabricFor fabricInitalOrg
-# 4.runapp && testapi
-fabricInitalRunApp
 
+######################动态加org总体配置#############################
+#bash端操作步骤
+fabricBashDynamicAddOrg (){
+  #加org的准备
+  #1. 创建证书，初始化新的org
+  fabricInitalOrg
+  #2. 合并到旧的org上
+  directiryCd ${balanceDeployDirectory}
+  fabricBashAddOrgCa
+  #3. 将新org追加到配置文件
+  fabricBashAddOrgConfigure
+  #4. 添加Cli配置文件，并启动
+  fabricCli
+  #5. 在cli端操作更新
+  dockerCli bash ${org}/${org}.sh
+}
+
+#########################初始化调用运行#############################
+#n家机构静态初始化
+fabricStaticInitalization (){
+  # 1.初始化admin
+  fabricInitalAdmin
+  # 2.初始化orderer
+  fabricInitalOrderer
+  # 3.初始化org
+  fabricFor fabricInitalOrg
+  # 4.runapp && testapi
+  fabricInitalRunApp
+  sed -i "s/inital)fabricStaticInitalization;;/#inital)fabricStaticInitalization;;/g" ~/$0
+  echo "提示: 初始化操作只能执行一次！！！"
+}
+
+#########################动态化调用运行#############################
+#
+fabricDyncmicallyAddOrg (){
+  #重新指定listFile文件
+  listFile=${dynamicFile}
+  #1.生成文件-->添加org-->
+  fabricFor fabricBashDynamicAddOrg
+}
+
+
+############调用运行##############
+status=${1}
+case $status in
+  inital)fabricStaticInitalization;;
+  dynamic)fabricDyncmicallyAddOrg;;
+  *)echo "Usage: $0 [inital|dynamic]";;
+esac
