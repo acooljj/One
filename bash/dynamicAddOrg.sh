@@ -59,7 +59,7 @@ fetchChannelConfig() {
   set +x
 }
 
-verifyResult() {
+verifyResult () {
   if [ $1 -ne 0 ]; then
     echo "!!!!!!!!!!!!!!! "$2" !!!!!!!!!!!!!!!!"
     echo "========= ERROR !!! FAILED to execute New Org Scenario ==========="
@@ -69,17 +69,17 @@ verifyResult() {
 }
 
 #
-joinChannelWithRetry() {
+joinChannelWithRetry () {
   PEER=$1
   ORG=$2
   setGlobals $PEER $ORG
   #查看当前Org身份
   echo "${CORE_PEER_LOCALMSPID}"
   set -x
-  peer channel join -b $CHANNEL_NAME.block >&log.txt
+  peer channel join -b $CHANNEL_NAME.block >& peer${PEER}.${ORG}.jcclog.txt
   res=$?
   set +x
-  cat log.txt
+  cat peer${PEER}.${ORG}.jcclog.txt
   if [ $res -ne 0 -a $COUNTER -lt $MAX_RETRY ]; then
     COUNTER=$(expr $COUNTER + 1)
     echo "peer${PEER}.org${ORG} failed to join the channel, Retry after $DELAY seconds"
@@ -88,10 +88,44 @@ joinChannelWithRetry() {
   else
     COUNTER=1
   fi
-  verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.org${ORG} has failed to join channel '$CHANNEL_NAME' "
+  verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.${ORG} has failed to join channel '$CHANNEL_NAME' "
+  echo "===================== peer${PEER}.${ORG} joined channel '$CHANNEL_NAME' ===================== "
 }
 
-createConfigUpdate() {
+#
+installChaincode () {
+  PEER=$1
+  ORG=$2
+  setGlobals $PEER $ORG
+  VERSION=${3:-1.0}
+  echo "Installing chaincode ${VERSION} on peer${PEER}.${ORG}..."
+  set -x
+  peer chaincode install -n mycc -v ${VERSION} -l ${LANGUAGE} -p ${CC_SRC_PATH} >& peer${PEER}.${ORG}.icclog.txt
+  res=$?
+  set +x
+  cat peer${PEER}.${ORG}.icclog.txt
+  verifyResult $res "Chaincode installation on peer${PEER}.${ORG} has failed"
+  echo "===================== Chaincode is installed on peer${PEER}.${ORG} ===================== "
+  echo
+}
+
+#
+upgradeChaincode() {
+  PEER=$1
+  ORG=$2
+  setGlobals $PEER $ORG
+
+  set -x
+  peer chaincode upgrade -o ${ordererDomainName}:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 2.0 -c '{"Args":["init","a","90","b","210"]}' -P "AND ('Org1MSP.peer','Org2MSP.peer','${OrgName}MSP.peer')"
+  res=$?
+  set +x
+  # cat peer${PEER}.${ORG}log.txt
+  verifyResult $res "Chaincode upgrade on peer${PEER}.${ORG} has failed"
+  echo "===================== Chaincode is upgraded on peer${PEER}.${ORG} on channel '$CHANNEL_NAME' ===================== "
+  echo
+}
+
+createConfigUpdate () {
   CHANNEL=$1
   ORIGINAL=$2
   MODIFIED=$3
@@ -145,28 +179,69 @@ fabircCliDynamicAddOrg (){
   set +x
   # 通过对比原来的channel和新加入org的配置pb文件，最终生成org_update_in_envelope.pb文件
   createConfigUpdate ${CHANNEL_NAME} mychannel_config.json modified_config.json  ${org}_update_in_envelope.pb
-  #查看当前Org身份
+
+################################################################################
+  #1.查看当前Org身份
   echo "${CORE_PEER_LOCALMSPID}"
   #使用org1的身份对其进行签名
+  set -x
   peer channel signconfigtx -f ./${org}/${org}_update_in_envelope.pb
-  #切换org身份到org2
+  res=$?
+  set +x
+  verifyResult ${res} "|| 1 || update channel failed ${org}"
+
+  #2.切换org身份到org2
   setGlobals 0 org2
   #查看当前Org身份
   echo "${CORE_PEER_LOCALMSPID}"
+  set -x
+  #使用org2的身份对其进行签名
+  peer channel signconfigtx -f ./${org}/${org}_update_in_envelope.pb
+  res=$?
+  set +x
+  verifyResult ${res} "|| 2 || update channel failed ${org}"
 
+  #3.切换org身份到org3
+  setGlobals 0 org3
+  #查看当前Org身份
+  echo "${CORE_PEER_LOCALMSPID}"
   set -x
   #update操作隐含了signconfigtx操作
-  #由第二个来进行签名，并进行update操作
-  peer channel update -f ./${org}/${org}_update_in_envelope.pb -c mychannel -o ${ordererDomainName}:7050 --tls --cafile ${ORDERER_CA}
+  #使用org3的身份对其进行签名并进行update操作
+  peer channel update -f ./${org}/${org}_update_in_envelope.pb -c ${CHANNEL_NAME} -o ${ordererDomainName}:7050 --tls --cafile ${ORDERER_CA}
+  res=$?
   set +x
+  verifyResult ${res} "|| 3 || update channel failed ${org}"
+################################################################################
 
-  #设置变量
+
+  #执行新org的peer0节点的Join channel
   joinChannelWithRetry 0 ${org}
 
+  #--- New --- Add ---
+  #执行新org的peer1节点的Join channel
+  joinChannelWithRetry 1 ${org}
+  # #执行新org的peer0节点的install chaincode
+  # installChaincode 0 ${org} v0
+  # #执行org1的peer0节点的install chaincode
+  # installChaincode 0 org1 v0
+  # #执行org2的peer0节点的install chaincode
+  # installChaincode 0 org2 v0
+  # #升级背书策略
+  # #upgradeChaincode 0 org1
+
+  # #query chaincode
+  # echo "${org} query chaincode..."
+  # peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+  # res=$?
+  # verifyResult ${res} "|| query || query chaincode failed ${org}"
+  # #ivoke chaincode
+  # echo "${org} ivoke chaincode..."
+  # peer chaincode invoke -o ${ordererDomainName}:7050  --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
+  # res=$?
+  # verifyResult ${res} "|| invoke || invoke chaincode failed ${org}"
+  echo "Is Good."
   echo "END"
-  #peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
-  #peer chaincode query -C mychannel -n mycc -c '{"Args":["query","a"]}'
-  #peer chaincode invoke -o orderer.example.com:7050  --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
 }
 
 ############调用运行##############

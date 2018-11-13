@@ -98,6 +98,11 @@ if [ "$LANGUAGE" = "node" ]; then
         CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/chaincode_example02/node/"
 fi
 
+#检查org列表文件是否存在
+[ -f ${staticFile} ] || (echo -e "Not Found File ${staticFile} ,Placse prepare the file.\nFormat: orgname;peer0 port1,port2;peer1 port3,port4" && exit 1)
+[ -f ${dynamicFile} ] || (echo -e "Not Found File ${dynamicFile} ,Placse prepare the file.\nFormat: orgname;peer0 port1,port2;peer1 port3,port4" && exit 1)
+
+
 listFile=${staticFile}
 
 # ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/${domainName}/orderers/${ordererDomainName}/msp/tlscacerts/tlsca.${domainName}-cert.pem
@@ -132,7 +137,7 @@ fabricOrg (){
 
 fabricFor (){
   funName=${1}
-  grep '' ${listFile} | while read line
+  grep -Ev '#|^$' ${listFile} | while read line
   do
     org=$(echo ${line} | awk -F ";" '{print $1}')
     peer0=$(echo ${line} | awk -F ";" '{print $2}' | awk '{print $2}')
@@ -175,7 +180,7 @@ fabricCreateAdmin (){
   fabric-ca-client -H ${adminDirectory} affiliation add ${unionRootCa}
   fabric-ca-client -H ${adminDirectory} affiliation add ${unionSecond}
   fabric-ca-client -H ${adminDirectory} affiliation list
-  sleep 3
+  # sleep 3
 }
 
 #create orderer msp
@@ -1008,7 +1013,9 @@ fabricBashAddOrgConfigure (){
   fabricConfigJsOrgs
   grep "$(eval fabricConfigJsOrgs)" config.js >/dev/null ||  sed -i "${addConfigOrgNum}i\\$(eval fabricConfigJsOrgs)" config.js
 
-  # 拷贝出新org.yaml文件
+  #生成新的org.yaml文件
+  fabricOrgYaml > artifacts/${org}.yaml
+  # 拷贝出新的configtx.org.yaml文件
   fabricConfigtxNewOrg > artifacts/channel/configtx.${org}.yaml
   mv artifacts/channel/configtx.yaml artifacts/channel/configtx.yaml.bak
   mv artifacts/channel/configtx.${org}.yaml artifacts/channel/configtx.yaml
@@ -1099,6 +1106,11 @@ fabricBashDynamicAddOrg (){
   fabricCli
   #5. 在cli端操作更新
   dockerCli bash ${org}/${org}.sh
+  echo
+  echo "restart: PORT=4000 node app"
+  echo
+  echo "1.run: install chaincode(is ok)"
+  echo "2.run: invoke cc && query cc"
 }
 
 #########################初始化调用运行#############################
