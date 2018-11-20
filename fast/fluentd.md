@@ -3,17 +3,22 @@
 --log-driver=fluentd --log-opt fluentd-async-connect=true
 
 #使用fluentd收集docker的日志-内有fluentd-docker异步设置链接
+
 http://www.imekaku.com/2016/09/08/docker-log-fluentd/
 https://segmentfault.com/a/1190000000730444
 
 #Github Fluentd-conf
+
 https://github.com/fluent/fluentd/blob/master/fluent.conf
 
 #a file generator that renders templates using docker container meta-data.
+
 https://github.com/jwilder/docker-gen
 
 #docker-gen fluentd模板
+
 https://github.com/jwilder/docker-gen/blob/master/templates/fluentd.conf.tmpl
+
 ---
 
 注意：这里最好需要再fluentd的选项中指定--log-opt fluentd-async-connect=true，如果没有指定，当你的fluentd进程挂了之后，容器就会立即终止，这样服务就挂了。
