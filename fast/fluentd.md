@@ -1,5 +1,6 @@
-##守护进行模式 Or docker异步设置
+#守护进行模式 Or docker异步设置
 我想在容器中以流畅的方式聚合容器日志。要自动使用流畅的日志驱动程序，我可以使用该选项启动de docker守护程序
+
 --log-driver=fluentd --log-opt fluentd-async-connect=true
 
 #使用fluentd收集docker的日志-内有fluentd-docker异步设置链接
