@@ -6,6 +6,7 @@
 #使用fluentd收集docker的日志-内有fluentd-docker异步设置链接
 
 http://www.imekaku.com/2016/09/08/docker-log-fluentd/
+
 https://segmentfault.com/a/1190000000730444
 
 #Github Fluentd-conf
