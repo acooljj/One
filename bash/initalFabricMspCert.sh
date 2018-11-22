@@ -1,8 +1,8 @@
 #!/bin/bash
-set -ex
-#支持n家证书生成、合并、重新生成创世纪块
+set -e
+#支持n家证书生成、合并、生成创世纪块
 #支持ca高可用<caServerAddress>
-#支持动态加org脚本的一部分，包括：文件系统上的配置文件生成，org容器和cli容器的启动，
+#合并了动态加org脚本，包括：文件系统上的配置文件生成，org容器和cli容器的启动，
 #以及cli内部添加org操作的脚本。
 #cli内部添加org的脚本是通过cli的docker-compose文件，以volumes的方式挂载到了cli容器里，
 #可以通过执行docker exec cli bash xxx/xxx.sh，来进行新org的签名，更新。
