@@ -10,16 +10,24 @@ Slack_Token=xxxx-000000000000-000000000000-xxxxxxxxxxxxxxxxxxxxxxxx
 
 function node_install (){
   echo "Install Node..."
+  #安装node和npm
+  sudo ln -s /usr/local/node/bin/npm /usr/local/bin/npm
+  sudo ln -s /usr/local/node/bin/node /usr/local/bin/node
+  node -v
+  npm -v
+
+
   if [ ! -d ${node_home_path}/node ];then
     if [ ! -f /tmp/node-v${node_version}-linux-x64.tar.xz ];then
     wget -O /tmp/node-v${node_version}-linux-x64.tar.xz https://nodejs.org/dist/v${node_version}/node-v${node_version}-linux-x64.tar.xz;fi
     xz -d /tmp/node-v${node_version}-linux-x64.tar.xz
     tar -xf /tmp/node-v${node_version}-linux-x64.tar
     mv node-v${node_version}-linux-x64/ ${node_home_path}/node
-    grep "export NODE_HOME=${node_home_path}/node" /etc/profile || echo "export NODE_HOME=${node_home_path}/node" >> /etc/profile
-    grep 'export PATH=$NODE_HOME/bin:$PATH' /etc/profile ||  echo 'export PATH=$NODE_HOME/bin:$PATH' >> /etc/profile
-    source /etc/profile
-    npm i -g npm to update
+#    grep "export NODE_HOME=${node_home_path}/node" /etc/profile || echo "export NODE_HOME=${node_home_path}/node" >> /etc/profile
+#    grep 'export PATH=$NODE_HOME/bin:$PATH' /etc/profile ||  echo 'export PATH=$NODE_HOME/bin:$PATH' >> /etc/profile
+#    source /etc/profile
+    ln -s ${node_home_path}/node/bin/node ${node_home_path}/bin/node
+    ln -s ${node_home_path}/node/bin/npm ${node_home_path}/bin/npm
     echo "node : $(node -v)"
     echo "npm : $(npm -v)"
     echo "Node Install Finished: SUCCESS"
@@ -35,6 +43,7 @@ function userad_node (){
 function Hubot_install_yo (){
   node_install
   echo "Install Hubot..."
+  npm i -g npm to update
   if type yo > /dev/null 2>&1; then :;else npm install -g yo generator-hubot;fi
 }
 
