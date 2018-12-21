@@ -1,16 +1,22 @@
 #!/bin/bash
+#在宿主机执行，需要启动cli容器
+#传参： 域名 链码名 链码版本
+
 #1.获取现有cc版本
 #2.设置更新的cc版本
 #3.安装new_cc --每个org；2peer
 #4.实例化cc
 #5.每个org执行query(应用新的cc)
 
-DOMAIN_NAME=unichain.org.cn
+DOMAIN_NAME=${3}
+CHAINCODE_NAME=${4}
+CHAINCODE_VERSION=${5}
+: ${DOMAIN_NAME:="unichain.org.cn"}
+: ${CHAINCODE_NAME:="chain"}
+: ${CHAINCODE_VERSION:="v1"}
 ORDERER_DOMAIN_NAME=orderer.${DOMAIN_NAME}
 CHANNEL_NAME=mychannel
-CHAINCODE_NAME=mycc
-CHAINCODE_VERSION=v0
-CHAINPATH=github.com/example_cc/go
+CHAINPATH=github.com/chain/go
 ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/${DOMAIN_NAME}/orderers/${ORDERER_DOMAIN_NAME}/msp/tlscacerts/tlsca.${DOMAIN_NAME}-cert.pem
 STATIC_FILE=~/orgList
 
@@ -27,14 +33,6 @@ fabricFor (){
   do
     org=$(echo ${line} | awk -F ";" '{print $1}')
     Org=$(echo $org | sed 's/^[a-z]/\U&/')
-    
-    # peer0=$(echo ${line} | awk -F ";" '{print $2}' | awk '{print $2}')
-    # peer0_1=$(echo ${peer0} | awk -F "," '{print $1}' )
-    # peer0_2=$(echo ${peer0} | awk -F "," '{print $2}' )
-    # peer1=$(echo ${line} | awk -F ";" '{print $3}' | awk '{print $2}')
-    # peer1_1=$(echo ${peer1} | awk -F "," '{print $1}' )
-    # peer1_2=$(echo ${peer1} | awk -F "," '{print $2}' )
-
     peer_count=$(echo ${line} | grep -o "peer" | wc -l)
     for((peer=0;peer<${peer_count};peer++));do
         ${funName}
@@ -80,8 +78,6 @@ fabircInstallChaincode (){
 # 升级cc * one
 fabircUpgradeChaincode (){
     echo "CLI Upgradeing chaincodes -- peer${peer}.${org}.${DOMAIN_NAME}"
-    # fabricSetCliCommand peer chaincode upgrade -o ${ORDERER_DOMAIN_NAME}:7050 --tls --cafile ${ORDERER_CA} -C ${CHANNEL_NAME} -n ${CHAINCODE_NAME} -v ${CHAINCODE_VERSION} -c '{"Args":["init","a","100","b","20"]}' -P "AND ('Org1MSP.peer','Org2MSP.peer')"
-    # fabricSetCliCommand peer chaincode upgrade -o ${ORDERER_DOMAIN_NAME}:7050 --tls --cafile ${ORDERER_CA} -C ${CHANNEL_NAME} -n ${CHAINCODE_NAME} -v ${CHAINCODE_VERSION} -c '{"Args":["init","a","100","b","20"]}' -P 'AND("Org1MSP.peer","Org2MSP.peer")'
     fabricSetCliCommand peer chaincode upgrade -o ${ORDERER_DOMAIN_NAME}:7050 --tls --cafile ${ORDERER_CA} -C ${CHANNEL_NAME} -n ${CHAINCODE_NAME} -v ${CHAINCODE_VERSION} -c '{"Args":["init","a","100","b","20"]}' -P 'AND("Org1MSP.member","Org2MSP.member")'
     echo
 }
@@ -89,11 +85,11 @@ fabircUpgradeChaincode (){
 # 执行query * all
 fabircQueryChaincode (){
     echo "CLI GET query chaincodes -- peer${peer}.${org}.${DOMAIN_NAME}"
-    fabricSetCliCommand peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE_NAME} -c '{"Args":["query","a"]}'
+    fabricSetCliCommand peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE_NAME} -c '{"Args":["queryObj","seq"]}'
     echo
 }
 
-# 执行ivoke * all
+# 执行ivoke * all --暂时停用
 fabircInvokeChaincode (){
     echo "CLI GET ivoke chaincodes -- peer${peer}.${org}.${DOMAIN_NAME}"
     fabricSetCliCommand peer chaincode invoke -o ${ORDERER_DOMAIN_NAME}:7050 --tls --cafile ${ORDERER_CA} -C ${CHANNEL_NAME} -n ${CHAINCODE_NAME} \
@@ -146,11 +142,14 @@ fabricUpgrade (){
     sleep 10
     fabricFor fabircQueryChaincode
 
-    # 执行ivoke * all
+    # 执行ivoke * all --暂时停用
     # fabricFor fabircInvokeChaincode
 }
 #################################### Upgrade End #########################################
 #################################### Query Start #########################################
+fabricquery (){
+    fabricFor fabircQueryChaincode
+}
 fabricQuery (){
     # cli Query Installed chaincodes
     fabricFor fabricQueryInstalledChaincodes
@@ -169,8 +168,8 @@ caseme=${1}
 case ${caseme} in
 Upgrade)fabricUpgrade;;
 Query)fabricQuery;;
-Invoke)fabricFor fabircInvokeChaincode;;
-*);;
+query)fabricquery;;
+*)echo "$0 [Upgrade|Query|query]";;
 esac
 #################################### Command End #########################################
 
@@ -185,17 +184,4 @@ echo "Total execution time : $(($(date +%s)-starttime)) secs ..."
 # 执行query --慢
 # 3.第三个安装新cc
 # 执行query --慢
-# ########################
-# 1.第一个peer安装新版本cc
-# 执行query --基于老cc
-# 2.第二个安装新cc
-# 执行query --基于老cc
-# 3.第三个安装新cc
-# 执行query --基于老cc
-# ########################
-# 1.第一个peer安装新版本cc
-# 2.第二个安装新cc
-# 3.第三个安装新cc
-# 4.执行upgrade --当前节点·慢；升级完sleep 10
-# 5.每个机构执行query --2节点·慢; sleep 30
 # ########################

@@ -45,7 +45,7 @@ fabricUseradd (){
 fabricClose (){
   fabricEcho 关闭路由[针对阿里云]
   if [ -f /etc/resolvconf/resolv.conf.d/tail ];then
-    rm /etc/resolvconf/resolv.conf.d/tail && service resolvconf restart
+    sed -i "s/options timeout:2 attempts:3 rotate single-request-reopen//g" /etc/resolvconf/resolv.conf.d/tail && service resolvconf restart
   else
     :
   fi

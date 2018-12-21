@@ -1,5 +1,6 @@
 #!/bin/bash
 #set -e
+#支持动态获取当前cc的版本
 domainName=DOMAINNAME
 ordererDomainName=orderer.${domainName}
 unionRootCa=$(echo $domainName | awk -F "." '{print $NF}')
@@ -7,11 +8,19 @@ unionSecond=${unionRootCa}.$(echo $domainName | awk -F "." '{print $(NF-1)}')
 unionOrderer=${unionSecond}.$(echo $domainName | awk -F "." '{print $(NF-2)}')
 org=ORGNAME
 Org=$(echo ${org} | sed "s/^[a-z]/\U&/")
+CHAINCODE_NAME=CCNAME
+nodeAppAddress=NODEADDRESS
+
 CHANNEL_NAME="$1"
 DELAY="$2"
 LANGUAGE="$3"
 TIMEOUT="$4"
 VERBOSE="$5"
+#获取当前cc版本号
+CC_VERSION=$(peer chaincode list --instantiated -C mychannel | grep Version | awk '{print $4}' | awk -F ',' '{print $1}')
+#获取已经安装的cc数；如果是1，则使用node安装cc；如果大于1，则使用cli安装cc
+CC_NUM=$(peer chaincode list --installed | grep Version -c)
+
 : ${CHANNEL_NAME:="mychannel"}
 : ${DELAY:="3"}
 : ${LANGUAGE:="golang"}
@@ -21,10 +30,18 @@ LANGUAGE=`echo "$LANGUAGE" | tr [:upper:] [:lower:]`
 COUNTER=1
 MAX_RETRY=5
 
-CC_SRC_PATH="github.com/chaincode/chaincode_example02/go/"
+CC_SRC_PATH="github.com/chain/go/"
 if [ "$LANGUAGE" = "node" ]; then
         CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/chaincode_example02/node/"
 fi
+
+jq --version > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+	echo "Please Install 'jq' https://stedolan.github.io/jq/ to execute this script"
+	echo
+	exit 1
+fi
+
 
 
 ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/${domainName}/orderers/${ordererDomainName}/msp/tlscacerts/tlsca.${domainName}-cert.pem
@@ -92,7 +109,7 @@ joinChannelWithRetry () {
   echo "===================== peer${PEER}.${ORG} joined channel '$CHANNEL_NAME' ===================== "
 }
 
-#
+# --暂时停用
 installChaincode () {
   PEER=$1
   ORG=$2
@@ -100,7 +117,7 @@ installChaincode () {
   VERSION=${3:-1.0}
   echo "Installing chaincode ${VERSION} on peer${PEER}.${ORG}..."
   set -x
-  peer chaincode install -n mycc -v ${VERSION} -l ${LANGUAGE} -p ${CC_SRC_PATH} >& peer${PEER}.${ORG}.icclog.txt
+  peer chaincode install -n ${CHAINCODE_NAME} -v ${VERSION} -l ${LANGUAGE} -p ${CC_SRC_PATH} >& peer${PEER}.${ORG}.icclog.txt
   res=$?
   set +x
   cat peer${PEER}.${ORG}.icclog.txt
@@ -109,7 +126,7 @@ installChaincode () {
   echo
 }
 
-#
+# --暂时停用
 upgradeChaincode() {
   PEER=$1
   ORG=$2
@@ -145,6 +162,34 @@ createConfigUpdate () {
   #将org_update_in_envelope.json文件转码为pb文件 org_update_in_envelope.pb
   configtxlator proto_encode --input ./${org}/${org}_update_in_envelope.json --type common.Envelope >"./${org}/${OUTPUT}"
   set +x
+}
+
+#使用node安装cc，在初始化后，升级cc之前可以使用
+nodeInstallChainCode (){
+  echo "POST request Enroll on ${Org}  ..."
+  echo
+  ORG_TOKEN=$(curl -s -X POST \
+    http://${nodeAppAddress}:4000/users \
+    -H "content-type: application/x-www-form-urlencoded" \
+    -d "username=${Org}-qJim&orgName=${Org}")
+  echo $ORG_TOKEN
+  ORG_TOKEN=$(echo $ORG_TOKEN | jq ".token" | sed "s/\"//g")
+  echo
+  echo "${Org} token is $ORG_TOKEN"
+
+  echo "POST Install chaincode on ${Org}"
+  echo
+  curl -s -X POST \
+    http://${nodeAppAddress}:4000/chaincodes \
+    -H "authorization: Bearer $ORG_TOKEN" \
+    -H "content-type: application/json" \
+    -d "{
+    \"peers\": [\"peer0.${org}.${domainName}\",\"peer1.${org}.${domainName}\"],
+    \"chaincodeName\":\"${CHAINCODE_NAME}\",
+    \"chaincodePath\":\"$CC_SRC_PATH\",
+    \"chaincodeType\": \"$LANGUAGE\",
+    \"chaincodeVersion\":\"${CC_VERSION}\"
+  }"
 }
 
 setGlobals (){
@@ -214,34 +259,31 @@ fabircCliDynamicAddOrg (){
   verifyResult ${res} "|| 3 || update channel failed ${org}"
 ################################################################################
 
-
   #执行新org的peer0节点的Join channel
   joinChannelWithRetry 0 ${org}
-
-  #--- New --- Add ---
   #执行新org的peer1节点的Join channel
   joinChannelWithRetry 1 ${org}
-  # #执行新org的peer0节点的install chaincode
-  # installChaincode 0 ${org} v0
-  # #执行org1的peer0节点的install chaincode
-  # installChaincode 0 org1 v0
-  # #执行org2的peer0节点的install chaincode
-  # installChaincode 0 org2 v0
-  # #升级背书策略
-  # #upgradeChaincode 0 org1
+  
+  #执行新org的install chaincode
+  # nodeInstallChainCode
+  if [ ${CC_NUM} -eq 1 ];then
+    #_判断当前的cc是不是通过node安装的
+    nodeInstallChainCode
+  elif [ ${CC_NUM} -gt 1 ];then
+    #_执行新org的peer0节点的install chaincode
+    installChaincode 0 ${org} ${CC_VERSION}
+    #_执行新org的peer1节点的install chaincode
+    installChaincode 1 ${org} ${CC_VERSION}
+  else
+    echo "Check that the number of chain codes installed is wrong (less than 1)"   
+  fi
+  # installChaincode 0 ${org} ${CC_VERSION}
+  # #执行新org的peer1节点的install chaincode
+  # installChaincode 1 ${org} ${CC_VERSION}
 
-  # #query chaincode
-  # echo "${org} query chaincode..."
-  # peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
-  # res=$?
-  # verifyResult ${res} "|| query || query chaincode failed ${org}"
-  # #ivoke chaincode
-  # echo "${org} ivoke chaincode..."
-  # peer chaincode invoke -o ${ordererDomainName}:7050  --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
-  # res=$?
-  # verifyResult ${res} "|| invoke || invoke chaincode failed ${org}"
+  echo
   echo "Is Good."
-  echo "END"
+  echo "Dynamic Add Org END -- OrgName [${org}]"
 }
 
 ############调用运行##############

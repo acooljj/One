@@ -51,7 +51,20 @@ set -e
 
 domainName=unichain.org.cn
 ordererDomainName=orderer.${domainName}
-caServerAddress=localhost:7054
+# CA地址
+caServerAddress=60.205.136.4:7054
+# Orderer地址
+ordererAddress=60.205.136.4:7050
+#_node app是容器的话peer的地址写容器内的地址peer0.org1.${domainName}:7051
+#_node app是普通程序的话peer的地址写宿主机的外网地址xx.xx.xx.xx:7051
+# peer0地址
+peer0sAddress=60.205.136.4
+# peer1地址
+peer1sAddress=60.205.136.4
+#node 地址
+nodeAppAddress=60.205.136.4
+# swarm network name
+networkName=microservices
 idSecret=password
 adminUser=admin
 adminPass=adminpw
@@ -76,18 +89,19 @@ cryptogenConfig=cryptogen.yaml
 fabricCaClientPath=${adminDirectory}
 fabricCaClientConfig=fabric-ca-client-config.yaml
 fabricNetworkConfigName=network-config.yaml
-balanceDeployDirectory=${fabricDirectory}/balance-cas
+balanceDeployDirectory=${fabricDirectory}/balance-cau
 staticFile=~/orgList
 dynamicFile=~/dynamicList
 
 
-
-CHANNEL_NAME="$1"
-DELAY="$2"
-LANGUAGE="$3"
-TIMEOUT="$4"
-VERBOSE="$5"
+CHANNEL_NAME="$4"
+CHAINCODE_NAME="$5"
+# DELAY="$2"
+# LANGUAGE="$3"
+# TIMEOUT="$4"
+# VERBOSE="$5"
 : ${CHANNEL_NAME:="mychannel"}
+: ${CHAINCODE_NAME:="chain"}
 : ${DELAY:="3"}
 : ${LANGUAGE:="golang"}
 : ${TIMEOUT:="10"}
@@ -96,13 +110,13 @@ LANGUAGE=`echo "$LANGUAGE" | tr [:upper:] [:lower:]`
 COUNTER=1
 MAX_RETRY=5
 
-CC_SRC_PATH="github.com/chaincode/chaincode_example02/go/"
+CC_SRC_PATH="github.com/chain/go/"
 if [ "$LANGUAGE" = "node" ]; then
         CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/chaincode_example02/node/"
 fi
 
 #检查org列表文件是否存在
-[ -f ${staticFile} ] || (echo -e "Not Found File ${staticFile} ,Placse prepare the file.\nFormat: orgname;peer0 port1,port2;peer1 port3,port4\n\nDefault: org1;peer0 7051,7053;peer1 7056,7058\n         org2;peer0 8051,8053;peer1 8056,8058\n         org3;peer0 9051,9053;peer1 9056,9058\n" && exit 1)
+[ -f ${staticFile} ] || (echo -e "Not Found File ${staticFile} ,Placse prepare the file.\nFormat: orgname;peer0 port1,port2;peer1 port3,port4\n\nDefault: org1;peer0 7051,7053;peer1 7056,7058;couchdb 7981,7986\n         org2;peer0 8051,8053;peer1 8056,8058;couchdb 8981,8986\n         org3;peer0 9051,9053;peer1 9056,9058;couchdb 9981,9986\n" && exit 1)
 [ -f ${dynamicFile} ] || (echo -e "Not Found File ${dynamicFile} ,Placse prepare the file.\nFormat: orgname;peer0 port1,port2;peer1 port3,port4\n\nDefault: org4;peer0 10051,10053;peer1 10056,10058\n" && exit 1)
 
 
@@ -112,6 +126,24 @@ listFile=${staticFile}
 
 
 ####################基础配置####################
+#帮助信息
+fabricHelp (){
+  echo "Msp cert inital."
+  echo "Usage:"
+  echo "    bash $0 [inital|dynamic] <solo|distributed> [swarm]"
+  echo "    swarm分布式初始化:bash $0 inital distributed swarm"
+  echo "    swarm单机初始化:bash $0 inital solo swarm"
+  echo "    swarm单机动态加org:bash $0 dynamic solo swarm"
+  echo 
+  echo "Options:"
+  echo "    inital    inital msp cert"
+  echo "    dynamic   dynamic add org"
+  echo
+  echo
+  echo "Flags:"
+  echo ""
+}
+
 #创建目录
 directiryCheck (){
   local dirName=${1}
@@ -122,6 +154,7 @@ directiryCheck (){
 directiryCd (){
   local dirName=${1}
   cd ${dirName}
+  echo "离开目录： ${OLDPWD}"
   echo "进入目录： ${dirName}"
 }
 
@@ -130,32 +163,51 @@ fabricOrg (){
   Org=$(echo $org | sed 's/^[a-z]/\U&/')
 }
 
-# fabricFor (){
-#   funName=${1}
-#   for org in ${newOrg[@]}
-#   do
-#     ${funName}
-#   done
-# }
+fabricNetworkSetOne (){
+  if [ ${networkType} == "swarm" ];then
+    echo "networks:"
+    echo " ${networkName}:"
+    echo "   external: true"
+  fi
+}
+
+fabricNetworkSetTwo (){
+  if [ ${networkType} == "swarm" ];then
+    echo "    networks:"
+    echo "      - ${networkName}"
+  fi
+}
 
 fabricFor (){
   funName=${1}
   grep -Ev '#|^$' ${listFile} | while read line
   do
     org=$(echo ${line} | awk -F ";" '{print $1}')
+    orgIdSecret=$(echo ${line} | awk -F ";" '{print $5}')
     peer0=$(echo ${line} | awk -F ";" '{print $2}' | awk '{print $2}')
     peer0_1=$(echo ${peer0} | awk -F "," '{print $1}' )
     peer0_2=$(echo ${peer0} | awk -F "," '{print $2}' )
     peer1=$(echo ${line} | awk -F ";" '{print $3}' | awk '{print $2}')
     peer1_1=$(echo ${peer1} | awk -F "," '{print $1}' )
     peer1_2=$(echo ${peer1} | awk -F "," '{print $2}' )
+    couchdb=$(echo ${line} | awk -F ";" '{print $4}' | awk '{print $2}')
+    couchdb0=$(echo ${couchdb} | awk -F "," '{print $1}')
+    couchdb1=$(echo ${couchdb} | awk -F "," '{print $2}')
+    couchdb_username=admin
+    # couchdb_username=
+    couchdb_password=${orgIdSecret}
     ${funName}
   done
 }
 
+fabricEchoAdd (){
+  MAIN_LIST=${staticFile}
+  grep "${line}" ${MAIN_LIST} || (sed -i "\$i\\${line}" ${MAIN_LIST} && echo "动态文件机构加入到orgList ...")
+}
+
 
 ####################初始化配置####################
-#获取ca Server命令行代码
+#获取ca Server命令行代码 #暂时停用
 fabricCaCmd (){
   echo "CheckOut github.com/hyperledger/fabric-ca/cmd/..."
   #首先获取fabric-ca server cmd
@@ -164,17 +216,17 @@ fabricCaCmd (){
 
 #create admin msp
 fabricCreateAdmin (){
-  #1.创建admin目录
-  directiryCheck ${deployDirectory}
-  cd ${deployDirectory}
-  directiryCheck ${adminDirectory}
-
-  lsof -i:7054 > /dev/null
-  #3.使用fabric-ca生成admin凭证
-  if [ $? -eq 0 ];then
+  #1.检查ca服务是否启动
+  CaServerStatus=$(curl -I -m 10 -o /dev/null -s -w %{http_code} ${caServerAddress} || :)
+  if [ ${CaServerStatus} -eq 404 ];then
+    #2.创建admin目录
+    directiryCheck ${deployDirectory}
+    cd ${deployDirectory}
+    directiryCheck ${adminDirectory}
+    #3.使用fabric-ca生成admin凭证
     fabric-ca-client enroll -H ${adminDirectory} -u http://${adminUser}:${adminPass}@${caServerAddress}
   else
-    echo "fabric-ca Server not running. Placse Start fabric-ca Server."
+    echo "fabric-ca Server not running. Placse Check or Start fabric-ca Server."
     exit 1
   fi
   #del old
@@ -192,7 +244,7 @@ fabricCreateOrderer (){
   fabric-ca-client -H ${adminDirectory} affiliation add ${unionOrderer}
   fabric-ca-client -H ${adminDirectory} affiliation list
   directiryCheck ${ordererDirectory}/msp
-  fabric-ca-client getcacert -M ${ordererDirectory}/msp
+  fabric-ca-client getcacert -M ${ordererDirectory}/msp -u http://${caServerAddress}
 }
 
 #create org msp
@@ -201,7 +253,7 @@ fabricCreateOrg (){
   fabric-ca-client -H ${adminDirectory} affiliation add ${unionOrgDomainName}
   fabric-ca-client -H ${adminDirectory} affiliation list
   directiryCheck ${org}.${domainName}/msp
-  fabric-ca-client getcacert -M ${caDeployDirectory}/${org}.${domainName}/msp
+  fabric-ca-client getcacert -M ${caDeployDirectory}/${org}.${domainName}/msp -u http://${caServerAddress}
 }
 
 
@@ -363,7 +415,7 @@ fabricConfigureBottom (){
   echo "            keystore: msp/keystore"
 }
 
-#network-config.yaml配置文件7-1
+#network-config.yaml配置文件8-1
 fabricNetworkConfigHeader (){
   echo "---"
   echo "name: \"balance-transfer\""
@@ -377,7 +429,7 @@ fabricNetworkConfigHeader (){
   echo "    peers:"
 }
 
-#network-config.yaml配置文件7-2
+#network-config.yaml配置文件8-2
 fabricNetworkConfigPeers (){
   echo "      peer0.${org}.${domainName}:"
   echo "        endorsingPeer: true"
@@ -391,14 +443,14 @@ fabricNetworkConfigPeers (){
   echo "        eventSource: false"
 }
 
-#network-config.yaml配置文件7-3
+#network-config.yaml配置文件8-3
 fabricNetworkConfigChaincode (){
   echo "    chaincodes:"
   echo "      - mycc:v0"
   echo "organizations:"
 }
 
-#network-config.yaml配置文件7-4
+#network-config.yaml配置文件8-4
 fabricNetworkConfigOrgs (){
   fabricOrg
   local sk_ii=$(ls ${balanceDeployDirectory}/artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/users/Admin@${org}.${domainName}/msp/keystore/)
@@ -415,11 +467,11 @@ fabricNetworkConfigOrgs (){
   echo "      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/users/Admin@${org}.${domainName}/msp/signcerts/cert.pem"
 }
 
-#network-config.yaml配置文件7-5
+#network-config.yaml配置文件8-5
 fabricNetworkConfigOrderer (){
   echo "orderers:"
   echo "  ${ordererDomainName}:"
-  echo "    url: grpcs://localhost:7050"
+  echo "    url: grpcs://${ordererAddress}"
   echo "    grpcOptions:"
   echo "      ssl-target-name-override: ${ordererDomainName}"
   echo "    tlsCACerts:"
@@ -427,23 +479,29 @@ fabricNetworkConfigOrderer (){
   echo "peers:"
 }
 
-#network-config.yaml配置文件7-6
-fabricNetworkConfigOrgPeers (){
+#network-config.yaml配置文件8-6
+fabricNetworkConfigOrgPeer0s (){
   echo "  peer0.${org}.${domainName}:"
-  echo "    url: grpcs://localhost:${peer0_1}"
+  echo "    url: grpcs://${peer0sAddress}:${peer0_1}"
   echo "    grpcOptions:"
   echo "      ssl-target-name-override: peer0.${org}.${domainName}"
   echo "    tlsCACerts:"
   echo "      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/tls/ca.crt"
+}
+
+#network-config.yaml配置文件8-7
+fabricNetworkConfigOrgPeer1s (){
   echo "  peer1.${org}.${domainName}:"
-  echo "    url: grpcs://localhost:${peer1_1}"
+  echo "    url: grpcs://${peer1sAddress}:${peer1_1}"
   echo "    grpcOptions:"
   echo "      ssl-target-name-override: peer1.${org}.${domainName}"
   echo "    tlsCACerts:"
   echo "      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer1.${org}.${domainName}/tls/ca.crt"
 }
 
-#network-config.yaml配置文件7-7
+
+
+#network-config.yaml配置文件8-8
 fabricNetworkConfigBottom (){
   echo "certificateAuthorities:"
   echo "  ca:"
@@ -467,16 +525,21 @@ fabricOrgYaml (){
   echo "client:"
   echo "  organization: ${Org}"
   echo "  credentialStore:"
-  echo "    path: \"./fabric-client-kv-${org}\""
+  echo "    path: \"./kvstore/fabric-client-kv-${org}\""
   echo "    cryptoStore:"
   echo "      path: \"/tmp/fabric-client-kv-${org}\""
   echo "    wallet: wallet-name"
 }
 
-#docker-compose.yaml配置文件3-1
-fabricDockerComposeConfigOrderer (){
+#docker-compose.yaml配置文件7-1
+fabricDockerComposeConfigHead (){
   echo "version: '2'"
+  fabricNetworkSetOne  
   echo "services:"
+}
+
+#docker-compose.yaml配置文件7-2
+fabricDockerComposeConfigOrderer (){
   echo "  ${ordererDomainName}:"
   echo "    container_name: ${ordererDomainName}"
   echo "    image: hyperledger/fabric-orderer"
@@ -498,23 +561,29 @@ fabricDockerComposeConfigOrderer (){
   echo "    volumes:"
   echo "        - ./channel:/etc/hyperledger/configtx"
   echo "        - ./channel/crypto-config/ordererOrganizations/${domainName}/orderers/${ordererDomainName}/:/etc/hyperledger/crypto/orderer"
+  fabricNetworkSetTwo
 }
 
-#docker-compose.yaml配置文件3-2
+#docker-compose.yaml配置文件7-3 #暂时停用
 fabricDockerComposeConfigOrgVolumes (){
   fabricOrg
   echo "        - ./channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/:/etc/hyperledger/crypto/peer${Org}"
 }
 
-#docker-compose.yaml配置文件3-3
-fabricDockerComposeConfigPeers (){
+#docker-compose.yaml配置文件7-4
+fabricDockerComposeConfigPeer0s (){
   fabricOrg
   echo "  peer0.${org}.${domainName}:"
   echo "    container_name: peer0.${org}.${domainName}"
+  echo "    restart: always"
   echo "    extends:"
   echo "      file:   base.yaml"
   echo "      service: peer-base"
   echo "    environment:"
+  echo "      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB"
+  echo "      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0.${org}.${domainName}:5984"
+  echo "      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=${couchdb_username}"
+  echo "      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=${couchdb_password}"  
   echo "      - CORE_PEER_ID=peer0.${org}.${domainName}"
   echo "      - CORE_PEER_LOCALMSPID=${Org}MSP"
   echo "      - CORE_PEER_ADDRESS=peer0.${org}.${domainName}:7051"
@@ -523,14 +592,27 @@ fabricDockerComposeConfigPeers (){
   echo "      - ${peer0_2}:7053"
   echo "    volumes:"
   echo "        - ./channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/:/etc/hyperledger/crypto/peer"
-  echo "    depends_on:"
+  [ ${relyArg} == solo ] && echo "    depends_on:"
+  [ ${relyArg} == distributed ] && echo "    external_links:"
   echo "      - ${ordererDomainName}"
+  echo "      - couchdb0.${org}.${domainName}"
+  fabricNetworkSetTwo
+}
+
+#docker-compose.yaml配置文件7-5
+fabricDockerComposeConfigPeer1s (){
+  fabricOrg
   echo "  peer1.${org}.${domainName}:"
   echo "    container_name: peer1.${org}.${domainName}"
+  echo "    restart: always"
   echo "    extends:"
   echo "      file:   base.yaml"
   echo "      service: peer-base"
   echo "    environment:"
+  echo "      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB"
+  echo "      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1.${org}.${domainName}:5984"
+  echo "      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=${couchdb_username}"
+  echo "      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=${couchdb_password}"
   echo "      - CORE_PEER_ID=peer1.${org}.${domainName}"
   echo "      - CORE_PEER_LOCALMSPID=${Org}MSP"
   echo "      - CORE_PEER_ADDRESS=peer1.${org}.${domainName}:7051"
@@ -539,8 +621,70 @@ fabricDockerComposeConfigPeers (){
   echo "      - ${peer1_2}:7053"
   echo "    volumes:"
   echo "        - ./channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer1.${org}.${domainName}/:/etc/hyperledger/crypto/peer"
-  echo "    depends_on:"
+  [ ${relyArg} == solo ] && echo "    depends_on:"
+  [ ${relyArg} == distributed ] && echo "    external_links:"
   echo "      - ${ordererDomainName}"
+  echo "      - couchdb1.${org}.${domainName}"
+  fabricNetworkSetTwo
+}
+
+#docker-compose.yaml配置文件7-6
+fabricDockerComposeConfigPeer0sCouchdb (){
+  echo "  couchdb0.${org}.${domainName}:"
+  echo "    container_name: couchdb0.${org}.${domainName}"
+  echo "    image: hyperledger/fabric-couchdb"
+  echo "    environment:"
+  echo "      - COUCHDB_USER=${couchdb_username}"
+  echo "      - COUCHDB_PASSWORD=${couchdb_password}"
+  echo "    ports:"
+  echo "      - ${couchdb0}:5984"
+  fabricNetworkSetTwo
+}
+
+#docker-compose.yaml配置文件7-7
+fabricDockerComposeConfigPeer1sCouchdb (){
+  echo "  couchdb1.${org}.${domainName}:"
+  echo "    container_name: couchdb1.${org}.${domainName}"
+  echo "    image: hyperledger/fabric-couchdb"
+  echo "    environment:"
+  echo "      - COUCHDB_USER=${couchdb_username}"
+  echo "      - COUCHDB_PASSWORD=${couchdb_password}"
+  echo "    ports:"
+  echo "      - ${couchdb1}:5984"
+  fabricNetworkSetTwo
+}
+
+#docker-compose-cli配置文件 1-1
+fabricDockerComposeCliConfigure (){
+  echo "version: '2'"
+  fabricNetworkSetOne
+  echo "services:"
+  echo "  cli:"
+  echo "    container_name: cli"
+  echo "    image: hyperledger/fabric-tools"
+  echo "    tty: true"
+  echo "    stdin_open: true"
+  echo "    environment:"
+  echo "      - GOPATH=/opt/gopath"
+  echo "      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock"
+  echo "      - CORE_LOGGING_LEVEL=INFO"
+  echo "      - CORE_PEER_ID=cli"
+  echo "      - CORE_PEER_ADDRESS=peer0.org1.${domainName}:7051"
+  echo "      - CORE_PEER_LOCALMSPID=Org1MSP"
+  echo "      - CORE_PEER_TLS_ENABLED=true"
+  echo "      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.${domainName}/peers/peer0.org1.${domainName}/tls/server.crt"
+  echo "      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.${domainName}/peers/peer0.org1.${domainName}/tls/server.key"
+  echo "      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.${domainName}/peers/peer0.org1.${domainName}/tls/ca.crt"
+  echo "      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.${domainName}/users/Admin@org1.${domainName}/msp"
+  echo "    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer"
+  echo "    command: /bin/bash"
+  echo "    volumes:"
+  echo "        - /var/run/:/host/var/run/"
+  echo "        - ./src/:/opt/gopath/src/"
+  echo "        - ./channel/crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/"
+  echo "        - ./channel/${org}.sh:/opt/gopath/src/github.com/hyperledger/fabric/peer/${org}/${org}.sh"
+  echo "        - ./channel/:/mnt/channel/"
+  fabricNetworkSetTwo
 }
 
 #channel/configtx.yaml配置文件6-1
@@ -672,28 +816,65 @@ fabricPeer1Configure (){
   fabricConfigureBottom
 }
 
+#生成network-config.yaml configure-peers
+fabricNetworkConfigOrgPeers (){
+  fabricNetworkConfigOrgPeer0s
+  fabricNetworkConfigOrgPeer1s
+}
+
 #生成network-config.yaml configure
 fabricNetworkConfig (){
   fabricNetworkConfigHeader
-  # for org in ${newOrg[@]};do fabricNetworkConfigPeers;done
   fabricFor fabricNetworkConfigPeers
   fabricNetworkConfigChaincode
-  # for org in ${newOrg[@]};do fabricNetworkConfigOrgs;done
   fabricFor fabricNetworkConfigOrgs
   fabricNetworkConfigOrderer
-  # for org in ${newOrg[@]};do fabricNetworkConfigOrgPeers;done
   fabricFor fabricNetworkConfigOrgPeers
   fabricNetworkConfigBottom
 }
 
-#生成docker-compose.yaml configure
-fabricDockerComposeConfig (){
-  fabricDockerComposeConfigOrderer
-  # for org in ${newOrg[@]};do fabricDockerComposeConfigOrgVolumes;done
-  fabricFor fabricDockerComposeConfigOrgVolumes
-  # for org in ${newOrg[@]};do fabricDockerComposeConfigPeers;done
-  fabricFor fabricDockerComposeConfigPeers
+#生成docker-compose.yaml configure-peer[0|1]
+fabricDockerComposeConfigPeers (){
+  fabricDockerComposeConfigPeer0s
+  fabricDockerComposeConfigPeer1s
 }
+
+#生成docker-compose.yaml configure-couchdb[0|1]
+fabricDockerComposeConfigCouchdbs (){
+  fabricDockerComposeConfigPeer0sCouchdb
+  fabricDockerComposeConfigPeer1sCouchdb
+}
+
+#生成docker-compose.yaml configure-all
+fabricDockerComposeConfig (){
+  fabricDockerComposeConfigHead
+  fabricDockerComposeConfigOrderer
+  # fabricFor fabricDockerComposeConfigOrgVolumes #暂时停用
+  fabricFor fabricDockerComposeConfigPeers
+  fabricFor fabricDockerComposeConfigCouchdbs
+}
+
+#生成docker-compose.yaml configure-orderer
+fabricDockerComposeOdererConfig (){
+  fabricDockerComposeConfigHead
+  fabricDockerComposeConfigOrderer
+}
+
+#生成docker-compose.yaml configure-peer0
+fabricDockerComposePeer0sConfig (){
+  fabricDockerComposeConfigHead
+  fabricFor fabricDockerComposeConfigPeer0s
+  fabricFor fabricDockerComposeConfigPeer0sCouchdb
+}  
+
+#生成docker-compose.yaml configure-peer1
+fabricDockerComposePeer1sConfig (){
+  fabricDockerComposeConfigHead
+  fabricFor fabricDockerComposeConfigPeer1s
+  fabricFor fabricDockerComposeConfigPeer1sCouchdb
+} 
+
+
 
 #生成configtx.yaml configure
 fabricConfigtxConfig (){
@@ -750,9 +931,9 @@ fabricNewAdminOrdererCa (){
 #开始操作证书生成 --org ca
 fabricNewAdminOrgCa (){
   fabricOrgCaConfigure > ${fabricCaClientPath}/${fabricCaClientConfig}
-  fabric-ca-client register -H ${adminDirectory} --id.secret=${idSecret}
+  fabric-ca-client register -H ${adminDirectory} --id.secret=${orgIdSecret}
   directiryCheck ${orgDirectory}
-  fabric-ca-client enroll -u http://Admin@${orgDomainName}:${idSecret}@${caServerAddress}  -H ${orgAdminDirectory}
+  fabric-ca-client enroll -u http://Admin@${orgDomainName}:${orgIdSecret}@${caServerAddress}  -H ${orgAdminDirectory}
   fabric-ca-client -H ${orgAdminDirectory} affiliation list
   directiryCheck ${orgDirectory}/msp/admincerts/
   cp ${orgAdminDirectory}/msp/signcerts/cert.pem  ${orgDirectory}/msp/admincerts/
@@ -773,9 +954,9 @@ fabricNewOrderer (){
 #开始操作证书生成 --org peer0
 fabricNewOrgPeer0 (){
   fabricPeer0Configure > ${orgAdminDirectory}/${fabricCaClientConfig}
-  fabric-ca-client register -H ${orgAdminDirectory} --id.secret=${idSecret}
+  fabric-ca-client register -H ${orgAdminDirectory} --id.secret=${orgIdSecret}
   directiryCheck ${orgDirectory}/peer0
-  fabric-ca-client enroll -u http://peer0.${orgDomainName}:${idSecret}@${caServerAddress} -H ${orgDirectory}/peer0
+  fabric-ca-client enroll -u http://peer0.${orgDomainName}:${orgIdSecret}@${caServerAddress} -H ${orgDirectory}/peer0
   directiryCheck ${orgDirectory}/peer0/msp/admincerts
   cp ${orgAdminDirectory}/msp/signcerts/cert.pem ${orgDirectory}/peer0/msp/admincerts/
 }
@@ -783,9 +964,9 @@ fabricNewOrgPeer0 (){
 #开始操作证书生成 --org peer1
 fabricNewOrgPeer1 (){
   fabricPeer1Configure > ${orgAdminDirectory}/${fabricCaClientConfig}
-  fabric-ca-client register -H ${orgAdminDirectory} --id.secret=${idSecret}
+  fabric-ca-client register -H ${orgAdminDirectory} --id.secret=${orgIdSecret}
   directiryCheck ${orgDirectory}/peer1
-  fabric-ca-client enroll -u http://peer1.${orgDomainName}:${idSecret}@${caServerAddress} -H ${orgDirectory}/peer1
+  fabric-ca-client enroll -u http://peer1.${orgDomainName}:${orgIdSecret}@${caServerAddress} -H ${orgDirectory}/peer1
   directiryCheck ${orgDirectory}/peer1/msp/admincerts
   cp ${orgAdminDirectory}/msp/signcerts/cert.pem ${orgDirectory}/peer1/msp/admincerts/
 }
@@ -803,6 +984,10 @@ fabricNewOrgYaml (){
 #开始操作docker-compose.yaml文件生成
 fabricNewDockerComposeConfig (){
   fabricDockerComposeConfig > ${balanceDeployDirectory}/artifacts/docker-compose.yaml
+  fabricDockerComposeOdererConfig > ${balanceDeployDirectory}/artifacts/docker-compose-orderer.yaml
+  fabricDockerComposePeer0sConfig > ${balanceDeployDirectory}/artifacts/docker-compose-peer0s.yaml
+  fabricDockerComposePeer1sConfig > ${balanceDeployDirectory}/artifacts/docker-compose-peer1s.yaml
+  fabricDockerComposeCliConfigure > ${balanceDeployDirectory}/artifacts/docker-compose-cli.yaml
 }
 
 #开始操作configtx.yaml文件生成
@@ -893,6 +1078,7 @@ fabricConfigtxNewOrg (){
 fabricConfigDockerCompose (){
   fabricOrg
   echo "version: '2'"
+  fabricNetworkSetOne
   echo "services:"
   echo "  peer0.${org}.${domainName}:"
   echo "    container_name: peer0.${org}.${domainName}"
@@ -900,6 +1086,10 @@ fabricConfigDockerCompose (){
   echo "      file:   base.yaml"
   echo "      service: peer-base"
   echo "    environment:"
+  echo "      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB"
+  echo "      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0.${org}.${domainName}:5984"
+  echo "      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=${couchdb_username}"
+  echo "      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=${couchdb_password}"  
   echo "      - CORE_PEER_ID=peer0.${org}.${domainName}"
   echo "      - CORE_PEER_LOCALMSPID=${Org}MSP"
   echo "      - CORE_PEER_ADDRESS=peer0.${org}.${domainName}:7051"
@@ -908,12 +1098,17 @@ fabricConfigDockerCompose (){
   echo "      - ${peer0_2}:7053"
   echo "    volumes:"
   echo "        - ./channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/:/etc/hyperledger/crypto/peer"
+  fabricNetworkSetTwo
   echo "  peer1.${org}.${domainName}:"
   echo "    container_name: peer1.${org}.${domainName}"
   echo "    extends:"
   echo "      file:   base.yaml"
   echo "      service: peer-base"
   echo "    environment:"
+  echo "      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB"
+  echo "      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1.${org}.${domainName}:5984"  
+  echo "      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=${couchdb_username}"
+  echo "      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=${couchdb_password}"  
   echo "      - CORE_PEER_ID=peer1.${org}.${domainName}"
   echo "      - CORE_PEER_LOCALMSPID=${Org}MSP"
   echo "      - CORE_PEER_ADDRESS=peer1.${org}.${domainName}:7051"
@@ -922,11 +1117,31 @@ fabricConfigDockerCompose (){
   echo "      - ${peer1_2}:7053"
   echo "    volumes:"
   echo "        - ./channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer1.${org}.${domainName}/:/etc/hyperledger/crypto/peer"
+  fabricNetworkSetTwo
+  echo "  couchdb0.${org}.${domainName}:"
+  echo "    container_name: couchdb0.${org}.${domainName}"
+  echo "    image: hyperledger/fabric-couchdb"
+  echo "    environment:"
+  echo "      - COUCHDB_USER=${couchdb_username}"
+  echo "      - COUCHDB_PASSWORD=${couchdb_password}"
+  echo "    ports:"
+  echo "      - ${couchdb0}:5984"
+  fabricNetworkSetTwo
+  echo "  couchdb1.${org}.${domainName}:"
+  echo "    container_name: couchdb1.${org}.${domainName}"
+  echo "    image: hyperledger/fabric-couchdb"
+  echo "    environment:"
+  echo "      - COUCHDB_USER=${couchdb_username}"
+  echo "      - COUCHDB_PASSWORD=${couchdb_password}"
+  echo "    ports:"
+  echo "      - ${couchdb1}:5984"
+  fabricNetworkSetTwo
 }
 
 #docker-compose-cli configure file | bash
 fabricCliConfigure (){
   echo "version: '2'"
+  fabricNetworkSetOne
   echo "services:"
   echo "  cli:"
   echo "    container_name: cli"
@@ -949,21 +1164,23 @@ fabricCliConfigure (){
   echo "    command: /bin/bash"
   echo "    volumes:"
   echo "        - /var/run/:/host/var/run/"
+  echo "        - ./src/:/opt/gopath/src/"
   echo "        - ./channel/crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/"
   echo "        - ./channel/${org}.json:/opt/gopath/src/github.com/hyperledger/fabric/peer/${org}/${org}.json"
   echo "        - ./channel/${org}.sh:/opt/gopath/src/github.com/hyperledger/fabric/peer/${org}/${org}.sh"
+  fabricNetworkSetTwo
 }
 
 fabricNewCliConfig (){
-  fabricCliConfigure > ./artifacts/docker-compose-cli.yaml
+  fabricCliConfigure > ./artifacts/docker-compose-cli-${org}.yaml
 }
 
 fabricCli (){
   directiryCd ${balanceDeployDirectory}
   fabricNewCliConfig
-  docker-compose -f ./artifacts/docker-compose-cli.yaml up -d
+  docker-compose -f ./artifacts/docker-compose-cli-${org}.yaml up -d
   if [ $? != 0 ];then
-    echo "docker-compose-cli start failure."
+    echo "docker-compose-cli-${org} start failure."
     exit 1
   fi
 }
@@ -985,6 +1202,8 @@ fabricCliBashFileWget (){
   mv dynamicAddOrg.sh ${org}.sh
   sed -i "s/ORGNAME/${org}/" ./${org}.sh
   sed -i "s/DOMAINNAME/${domainName}/" ./${org}.sh
+  sed -i "s/CCNAME/${CHAINCODE_NAME}/" ./${org}.sh
+  sed -i "s/NODEADDRESS/${nodeAppAddress}/" ./${org}.sh
 }
 
 fabricNetworkConfigNewOrgConfig (){
@@ -993,7 +1212,7 @@ fabricNetworkConfigNewOrgConfig (){
 
   Peers="      peer0.${org}.${domainName}:\n        endorsingPeer: true\n        chaincodeQuery: true\n        ledgerQuery: true\n        eventSource: true\n      peer1.${org}.${domainName}:\n        endorsingPeer: false\n        chaincodeQuery: true\n        ledgerQuery: true\n        eventSource: false"
   Orgs="  ${Org}:\n    mspid: ${Org}MSP\n    peers:\n      - peer0.${org}.${domainName}\n      - peer1.${org}.${domainName}\n    certificateAuthorities:\n      - ca\n    adminPrivateKey:\n      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/users/Admin@${org}.${domainName}/msp/keystore/${sk_ii}\n    signedCert:\n      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/users/Admin@${org}.${domainName}/msp/signcerts/cert.pem"
-  OrgPeers="  peer0.${org}.${domainName}:\n    url: grpcs://localhost:${peer0_1}\n    grpcOptions:\n      ssl-target-name-override: peer0.${org}.${domainName}\n    tlsCACerts:\n      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/tls/ca.crt\n  peer1.${org}.${domainName}:\n    url: grpcs://localhost:${peer1_1}\n    grpcOptions:\n      ssl-target-name-override: peer1.${org}.${domainName}\n    tlsCACerts:\n      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer1.${org}.${domainName}/tls/ca.crt"
+  OrgPeers="  peer0.${org}.${domainName}:\n    url: grpcs://${peer0sAddress}:${peer0_1}\n    grpcOptions:\n      ssl-target-name-override: peer0.${org}.${domainName}\n    tlsCACerts:\n      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer0.${org}.${domainName}/tls/ca.crt\n  peer1.${org}.${domainName}:\n    url: grpcs://${peer1sAddress}:${peer1_1}\n    grpcOptions:\n      ssl-target-name-override: peer1.${org}.${domainName}\n    tlsCACerts:\n      path: artifacts/channel/crypto-config/peerOrganizations/${org}.${domainName}/peers/peer1.${org}.${domainName}/tls/ca.crt"
 }
 
 fabricBashAddOrgConfigure (){
@@ -1036,7 +1255,7 @@ fabricBashAddOrgConfigure (){
 #1.admin
 fabricInitalAdmin (){
   #获取ca server cmd
-  fabricCaCmd
+  # fabricCaCmd #暂时停用
   #初始化admin CA目录和联盟
   fabricCreateAdmin
 }
@@ -1082,9 +1301,10 @@ fabricInitalRunApp (){
   echo "Clean succeed.Rename cryptogen-config"
   echo
   directiryCd ${balanceDeployDirectory}
-  sed -i "s/example.com/${domainName}/g" testAPIs.sh
-  sed -i "s/affiliation: userOrg.toLowerCase() + '.department1'/affiliation: \'${unionOrderer}.\' + userOrg.toLowerCase()/" app/helper.js
-  sed -i "s/60000/600000/g" app/instantiate-chaincode.js
+  # sed -i "s/example.com/${domainName}/g" testAPIs.sh
+  # sed -i "s/affiliation: userOrg.toLowerCase() + '.department1'/affiliation: \'${unionOrderer}.\' + userOrg.toLowerCase()/" app/helper.js
+  # sed -i "s/60000/600000/g" app/instantiate-chaincode.js
+  sed -i "s/artifacts_default/${networkName}/g" artifacts/base.yaml
 
   fabricNewNetworkConfig
   fabricNewDockerComposeConfig
@@ -1105,15 +1325,22 @@ fabricBashDynamicAddOrg (){
   fabricBashAddOrgCa
   #3. 将新org追加到配置文件
   fabricBashAddOrgConfigure
+  #宿主机配置文件修改完重启下node容器，让其重新加载
+  APP_CONTAINER_ID=$(docker ps -a | grep zbx-app | awk '{print $1}')
+  echo "重启node app 容器 ..."
+  docker restart ${APP_CONTAINER_ID}
+  [ $? -eq 0 ] && echo "重启完毕."
+  sleep 2
   #4. 添加Cli配置文件，并启动
   fabricCli
   #5. 在cli端操作更新
   dockerCli bash ${org}/${org}.sh
+  echo "##############################################"
+  echo "  run: query chaincode"
+  echo "##############################################"
   echo
-  echo "restart: PORT=4000 node app"
-  echo
-  echo "1.run: install chaincode(is ok)"
-  echo "2.run: invoke cc && query cc"
+  #6.合并动态机构到静态文件中，以便升级cc使用 
+  fabricEchoAdd
 }
 
 #########################初始化调用运行#############################
@@ -1127,7 +1354,7 @@ fabricStaticInitalization (){
   fabricFor fabricInitalOrg
   # 4.runapp && testapi
   fabricInitalRunApp
-  sed -i "s/inital)fabricStaticInitalization;;/#inital)fabricStaticInitalization;;/g" ~/$0
+  sed -i "s/#inital)fabricStaticInitalization;;/##inital)fabricStaticInitalization;;/g" ~/$0
   echo "提示: 初始化操作只能执行一次！！！"
 }
 
@@ -1143,8 +1370,19 @@ fabricDyncmicallyAddOrg (){
 
 ############调用运行##############
 status=${1}
+relyArg=${2:-solo} #_[solo OR distributed]
+networkType=${3:-none} #_[swarm]
+
 case $status in
   inital)fabricStaticInitalization;;
   dynamic)fabricDyncmicallyAddOrg;;
-  *)echo "Usage: $0 [inital|dynamic]";;
+  help|h)fabricHelp;;
+  *)fabricHelp;;
 esac
+
+echo "MSP cert Directory: ${balanceDeployDirectory}"
+echo "..."
+
+
+#_for  i in `grep -n "  peer0" artifacts/docker-compose.yaml \ 
+#_| awk -F ":" '{print $1}'| tac`;do sed -i "${i},`expr $i + 15`d" artifacts/docker-compose.yaml;done
