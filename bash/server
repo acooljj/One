@@ -38,7 +38,8 @@ status_server (){
   server_pid=$(jps -mv | grep -v Jps | grep /${app_id}/ | awk '{print $1,$2,$3}')
   server_path=$(jps -mvlV | grep -v Jps | grep /${app_id}/ | awk  '{print $(NF-2)}')
   if [[ -n ${server_pid} ]];then 
-    echo -e "Pid: \033[32m${server_pid}\033[0m | path: \033[32m${server_path}\033[0m"
+    runningTime=$(ps -o etime=${server_id} | tail -n 1)
+    echo -e "Pid: \033[32m${server_pid}\033[0m | path: \033[32m${server_path}\033[0m | Run Time \033[32m${runningTime}\033[0m"
   else
     echo -e "\033[33mserver ${app_id} not running \033[0m" | tr '\n' ','
     echo " Usage: ./server tomcat [start|status|stop|restart]"
