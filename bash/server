@@ -1,5 +1,8 @@
 #!/bin/bash
-#./server app_id [start|status|stop|restart|tailf]
+#tomcat path : /home/tomcat/{app1,app2,app3}
+#Usage:
+#  ./server app_id [start|status|stop|restart|tailf]
+# Ctrl+C == Exit
 trap '' SIGTSTP
 
 export tomcat_path=/home/tomcat
@@ -29,7 +32,12 @@ start_server (){
   rm -rf ${tomcat_path}/${app_id}/work/Catalina/
   ./bin/startup.sh > /dev/null
   echo -e "Started server \033[1m\033[32m${app_id}\033[0m"
+}
 
+restart_server (){
+  stop_server ${app_id}
+  start_server ${app_id}
+  
   echo -e '请按\033[32;1m[回车]\033[0m键继续查看日志或使用[\033[32;1mCtrl+c\033[0m]退出.......'
   read
   tail_log_server
@@ -75,22 +83,21 @@ fi
 
 case ${app_status} in
  stop)
-   stop_server ${app_id}
+   stop_server
  ;;
  start)
-   check_start ${app_id}
+   check_start
  ;;
  restart)
-   stop_server ${app_id}
-   start_server ${app_id}
+   restart_server
  ;;
  status)
-  status_server ${app_id}
+   status_server
  ;;
  tailf)
-  tail_log_server ${app_id}
+   tail_log_server
  ;;
  *)
-  echo "Usage: ./$0 tomcat [start|status|stop|restart|tailf]"
+   echo "Usage: ./$0 tomcat [start|status|stop|restart|tailf]"
  ;;
 esac

@@ -1,5 +1,5 @@
-from time import sleep
-from tqdm import tqdm
+import time
+from tqdm import trange
 
-for i in tqdm(range(1, 500)):
-  sleep(0.01)
+for i in trange(100):
+    time.sleep(0.01)
