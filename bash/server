@@ -20,7 +20,7 @@ stop_server (){
     echo -e "\033[33mserver ${app_id} not running.\033[0m"
   else
     pid_k=`ps -ef|grep /${app_id}/|grep java|grep -v grep|awk '{print $2}' | xargs kill -9`
-    echo -e -n "Stoped server \033[1m\033[32m${app_id}\033[0m"
+    echo -e -n "Stopped server \033[1m\033[32m${app_id}\033[0m"
     echo -e -n " : \033[1m\033[32m${app_id}\033[0m has be killed, "
     echo -e -n "PID is { \033[1m\033[32m${pid}\033[0m }, "
     echo -e "kill process count \033[1m\033[32m${suM}\033[0m"
@@ -31,16 +31,23 @@ start_server (){
   cd ${tomcat_path}/${app_id}
   rm -rf ${tomcat_path}/${app_id}/work/Catalina/
   ./bin/startup.sh > /dev/null
-  echo -e "Started server \033[1m\033[32m${app_id}\033[0m"
+  pid=`ps -ef|grep /${app_id}/|grep java|grep -v grep|awk '{print $2}'`
+  echo -e -n "Started server \033[1m\033[32m${app_id}\033[0m"
+  echo -e " : PID is { \033[1m\033[32m${pid}\033[0m }. "
 }
 
 restart_server (){
-  stop_server ${app_id}
-  start_server ${app_id}
+  stop_server
+  start_server
   
   echo -e '请按\033[32;1m[回车]\033[0m键继续查看日志或使用[\033[32;1mCtrl+c\033[0m]退出.......'
   read
   tail_log_server
+}
+
+silent_restart_server (){
+  stop_server
+  start_server
 }
 
 status_server (){
@@ -91,6 +98,9 @@ case ${app_status} in
  restart)
    restart_server
  ;;
+ slient-restart)
+   silent_restart_server
+ ;;
  status)
    status_server
  ;;
@@ -98,6 +108,6 @@ case ${app_status} in
    tail_log_server
  ;;
  *)
-   echo "Usage: ./$0 tomcat [start|status|stop|restart|tailf]"
+   echo "Usage: ./$0 tomcat [start|status|stop|restart|slient-restart|tailf]"
  ;;
 esac
