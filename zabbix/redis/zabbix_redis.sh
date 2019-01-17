@@ -6,6 +6,18 @@ PASSWD="14YVeC0PToxRIAs"
 REDIS_PA="$REDISPATH -h $HOST -p $PORT -a $PASSWD info"
 if [[ $# == 1 ]];then
     case $1 in
+ redis_version)
+	result=`$REDIS_PA|/bin/grep redis_version|awk -F":" '{print $NF}'`
+	    echo $result
+	    ;;
+ redis_mode)
+	result=`$REDIS_PA|/bin/grep redis_mode|awk -F":" '{print $NF}'`
+	    echo $result
+	    ;;
+ tcp_port)
+	result=`$REDIS_PA|/bin/grep tcp_port|awk -F":" '{print $NF}'`
+	    echo $result
+	    ;;
  cluster)
         result=`$REDIS_PA|/bin/grep cluster|awk -F":" '{print $NF}'`
             echo $result 
@@ -35,10 +47,6 @@ if [[ $# == 1 ]];then
         result=`$REDIS_PA|/bin/grep used_memory|awk -F":" '{print $NF}'|awk 'NR==1'`
             echo $result 
             ;; 
- used_memory_human)
-        result=`$REDIS_PA|/bin/grep used_memory_human|awk -F":" '{print $NF}'|awk -F'K' '{print $1}'` 
-            echo $result 
-            ;; 
  used_memory_rss)
         result=`$REDIS_PA|/bin/grep used_memory_rss|awk -F":" '{print $NF}'`
             echo $result 
@@ -47,10 +55,52 @@ if [[ $# == 1 ]];then
         result=`$REDIS_PA|/bin/grep used_memory_peak|awk -F":" '{print $NF}'|awk 'NR==1'`
             echo $result 
             ;; 
- used_memory_peak_human)
-        result=`$REDIS_PA|/bin/grep used_memory_peak_human|awk -F":" '{print $NF}'|awk -F'K' '{print $1}'`
+ maxmemory)
+        result=`$REDIS_PA|/bin/grep -w maxmemory |awk -F":" '{print $NF}'`
             echo $result 
             ;; 
+ used_memory_lua)
+        result=`$REDIS_PA|/bin/grep used_memory_lua|awk -F":" '{print $NF}'`
+            echo $result 
+            ;;     
+ mem_fragmentation_ratio)
+        result=`$REDIS_PA|/bin/grep mem_fragmentation_ratio|awk -F":" '{print $NF}'`
+            echo $result 
+            ;;   
+#rdb
+ rdb_changes_since_last_save)
+        result=`$REDIS_PA|/bin/grep rdb_changes_since_last_save|awk -F":" '{print $NF}'`
+            echo $result 
+            ;;   
+ rdb_bgsave_in_progress)
+        result=`$REDIS_PA|/bin/grep rdb_bgsave_in_progress|awk -F":" '{print $NF}'`
+            echo $result 
+            ;;   
+ rdb_last_save_time)
+        result=`$REDIS_PA|/bin/grep rdb_last_save_time|awk -F":" '{print $NF}'`
+            echo $result 
+            ;;   
+ rdb_last_bgsave_status)
+        result=`$REDIS_PA|/bin/grep -w "rdb_last_bgsave_status" | awk -F':' '{print $2}' | /bin/grep -c ok`
+            echo $result 
+            ;;   
+ rdb_current_bgsave_time_sec)
+        result=`$REDIS_PA|/bin/grep -w "rdb_current_bgsave_time_sec" | awk -F':' '{print $2}'`
+            echo $result 
+            ;; 
+#rdbinfo
+ aof_enabled)
+        result=`$REDIS_PA|/bin/grep -w "aof_enabled" | awk -F':' '{print $2}'`
+            echo $result 
+            ;; 
+ aof_rewrite_scheduled)
+        result=`$REDIS_PA|/bin/grep -w "aof_rewrite_scheduled" | awk -F':' '{print $2}'`
+            echo $result 
+            ;; 
+ aof_last_rewrite_time_sec)
+        result=`$REDIS_PA|/bin/grep -w "aof_last_rewrite_time_sec" | awk -F':' '{print $2}'`
+            echo $result 
+       	    ;;
  used_memory_lua)
         result=`$REDIS_PA|/bin/grep used_memory_lua|awk -F":" '{print $NF}'`
             echo $result 
@@ -141,6 +191,14 @@ if [[ $# == 1 ]];then
             ;; 
  instantaneous_ops_per_sec)
         result=`$REDIS_PA|/bin/grep -w "instantaneous_ops_per_sec" | awk -F':' '{print $2}'`
+            echo $result 
+            ;; 
+ instantaneous_input_kbps)
+        result=`$REDIS_PA|/bin/grep -w "instantaneous_input_kbps" | awk -F':' '{print $2}'`
+            echo $result 
+            ;; 
+ instantaneous_output_kbps)
+        result=`$REDIS_PA|/bin/grep -w "instantaneous_output_kbps" | awk -F':' '{print $2}'`
             echo $result 
             ;; 
  rejected_connections)
