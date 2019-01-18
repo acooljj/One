@@ -3,8 +3,8 @@
 #tcp status
 metric=$1
 tmp_file=/tmp/tcp_status.txt
-/bin/netstat -an|awk '/^tcp/{++S[$NF]}END{for(a in S) print a,S[a]}' > $tmp_file
- 
+/usr/sbin/ss -ant | sed 1d | awk '{++S[$1]}END{for(a in S) print a,S[a]}' > $tmp_file
+
 case $metric in
    CLOSED)
           output=$(awk '/CLOSED/{print $2}' $tmp_file)
@@ -23,7 +23,7 @@ case $metric in
           fi
         ;;
    SYN-RECV)
-          output=$(awk '/SYN_RECV/{print $2}' $tmp_file)
+          output=$(awk '/SYN-RECV/{print $2}' $tmp_file)
           if [ "$output" == "" ];then
              echo 0
           else
@@ -31,7 +31,7 @@ case $metric in
           fi
         ;;
    SYN-SENT)
-          output=$(awk '/SYN_SENT/{print $2}' $tmp_file)
+          output=$(awk '/SYN-SENT/{print $2}' $tmp_file)
           if [ "$output" == "" ];then
              echo 0
           else
@@ -39,7 +39,7 @@ case $metric in
           fi
         ;;
    ESTAB)
-          output=$(awk '/ESTABLISHED/{print $2}' $tmp_file)
+          output=$(awk '/ESTAB/{print $2}' $tmp_file)
           if [ "$output" == "" ];then
              echo 0
           else
@@ -47,7 +47,7 @@ case $metric in
           fi
         ;;
    TIME-WAIT)
-          output=$(awk '/TIME_WAIT/{print $2}' $tmp_file)
+          output=$(awk '/TIME-WAIT/{print $2}' $tmp_file)
           if [ "$output" == "" ];then
              echo 0
           else
@@ -63,7 +63,7 @@ case $metric in
           fi
         ;;
    CLOSE-WAIT)
-          output=$(awk '/CLOSE_WAIT/{print $2}' $tmp_file)
+          output=$(awk '/CLOSE-WAIT/{print $2}' $tmp_file)
           if [ "$output" == "" ];then
              echo 0
           else
@@ -71,7 +71,7 @@ case $metric in
           fi
         ;;
    LAST-ACK)
-          output=$(awk '/LAST_ACK/{print $2}' $tmp_file)
+          output=$(awk '/LAST-ACK/{print $2}' $tmp_file)
           if [ "$output" == "" ];then
              echo 0
           else
@@ -79,7 +79,7 @@ case $metric in
           fi
          ;;
    FIN-WAIT-1)
-          output=$(awk '/FIN_WAIT1/{print $2}' $tmp_file)
+          output=$(awk '/FIN-WAIT-1/{print $2}' $tmp_file)
           if [ "$output" == "" ];then
              echo 0
           else
@@ -87,7 +87,7 @@ case $metric in
           fi
          ;;
    FIN-WAIT-2)
-          output=$(awk '/FIN_WAIT2/{print $2}' $tmp_file)
+          output=$(awk '/FIN-WAIT-2/{print $2}' $tmp_file)
           if [ "$output" == "" ];then
              echo 0
           else
@@ -95,6 +95,6 @@ case $metric in
           fi
          ;;
          *)
-          echo -e "\e[033mUsage: sh  $0 [closed|closing|closewait|synrecv|synsent|finwait1|finwait2|listen|established|lastack|timewait]\e[0m"
+          echo -e "\e[033mUsage: sh  $0 [CLOSED|CLOSING|CLOSEWAIT|SYNRECV|SYNSENT|FINWAIT1|FINWAIT2|LISTEN|ESTABLISHED|LASTACK|TIMEWAIT]\e[0m"
    
 esac
