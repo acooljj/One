@@ -5,7 +5,7 @@ Git is a free software distributed under the GPL.
 One Pioce
 
 
-** image **
+**image**
 
 |via|.|
 |-|-|
