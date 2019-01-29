@@ -8,5 +8,5 @@ One Pioce
 
 # image
 |via|.|
-|-|!-|
+|-|-|
 |xshell5-XTerm.xcs| color XTerm|
