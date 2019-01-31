@@ -95,6 +95,3 @@ centosinstallGlibc (){
   make install
   ldd -version
 }
-
-
-centosInstallGo
