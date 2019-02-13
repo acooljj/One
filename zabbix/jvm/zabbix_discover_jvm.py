@@ -1,4 +1,5 @@
-#!/usr/bin/python2
+#!/usr/bin/python
+#python2
 #Usage: discover tomcat_app
 #Last Modified:
  
