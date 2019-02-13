@@ -1,4 +1,5 @@
 # template
+# 使用zabbix_app_status.sh需要启动zabbix-agent和jvm进程的用户保持一致
 jdk: 1.7,1.8
 uptime运行时间
 jvm分区:
