@@ -1,5 +1,6 @@
 # template
 jdk: 1.7,1.8
+uptime运行时间
 jvm分区:
   新生代
     伊甸园
@@ -18,5 +19,5 @@ path:/etc/zabbix/zabbix_agentd.d
 path:/etc/zabbix/scripts
 3.zabbix_discover_jvm.conf
 path:
-4.
+4.zbx_export_jvm_templates.xml
 zabbix3.0监控jvm模板,web端导入模板用
