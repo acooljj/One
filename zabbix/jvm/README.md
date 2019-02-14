@@ -12,11 +12,11 @@ jvm分区:
 ..配置文件定义服务名称的key和监控项的key
 ...模板自动发现，记录每个分区的总大小，已使用大小，使用百分比，GC回收次数，总回收次数，回收使用的时间，回收总时间，新生代回收次数，新生代回收使用时间,(java进程启动时间，tomat版本，java版本，进程启动用户，)
 
-1.zabbix_discover_jvm.sh
+1. zabbix_discover_jvm.sh
 path:/etc/zabbix/scripts
-2.zabbix_discover_jvm.conf
+2. zabbix_discover_jvm.conf
 path:
-3.zbx_export_jvm_templates.xml
+3. zbx_export_jvm_templates.xml
 zabbix3.0监控jvm模板,web端导入模板用
 
 >  ansible-playbook文件获取
