@@ -19,12 +19,12 @@ path:
 3.zbx_export_jvm_templates.xml
 zabbix3.0监控jvm模板,web端导入模板用
 
-# ansible-playbook文件获取
-# https://github.com/mainiubaba/ansible_plus/blob/master/roles/zabbix/tasks/deploy_jvm.yml
-# User=name根据自己实际情况更改，name的值是java应用程序的运行用户
-# #ansible-playbook deploy_jvm.yml --extra-vars host_app=10.1.1.10
-# $ansible-playbook deploy_jvm.yml --extra-vars host_app=10.1.1.10 -s
-# 执行后，在服务端测试,有返回值说明成功；没有的话，检查服务是否启动，启动用户是否一致
-# zabbix-get -s 10.0.0.10 -k custom.discover.jvm_app | jq .
-# 然后在web端导入模板文件
-# 最后在对应的主机添加模板，等会看有没有数据，没数据看监控项详情，会有提示。
+> # ansible-playbook文件获取
+> # https://github.com/mainiubaba/ansible_plus/blob/master/roles/zabbix/tasks/deploy_jvm.yml
+> # User=name根据自己实际情况更改，name的值是java应用程序的运行用户
+> # #ansible-playbook deploy_jvm.yml --extra-vars host_app=10.1.1.10
+> # $ansible-playbook deploy_jvm.yml --extra-vars host_app=10.1.1.10 -s
+> # 执行后，在服务端测试,有返回值说明成功；没有的话，检查服务是否启动，启动用户是否一致
+> # zabbix-get -s 10.0.0.10 -k custom.discover.jvm_app | jq .
+> # 然后在web端导入模板文件
+> # 最后在对应的主机添加模板，等会看有没有数据，没数据看监控项详情，会有提示。
