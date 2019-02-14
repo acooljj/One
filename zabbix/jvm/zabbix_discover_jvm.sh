@@ -11,9 +11,38 @@
 # 定义变量
 app=$1
 status=$2
-pid=$(ps -fC java | tail -n +2| grep "${app}/conf" | grep -v "$0"| awk '{print $2}')
-envpath=$(dirname $(ps -fC java | tail -n +2  | grep "$app/conf" | grep -v "$0" | awk '{print $8}'))
-envpath=$(echo $envpath | sed 's/jre\///g')
+
+function base_server (){
+  # 获取运行的服务列表
+  a=$(for i in `ps -fC java | tail -n +2| awk '{print $2}'`;do ls -l /proc/$i/cwd | awk '{print $NF}'|awk -F '/' '{print $4}';done | grep -Ev "^$")
+  # 输出头信息
+  echo "{\"data\":["
+  # 输出主体信息
+  count=1
+  # 遍历应用列表
+  for i in ${a[@]}
+  do
+    # 如果值有1个，直接输出
+    if [ $count == 1 ];then
+       echo """
+      {
+          \"{#APP_NAME}\":\"${i}\"
+      }
+            """
+    # 如果值有多个，持续输出
+    else
+       echo """
+         ,{
+             \"{#APP_NAME}\":\"${i}\"
+         }
+            """
+    fi
+    # 自增数1
+    count=$(expr $count + 1)
+  done
+  # 输出尾信息
+  echo "]}"
+}
 
 function jinfo_config (){
  jinfo_file=/tmp/jinfo_${pid}.txt
@@ -106,14 +135,15 @@ function tatol_time (){
 
 # 判断是否传参数
 if [ -z $app ];then
+  base_server
+  exit
+elif [ $app == h -o $app == help ];then
   help
 fi
 
-# pid=$(ps -fC java | tail -n +2| grep "${app}/conf" | grep -v "$0"| awk '{print $2}')
-# jinfo_file=/tmp/jinfo_${pid}.txt
-# jinfo ${pid} > ${jinfo_file}
-# envpath=$(dirname $(ps -fC java | tail -n +2  | grep "$app/conf" | grep -v "$0" | awk '{print $8}'))
-# envpath=$(echo $envpath | sed 's/jre\///g')
+pid=$(ps -fC java | tail -n +2| grep "${app}/conf" | grep -v "$0"| awk '{print $2}')
+envpath=$(dirname $(ps -fC java | tail -n +2  | grep "$app/conf" | grep -v "$0" | awk '{print $8}'))
+envpath=$(echo $envpath | sed 's/jre\///g')
 
 case $status in
 # -gc (KB)
