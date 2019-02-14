@@ -7,10 +7,25 @@
 
 #  S0     S1     E      O      P     YGC     YGCT    FGC    FGCT     GCT
 #  S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT    
+
+# 定义变量
 app=$1
 status=$2
+pid=$(ps -fC java | tail -n +2| grep "${app}/conf" | grep -v "$0"| awk '{print $2}')
+envpath=$(dirname $(ps -fC java | tail -n +2  | grep "$app/conf" | grep -v "$0" | awk '{print $8}'))
+envpath=$(echo $envpath | sed 's/jre\///g')
 
-help(){
+function jinfo_config (){
+ jinfo_file=/tmp/jinfo_${pid}.txt
+ # 如果文件在10分钟之内被修改过，则不重新查看Jvm进程信息，避免多次查看影响服务性能(zabbix_server服务端采取间隔为10分钟)
+ if [ $(find ${jinfo_file} -mmin -10 | wc -l) == 0 ];then
+   ${envpath}/jinfo -sysprops ${pid} > ${jinfo_file}
+ else
+   :
+ fi
+}
+
+function help (){
   app_name=${app:-app_name}
   echo -e "\e[033mUsage: $0 $app_name [S0C|S1C|S0U|S1U|EC|EU|OC|OU|YGC|YGCT|FGC|FGCT|GCT|S0|S1|E|O|uptime]\n\t\t\t\t[1.7|PC|PU|P]\n\t\t\t\t[1.8|MC|MU|CCSC|CCSU|M|CCS]\e[0m" 
   exit 1
@@ -94,9 +109,11 @@ if [ -z $app ];then
   help
 fi
 
-pid=$(ps -fC java | tail -n +2| grep "${app}/conf" | grep -v "$0"| awk '{print $2}')
-envpath=$(dirname $(ps -fC java | tail -n +2  | grep "$app/conf" | grep -v "$0" | awk '{print $8}'))
-envpath=$(echo $envpath | sed 's/jre\///g')
+# pid=$(ps -fC java | tail -n +2| grep "${app}/conf" | grep -v "$0"| awk '{print $2}')
+# jinfo_file=/tmp/jinfo_${pid}.txt
+# jinfo ${pid} > ${jinfo_file}
+# envpath=$(dirname $(ps -fC java | tail -n +2  | grep "$app/conf" | grep -v "$0" | awk '{print $8}'))
+# envpath=$(echo $envpath | sed 's/jre\///g')
 
 case $status in
 # -gc (KB)
@@ -221,6 +238,21 @@ case $status in
     # time
     uptime)
         tatol_time
+        ;;
+    java_version)
+        jinfo_config
+        java_version=$(cat ${jinfo_file} | grep -w "java.version" | awk -F " = " '{print $2}')
+        echo ${java_version}
+        ;;
+    class_version)
+        jinfo_config
+        class_version=$(cat ${jinfo_file} | grep -w "java.class.version" | awk -F " = " '{print $2}')
+        echo ${class_version}
+        ;;
+    vm_version)
+        jinfo_config
+        vm_version=$(cat ${jinfo_file} | grep -w "java.vm.version" | awk -F " = " '{print $2}')
+        echo ${vm_version}
         ;;
 ###
     *)
