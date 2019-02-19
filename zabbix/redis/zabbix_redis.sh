@@ -48,7 +48,7 @@ if [[ $# == 1 ]];then
             echo $result 
             ;; 
  used_memory_rss)
-        result=`$REDIS_PA|/bin/grep used_memory_rss|awk -F":" '{print $NF}'`
+        result=`$REDIS_PA|/bin/grep used_memory_rss|awk -F":" '{print $NF}' | awk 'NR==1'`
             echo $result 
             ;; 
  used_memory_peak)
