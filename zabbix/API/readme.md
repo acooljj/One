@@ -1,3 +1,5 @@
+
+`Python 2.7`
 screen_hosts.py --生成单台主机的所有聚合图形
 
 create_screen.py --生成某个监控项的聚合图形
