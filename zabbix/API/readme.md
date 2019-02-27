@@ -1,10 +1,13 @@
-> screen_hosts.py --生成单台主机的所有聚合图形
+screen_hosts.py --生成单台主机的所有聚合图形
+
 create_screen.py --生成某个监控项的聚合图形
+
 disk_create_screen.py --生成磁盘监控的聚合图形
+
 两个脚本（create_screen.py and disk_create_screen.py）唯一不同的就是width和height的值不一样。
 
 ---
-**creen_hosts.py** --生成单台主机的所有聚合图形
+# creen_hosts.py
 
 执行命令
 
@@ -19,7 +22,7 @@ Total Number of Graphs: 10
 ```
 
 ---
-**create_screen.py** --生成某个监控项的聚合
+# create_screen.py
 
 执行命令
 
@@ -32,7 +35,7 @@ Total Number of Graphs: 10
 'width': ，'height': 参数来设置大小。
 
 ---
-**disk_create_screen.py** --生成磁盘监控的聚合图形
+# disk_create_screen.py
 
 执行命令
 
