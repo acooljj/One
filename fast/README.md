@@ -8,6 +8,7 @@
 3. 文件夹管理工具: [Clover](http://cn.ejie.me/)
 4. 搜索工具: [Listary](https://www.listary.com/download)
 5. Py工具: Thonny, PyCharm
+6. 桌面壁纸工具：[Artpip](https://www.artpip.com/)
 
 
 
