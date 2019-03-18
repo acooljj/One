@@ -116,8 +116,19 @@ if [ "$LANGUAGE" = "node" ]; then
 fi
 
 #检查org列表文件是否存在
-[ -f ${staticFile} ] || (echo -e "Not Found File ${staticFile} ,Placse prepare the file.\nFormat: orgname;peer0 port1,port2;peer1 port3,port4\n\nDefault: org1;peer0 7051,7053;peer1 7056,7058;couchdb 7981,7986\n         org2;peer0 8051,8053;peer1 8056,8058;couchdb 8981,8986\n         org3;peer0 9051,9053;peer1 9056,9058;couchdb 9981,9986\n" && exit 1)
-[ -f ${dynamicFile} ] || (echo -e "Not Found File ${dynamicFile} ,Placse prepare the file.\nFormat: orgname;peer0 port1,port2;peer1 port3,port4\n\nDefault: org4;peer0 10051,10053;peer1 10056,10058\n" && exit 1)
+[ -f ${staticFile} ] || (echo """Not Found File ${staticFile} ,Placse prepare the file.
+Format: orgname;peer0 port1,port2;peer1 port3,port4
+
+Default: org1;peer0 7051,7053;peer1 7056,7058;couchdb 7981,7986
+         org2;peer0 8051,8053;peer1 8056,8058;couchdb 8981,8986
+         org3;peer0 9051,9053;peer1 9056,9058;couchdb 9981,9986
+""" && exit 1)
+
+[ -f ${dynamicFile} ] || (echo """Not Found File ${dynamicFile} ,Placse prepare the file.
+Format: orgname;peer0 port1,port2;peer1 port3,port4
+
+Default: org4;peer0 10051,10053;peer1 10056,10058
+""" && exit 1)
 
 
 listFile=${staticFile}
