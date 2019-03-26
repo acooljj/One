@@ -1,4 +1,6 @@
 #!/bin/bash
+# 生成的testAPIs.sh只能执行到实例化
+
 setFor (){
   ofile=~/orgList
   funcName=${1}
@@ -38,16 +40,16 @@ echoFile (){
   setFor setEnrollTokens
   #create channel
   cat CreateChannel
-  #
+  #join channel
   setFor setJoinChannels
-  #
+  #install chaincode
   setFor setInstallChainCodes
-  #
+  #instantiate chaincode
   cat InstantiateChainCode
-  #
-  cat IvokeChainCode
-  #
-  setFor setQueryChainCodes
+  # #ivoke chaincode  --no use
+  # cat IvokeChainCode
+  # #query chaincode  --no use
+  # setFor setQueryChainCodes
   #
   cat Bottom
 }

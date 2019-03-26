@@ -1,6 +1,9 @@
 #!/bin/bash
 #在宿主机执行，需要启动cli容器
 #传参： 域名 链码名 链码版本
+# Upgrade: scripts.sh Upgrade - unichain.org.cn chain v2
+# Query: scripts.sh Query
+# query: scripts.sh query
 
 #1.获取现有cc版本
 #2.设置更新的cc版本

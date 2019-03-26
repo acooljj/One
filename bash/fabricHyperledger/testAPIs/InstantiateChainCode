@@ -5,7 +5,7 @@ curl -s -X POST \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d "{
-	\"chaincodeName\":\"mycc\",
+	\"chaincodeName\":\"chain\",
 	\"chaincodeVersion\":\"v0\",
 	\"chaincodeType\": \"$LANGUAGE\",
 	\"args\":[\"a\",\"100\",\"b\",\"200\"]
