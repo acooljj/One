@@ -120,7 +120,7 @@ fi
 [ -f ${staticFile} ] || (echo """Not Found File ${staticFile} ,Placse prepare the file.
 Format: orgname;peer0 port1,port2;peer1 port3,port4;couchdb port5,port6;password
 
-Default: org1;peer0 7051,7053;peer1 7056,7058;couchdb 7981,7986;123456
+Bg: org1;peer0 7051,7053;peer1 7056,7058;couchdb 7981,7986;123456
          org2;peer0 8051,8053;peer1 8056,8058;couchdb 8981,8986;123456
          org3;peer0 9051,9053;peer1 9056,9058;couchdb 9981,9986;123456
 """ && exit 1)
@@ -128,7 +128,7 @@ Default: org1;peer0 7051,7053;peer1 7056,7058;couchdb 7981,7986;123456
 [ -f ${dynamicFile} ] || (echo """Not Found File ${dynamicFile} ,Placse prepare the file.
 Format: orgname;peer0 port1,port2;peer1 port3,port4;couchdb port5,port6;123456
 
-Default: org4;peer0 10051,10053;peer1 10056,10058;couchdb 10981,10986;123456
+Bg: org4;peer0 10051,10053;peer1 10056,10058;couchdb 10981,10986;123456
 """ && exit 1)
 
 
@@ -143,13 +143,16 @@ fabricHelp (){
   echo "Msp cert inital."
   echo "Usage:"
   echo "    bash $0 [inital|dynamic] <solo|distributed> [swarm]"
-  echo "    swarm分布式初始化:bash $0 inital distributed swarm"
-  echo "    swarm单机初始化:bash $0 inital solo swarm"
-  echo "    swarm单机动态加org:bash $0 dynamic solo swarm"
+  echo
+  echo "    inital:"
+  echo "      swarm单机初始化:bash $0 inital solo swarm"
+  echo "      swarm分布式初始化:bash $0 inital distributed swarm"
+  echo "    dynamic:"
+  echo "      swarm单机动态加org:bash $0 dynamic solo swarm"
   echo 
   echo "Options:"
   echo "    inital    inital msp cert"
-  echo "    dynamic   dynamic add org"
+  echo "    dynamic   dynamic add org, swarm"
   echo
   echo
   echo "Flags:"
