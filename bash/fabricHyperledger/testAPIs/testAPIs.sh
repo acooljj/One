@@ -52,60 +52,61 @@ function setChaincodePath(){
 
 setChaincodePath
 
-echo "POST request Enroll on Org1  ..."
+echo "POST request Enroll on Ceea  ..."
 echo
-ORG1_TOKEN=$(curl -s -X POST \
+CEEA_TOKEN=$(curl -s -X POST \
   http://localhost:4000/users \
   -H "content-type: application/x-www-form-urlencoded" \
-  -d 'username=Org1-qJim&orgName=Org1')
-echo $ORG1_TOKEN
-ORG1_TOKEN=$(echo $ORG1_TOKEN | jq ".token" | sed "s/\"//g")
+  -d 'username=Ceea-qJim&orgName=Ceea')
+echo $CEEA_TOKEN
+CEEA_TOKEN=$(echo $CEEA_TOKEN | jq ".token" | sed "s/\"//g")
 echo
-echo "ORG1 token is $ORG1_TOKEN"
+echo "CEEA token is $CEEA_TOKEN"
 echo
 
-echo "POST request Enroll on Org2  ..."
+echo "POST request Enroll on Amazingsys  ..."
 echo
-ORG2_TOKEN=$(curl -s -X POST \
+AMAZINGSYS_TOKEN=$(curl -s -X POST \
   http://localhost:4000/users \
   -H "content-type: application/x-www-form-urlencoded" \
-  -d 'username=Org2-qJim&orgName=Org2')
-echo $ORG2_TOKEN
-ORG2_TOKEN=$(echo $ORG2_TOKEN | jq ".token" | sed "s/\"//g")
+  -d 'username=Amazingsys-qJim&orgName=Amazingsys')
+echo $AMAZINGSYS_TOKEN
+AMAZINGSYS_TOKEN=$(echo $AMAZINGSYS_TOKEN | jq ".token" | sed "s/\"//g")
 echo
-echo "ORG2 token is $ORG2_TOKEN"
+echo "AMAZINGSYS token is $AMAZINGSYS_TOKEN"
 echo
 
-echo "POST request Enroll on Org3  ..."
+echo "POST request Enroll on Ccid  ..."
 echo
-ORG3_TOKEN=$(curl -s -X POST \
+CCID_TOKEN=$(curl -s -X POST \
   http://localhost:4000/users \
   -H "content-type: application/x-www-form-urlencoded" \
-  -d 'username=Org3-qJim&orgName=Org3')
-echo $ORG3_TOKEN
-ORG3_TOKEN=$(echo $ORG3_TOKEN | jq ".token" | sed "s/\"//g")
+  -d 'username=Ccid-qJim&orgName=Ccid')
+echo $CCID_TOKEN
+CCID_TOKEN=$(echo $CCID_TOKEN | jq ".token" | sed "s/\"//g")
 echo
-echo "ORG3 token is $ORG3_TOKEN"
+echo "CCID token is $CCID_TOKEN"
 echo
 
-echo "POST request Enroll on Org4  ..."
+echo "POST request Enroll on Sinobasalt  ..."
 echo
-ORG4_TOKEN=$(curl -s -X POST \
+SINOBASALT_TOKEN=$(curl -s -X POST \
   http://localhost:4000/users \
   -H "content-type: application/x-www-form-urlencoded" \
-  -d 'username=Org4-qJim&orgName=Org4')
-echo $ORG4_TOKEN
-ORG4_TOKEN=$(echo $ORG4_TOKEN | jq ".token" | sed "s/\"//g")
+  -d 'username=Sinobasalt-qJim&orgName=Sinobasalt')
+echo $SINOBASALT_TOKEN
+SINOBASALT_TOKEN=$(echo $SINOBASALT_TOKEN | jq ".token" | sed "s/\"//g")
 echo
-echo "ORG4 token is $ORG4_TOKEN"
+echo "SINOBASALT token is $SINOBASALT_TOKEN"
 echo
+
 echo
 echo
 echo "POST request Create channel  ..."
 echo
 curl -s -X POST \
   http://localhost:4000/channels \
-  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "authorization: Bearer $CEEA_TOKEN" \
   -H "content-type: application/json" \
   -d '{
 	"channelName":"mychannel",
@@ -114,62 +115,62 @@ curl -s -X POST \
 echo
 echo
 
-echo "POST request Join channel on Org1"
+echo "POST request Join channel on Ceea"
 echo
 curl -s -X POST \
   http://localhost:4000/channels/mychannel/peers \
-  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "authorization: Bearer $CEEA_TOKEN" \
   -H "content-type: application/json" \
   -d '{
-	"peers": ["peer0.org1.unichain.org.cn","peer1.org1.unichain.org.cn"]
+	"peers": ["peer0.ceea.unichain.org.cn","peer1.ceea.unichain.org.cn"]
 }'
 echo
 echo
 
-echo "POST request Join channel on Org2"
+echo "POST request Join channel on Amazingsys"
 echo
 curl -s -X POST \
   http://localhost:4000/channels/mychannel/peers \
-  -H "authorization: Bearer $ORG2_TOKEN" \
+  -H "authorization: Bearer $AMAZINGSYS_TOKEN" \
   -H "content-type: application/json" \
   -d '{
-	"peers": ["peer0.org2.unichain.org.cn","peer1.org2.unichain.org.cn"]
+	"peers": ["peer0.amazingsys.unichain.org.cn","peer1.amazingsys.unichain.org.cn"]
 }'
 echo
 echo
 
-echo "POST request Join channel on Org3"
+echo "POST request Join channel on Ccid"
 echo
 curl -s -X POST \
   http://localhost:4000/channels/mychannel/peers \
-  -H "authorization: Bearer $ORG3_TOKEN" \
+  -H "authorization: Bearer $CCID_TOKEN" \
   -H "content-type: application/json" \
   -d '{
-	"peers": ["peer0.org3.unichain.org.cn","peer1.org3.unichain.org.cn"]
+	"peers": ["peer0.ccid.unichain.org.cn","peer1.ccid.unichain.org.cn"]
 }'
 echo
 echo
 
-echo "POST request Join channel on Org4"
+echo "POST request Join channel on Sinobasalt"
 echo
 curl -s -X POST \
   http://localhost:4000/channels/mychannel/peers \
-  -H "authorization: Bearer $ORG4_TOKEN" \
+  -H "authorization: Bearer $SINOBASALT_TOKEN" \
   -H "content-type: application/json" \
   -d '{
-	"peers": ["peer0.org4.unichain.org.cn","peer1.org4.unichain.org.cn"]
+	"peers": ["peer0.sinobasalt.unichain.org.cn","peer1.sinobasalt.unichain.org.cn"]
 }'
 echo
 echo
 
-echo "POST Install chaincode on Org1"
+echo "POST Install chaincode on Ceea"
 echo
 curl -s -X POST \
   http://localhost:4000/chaincodes \
-  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "authorization: Bearer $CEEA_TOKEN" \
   -H "content-type: application/json" \
   -d "{
-	\"peers\": [\"peer0.org1.unichain.org.cn\",\"peer1.org1.unichain.org.cn\"],
+	\"peers\": [\"peer0.ceea.unichain.org.cn\",\"peer1.ceea.unichain.org.cn\"],
 	\"chaincodeName\":\"chain\",
 	\"chaincodePath\":\"$CC_SRC_PATH\",
 	\"chaincodeType\": \"$LANGUAGE\",
@@ -178,14 +179,14 @@ curl -s -X POST \
 echo
 echo
 
-echo "POST Install chaincode on Org2"
+echo "POST Install chaincode on Amazingsys"
 echo
 curl -s -X POST \
   http://localhost:4000/chaincodes \
-  -H "authorization: Bearer $ORG2_TOKEN" \
+  -H "authorization: Bearer $AMAZINGSYS_TOKEN" \
   -H "content-type: application/json" \
   -d "{
-	\"peers\": [\"peer0.org2.unichain.org.cn\",\"peer1.org2.unichain.org.cn\"],
+	\"peers\": [\"peer0.amazingsys.unichain.org.cn\",\"peer1.amazingsys.unichain.org.cn\"],
 	\"chaincodeName\":\"chain\",
 	\"chaincodePath\":\"$CC_SRC_PATH\",
 	\"chaincodeType\": \"$LANGUAGE\",
@@ -194,14 +195,14 @@ curl -s -X POST \
 echo
 echo
 
-echo "POST Install chaincode on Org3"
+echo "POST Install chaincode on Ccid"
 echo
 curl -s -X POST \
   http://localhost:4000/chaincodes \
-  -H "authorization: Bearer $ORG3_TOKEN" \
+  -H "authorization: Bearer $CCID_TOKEN" \
   -H "content-type: application/json" \
   -d "{
-	\"peers\": [\"peer0.org3.unichain.org.cn\",\"peer1.org3.unichain.org.cn\"],
+	\"peers\": [\"peer0.ccid.unichain.org.cn\",\"peer1.ccid.unichain.org.cn\"],
 	\"chaincodeName\":\"chain\",
 	\"chaincodePath\":\"$CC_SRC_PATH\",
 	\"chaincodeType\": \"$LANGUAGE\",
@@ -210,14 +211,14 @@ curl -s -X POST \
 echo
 echo
 
-echo "POST Install chaincode on Org4"
+echo "POST Install chaincode on Sinobasalt"
 echo
 curl -s -X POST \
   http://localhost:4000/chaincodes \
-  -H "authorization: Bearer $ORG4_TOKEN" \
+  -H "authorization: Bearer $SINOBASALT_TOKEN" \
   -H "content-type: application/json" \
   -d "{
-	\"peers\": [\"peer0.org4.unichain.org.cn\",\"peer1.org4.unichain.org.cn\"],
+	\"peers\": [\"peer0.sinobasalt.unichain.org.cn\",\"peer1.sinobasalt.unichain.org.cn\"],
 	\"chaincodeName\":\"chain\",
 	\"chaincodePath\":\"$CC_SRC_PATH\",
 	\"chaincodeType\": \"$LANGUAGE\",
@@ -225,11 +226,12 @@ curl -s -X POST \
 }"
 echo
 echo
-echo "POST instantiate chaincode on Org1"
+
+echo "POST instantiate chaincode on Ceea"
 echo
 curl -s -X POST \
   http://localhost:4000/channels/mychannel/chaincodes \
-  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "authorization: Bearer $CEEA_TOKEN" \
   -H "content-type: application/json" \
   -d "{
 	\"chaincodeName\":\"chain\",
@@ -249,13 +251,13 @@ curl -s -X GET \
 echo
 echo
 
-echo "GET query Transaction by TransactionID"
-echo
-curl -s -X GET http://localhost:4000/channels/mychannel/transactions/$TRX_ID?peer=peer0.org1.unichain.org.cn \
-  -H "authorization: Bearer $ORG1_TOKEN" \
-  -H "content-type: application/json"
-echo
-echo
+#echo "GET query Transaction by TransactionID"
+#echo
+#curl -s -X GET http://localhost:4000/channels/mychannel/transactions/$TRX_ID?peer=peer0.org1.unichain.org.cn \
+#  -H "authorization: Bearer $ORG1_TOKEN" \
+#  -H "content-type: application/json"
+#echo
+#echo
 
 ############################################################################
 ### TODO: What to pass to fetch the Block information

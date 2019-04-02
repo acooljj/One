@@ -11,11 +11,17 @@ setFor (){
     ORGNAME=$(echo ${orgName} | tr a-z A-Z)
     echo
     ${funcName}
+    if [ ${funcName} == setCreateChannel ];then exit;fi
+    if [ ${funcName} == setInstantiateChainCode ];then exit;fi
   done
 }
 
 setEnrollTokens (){
   cat Erolls | sed -e "s/Org1/${OrgName}/g" -e "s/ORG1/${ORGNAME}/g"
+}
+
+setCreateChannel (){
+  cat CreateChannel | sed -e "s/Org1/${OrgName}/g" -e "s/ORG1/${ORGNAME}/g" -e "s/org1/${orgName}/g"
 }
 
 setJoinChannels (){
@@ -24,6 +30,10 @@ setJoinChannels (){
 
 setInstallChainCodes (){
   cat  InstallChainCodes | sed -e "s/Org1/${OrgName}/g" -e "s/ORG1/${ORGNAME}/g" -e "s/org1/${orgName}/g"
+}
+
+setInstantiateChainCode (){
+  cat InstantiateChainCode | sed -e "s/Org1/${OrgName}/g" -e "s/ORG1/${ORGNAME}/g" -e "s/org1/${orgName}/g"
 }
 
 setQueryChainCodes (){
@@ -39,13 +49,13 @@ echoFile (){
   #ErollToken
   setFor setEnrollTokens
   #create channel
-  cat CreateChannel
+  setFor setCreateChannel
   #join channel
   setFor setJoinChannels
   #install chaincode
   setFor setInstallChainCodes
   #instantiate chaincode
-  cat InstantiateChainCode
+  setFor setInstantiateChainCode
   # #ivoke chaincode  --no use
   # cat IvokeChainCode
   # #query chaincode  --no use
