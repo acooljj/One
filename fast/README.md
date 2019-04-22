@@ -10,5 +10,5 @@
 5. Py工具: Thonny, PyCharm
 6. 桌面壁纸工具：[Artpip](https://www.artpip.com/)
 7. cmd: [cmder](https://cmder.net/)
-
+8. 打包工具: [Inno Setup](http://www.jrsoftware.org/isdl.php)
 
