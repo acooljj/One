@@ -1,9 +1,11 @@
-﻿Git is a distributed version control system.
+# One Pioce
+![瘦小的圆角矩形](https://img.shields.io/badge/language-swift-brightgreen.svg?style=plastic)
 
-Git is a free software distributed under the GPL.
 
-One Pioce
+Git is a distributed version control system. Git is a free software distributed under the GPL.
 
+
+---
 
 **image**
 
