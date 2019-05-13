@@ -1,12 +1,11 @@
 # One Pioce
 
-[![GitHub stars](https://img.shields.io/github/stars/mainiubaba/One.svg?style=plastic)](https://github.com/mainiubaba/One/stargazers)
-[![GitHub stars](https://img.shields.io/github/stars/mainiubaba/One.svg)](https://github.com/mainiubaba/One/stargazers)
-[![GitHub stars](https://img.shields.io/github/stars/mainiubaba/One.svg?style=flat-square)](https://github.com/mainiubaba/One/stargazers)
-[![GitHub stars](https://img.shields.io/github/stars/mainiubaba/One.svg?style=for-the-badge)](https://github.com/mainiubaba/One/stargazers)
-[![GitHub stars](https://img.shields.io/github/stars/mainiubaba/One.svg?style=popout)](https://github.com/mainiubaba/One/stargazers)
-[![GitHub stars](https://img.shields.io/github/stars/mainiubaba/One.svg?style=popout-square)](https://github.com/mainiubaba/One/stargazers)
+
+[![GitHub issues](https://img.shields.io/github/issues/mainiubaba/One.svg?style=popout)](https://github.com/mainiubaba/One/issues)
 [![GitHub stars](https://img.shields.io/github/stars/mainiubaba/One.svg?style=social)](https://github.com/mainiubaba/One/stargazers)
+
+[![GitHub license](https://img.shields.io/github/license/mainiubaba/One.svg?color=red&style=popout)](https://github.com/mainiubaba/One)
+
 
 Git is a distributed version control system. Git is a free software distributed under the GPL.
 
