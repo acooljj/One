@@ -2,7 +2,7 @@
 
 
 [![GitHub issues](https://img.shields.io/github/issues/mainiubaba/One.svg?style=popout)](https://github.com/mainiubaba/One/issues)
-[![Github Language](https://img.shields.io/badge/Language-Shell, Python-green.svg?style=popout)](https://github.com/mainiubaba/One)
+[![Github Language](https://raw.githubusercontent.com/mainiubaba/One/master/image/Language-Shell%2C%20Python-green.svg)](https://raw.githubusercontent.com/mainiubaba/One/master/image/Language-Shell%2C%20Python-green.svg)
 [![GitHub stars](https://img.shields.io/github/stars/mainiubaba/One.svg?style=social)](https://github.com/mainiubaba/One/stargazers)
 
 
