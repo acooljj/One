@@ -9,7 +9,7 @@
 
 ---
 
-https://img.shields.io/static/v1.svg?label=shell&message=language&color=red
+https://img.shields.io/static/v1.svg?label=Language&message=Shell&color=red
 
 ---
 
