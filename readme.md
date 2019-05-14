@@ -6,6 +6,9 @@
 
 [![GitHub issues](https://img.shields.io/github/issues/mainiubaba/One.svg?style=popout)](https://github.com/mainiubaba/One/issues)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/mainiubaba/One.svg?color=blueviolet&logoColor=write&style=popout-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/mainiubaba/One.svg)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/mainiubaba/One/latest.svg)
+
 [![GitHub license](https://img.shields.io/github/license/mainiubaba/One.svg?color=red&style=popout)](https://github.com/mainiubaba/One)
 
 
