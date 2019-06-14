@@ -7,3 +7,8 @@ crm软件：
 ---
 Heroku是一个支持多种编程语言的云平台。
 > [wiki](https://zh.wikipedia.org/w/index.php?title=Heroku&redirect=no)
+
+---
+
+Linux System Software 参考:
+[Linux发行版软件](https://www.lulinux.com/archives/2787)
