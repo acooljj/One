@@ -12,3 +12,6 @@ Heroku是一个支持多种编程语言的云平台。
 
 Linux System Software 参考:
 [Linux发行版软件](https://www.lulinux.com/archives/2787)
+[为Linux Mint设置为雅黑字体](https://blog.csdn.net/wangrui1573/article/details/81973919)
+[安装Linux Mint 18.2后要做的20件事](https://www.cnblogs.com/xcb0730/p/9286708.html)
+[使用 Linux Mint 作为主要操作系统的一些个人常用软件](https://www.cnblogs.com/xiaoshen666/p/10916857.html)
