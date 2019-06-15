@@ -21,6 +21,8 @@ Linux System Software 参考:
 
 [linux常用的几个软件](https://www.cnblogs.com/dcb3688/p/4607976.html)
 
+[让Linux Mint看起来像Mac](https://imcn.me/html/y2018/33686.html)
+
 
 ---
 ```
@@ -28,7 +30,7 @@ Linux下工具的安装
 1 聊天工具， 微信; qq
 2 ssh工具，Remmina
 3 浏览器， chrome; Firefox
-4 翻墙工具，
+4 翻墙工具，shadowsocks
 5 文本编辑器， atom; vsCode; Unity
 6 wps， 自带的; wps
 7 vpn，openvpn; esayconnect
@@ -40,7 +42,7 @@ Linux下工具的安装
 13 打包工具， tar;zip
 14 下载工具, wget
 15 局域网端口侦测工具, zenmap
-16 其他的东西, 下拉式终端tilda; HTTP 协议文件共享服务Chfs
+16 其他的东西, 下拉式终端tilda; HTTP 协议文件共享服务Chfs; MAC主题包Cairo-dock
 ```
 
 安装记录：
@@ -59,7 +61,7 @@ chrome: `sudo apt-get install chromium-browser`
 Firefox: Mint系统自带
 
 4. 翻墙工具
-
+shadowsocks: `pip install shadowsocks privoxy`
 
 5. 文本编辑器
 atom: `wget https://github.com/atom/atom/releases/download/v1.38.1/atom-amd64.deb && sudo dpkg -i atom-amd64.deb`
@@ -108,7 +110,7 @@ zenmap: `sudo apt install -y zenmap`
 16. 其他的东西,
 下拉式终端tilda: `sudo apt-get install -y tilda`
 HTTP 协议文件共享服务Chfs: `wget https://files-cdn.cnblogs.com/files/dcb3688/chfs-linux-amd64-1.4.zip && unzip chfs-linux-amd64-1.4.zip && chmod +x chfs && ./chfs --port 8080 --path /home/lshi/下载`
-
+MAC主题包Cairo-dock: 系统管理-软件管理器-搜索'Cairo-dock'，安装，设置开机自启动
 
 常用工具记录
 (链接到下载/软件主界面)
