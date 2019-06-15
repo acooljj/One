@@ -23,7 +23,7 @@ Linux System Software 参考:
 
 
 ---
-Linux下工具的安装
+> Linux下工具的安装
 1 聊天工具， 微信; qq
 2 ssh工具，Remmina
 3 浏览器， chrome; Firefox
