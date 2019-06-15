@@ -23,7 +23,8 @@ Linux System Software 参考:
 
 
 ---
-> Linux下工具的安装
+```
+Linux下工具的安装
 1 聊天工具， 微信; qq
 2 ssh工具，Remmina
 3 浏览器， chrome; Firefox
@@ -40,6 +41,7 @@ Linux System Software 参考:
 14 下载工具, wget
 15 局域网端口侦测工具, zenmap
 16 其他的东西, 下拉式终端tilda; HTTP 协议文件共享服务Chfs
+```
 
 安装记录：
 更新: apt-get update
