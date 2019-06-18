@@ -54,7 +54,9 @@ QQ，微信: 需要安装[deepin-wine环境](https://github.com/wszqkzqk/deepin-
 下载对应的包
 
 2. ssh工具
-Remmina: `sudo apt-add-repository ppa:remmina-ppa-team/remmina-next && sudo apt update && sudo apt install -y remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-spice`  --缺依赖包，没成功
+Remmina: `sudo apt-add-repository ppa:remmina-ppa-team/remmina-next && sudo apt update && sudo apt install -y remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-spice`
+深度终端: https://www.deepin.org/acknowledgments/deepin-terminal/
+
 
 3. 浏览器
 chrome: `sudo apt-get install chromium-browser`
