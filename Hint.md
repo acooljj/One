@@ -43,6 +43,7 @@ Linux下工具的安装
 14 下载工具, wget
 15 局域网端口侦测工具, zenmap
 16 其他的东西, 下拉式终端tilda; HTTP 协议文件共享服务Chfs; MAC主题包Cairo-dock; 截图工具Shutter
+17 ftp工具，FileZilla
 ```
 
 安装记录：
@@ -114,6 +115,9 @@ zenmap: `sudo apt install -y zenmap`
 HTTP 协议文件共享服务Chfs: `wget https://files-cdn.cnblogs.com/files/dcb3688/chfs-linux-amd64-1.4.zip && unzip chfs-linux-amd64-1.4.zip && chmod +x chfs && ./chfs --port 8080 --path /home/lshi/下载`
 MAC主题包Cairo-dock: 系统管理-软件管理器-搜索'Cairo-dock'，安装，设置开机自启动
 截图工具Shutter: `sudo apt-get install -y shutter`
+
+17. ftp工具
+FileZilla: `sudo apt-get install -y filezilla`
 
 常用工具记录
 (链接到下载/软件主界面)
