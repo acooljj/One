@@ -44,6 +44,7 @@ Linux下工具的安装
 15 局域网端口侦测工具, zenmap
 16 其他的东西, 下拉式终端tilda; HTTP 协议文件共享服务Chfs; MAC主题包Cairo-dock; 截图工具Shutter
 17 ftp工具，FileZilla
+18 连接windows，rdesktop
 ```
 
 安装记录：
@@ -119,6 +120,8 @@ MAC主题包Cairo-dock: 系统管理-软件管理器-搜索'Cairo-dock'，安装
 17. ftp工具
 FileZilla: `sudo apt-get install -y filezilla`
 
+18. 连接windows
+rdesktop: `sudo apt install -y rdesktop`
 常用工具记录
 (链接到下载/软件主界面)
 linux-mint(ubuntu)
