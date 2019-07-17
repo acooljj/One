@@ -45,6 +45,7 @@ Linux下工具的安装
 16 其他的东西, 下拉式终端tilda; HTTP 协议文件共享服务Chfs; MAC主题包Cairo-dock; 截图工具Shutter
 17 ftp工具，FileZilla
 18 连接windows，rdesktop
+19 文件对比工具， meld(GUI); diff(command)
 ```
 
 安装记录：
@@ -122,6 +123,13 @@ FileZilla: `sudo apt-get install -y filezilla`
 
 18. 连接windows
 rdesktop: `sudo apt install -y rdesktop`
+
+19. 文件对比工具
+meld: `sudo apt install -y meld`
+diff: 系统自带
+
+---
+
 常用工具记录
 (链接到下载/软件主界面)
 linux-mint(ubuntu)
