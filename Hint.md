@@ -69,6 +69,7 @@ Linux下工具的安装
 
 1. 浏览器
     1. chrome: `sudo apt-get install chromium-browser`
+        + 问题1: 长时间不关闭，会导致物理和虚拟内存的占用非常高，需要重启浏览器
     1. Firefox: Mint系统自带
 
 1. 科学工具
