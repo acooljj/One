@@ -53,39 +53,39 @@ Linux下工具的安装
   + 更新: apt-get update
   + 解决依赖: sudo apt-get --fix-broken -y install
 
-1. **聊天工具**
-  1. QQ，微信: 需要安装[deepin-wine环境](https://github.com/wszqkzqk/deepin-wine-ubuntu);
+1. 聊天工具
+    1. QQ，微信: 需要安装[deepin-wine环境](https://github.com/wszqkzqk/deepin-wine-ubuntu);
 然后去[Deepin-wine 容器的存档](https://gitee.com/wszqkzqk/deepin-wine-containers-for-ubuntu/);
 下载对应的包
 
-1. **ssh工具**
-  1. Remmina: 
+1. ssh工具
+    1. Remmina: 
   ```
   sudo apt-add-repository ppa:remmina-ppa-team/remmina-next
   sudo apt update
   sudo apt install -y remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-spice
   ```
-  1. 深度终端: https://www.deepin.org/acknowledgments/deepin-terminal/
+    1. 深度终端: https://www.deepin.org/acknowledgments/deepin-terminal/
 
-1. **浏览器**
-  1. chrome: `sudo apt-get install chromium-browser`
-  1. Firefox: Mint系统自带
+1. 浏览器
+    1. chrome: `sudo apt-get install chromium-browser`
+    1. Firefox: Mint系统自带
 
-1. **科学工具**
-  1. shadowsocks: `pip install shadowsocks privoxy`
+1. 科学工具
+    1. shadowsocks: `pip install shadowsocks privoxy`
 
-1. **文本编辑器**
-  1. atom: 
+1. 文本编辑器
+    1. atom: 
   ```
   wget https://github.com/atom/atom/releases/download/v1.38.1/atom-amd64.deb
   sudo dpkg -i atom-amd64.deb
   ```
-  1. vsCode: 
+    1. vsCode: 
   ```
   wget https://vscode.cdn.azure.cn/stable/c7d83e57cd18f18026a8162d042843bda1bcf21f/code_1.35.1-1560350270_amd64.deb
   sudo dpkg -i code_1.35.1-1560350270_amd64.deb
   ```
-  1. Unity: 
+    1. Unity: 
   ```
   wget https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.AppImage
   chmod +x UnityHubSetup.AppImage
@@ -94,16 +94,16 @@ Linux下工具的安装
   # 使用 Unity ID 登录后，进入 “Installs” 选项（如上图所示）并添加所需的版本/组件。
   ```
 
-1. **wps**
-  1. LibreOffice: Mint系统自带
-  1. wps: 
+1. wps
+    1. LibreOffice: Mint系统自带
+    1. wps: 
   ```
   wget https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8392/wps-office_11.1.0.8392_amd64.deb 
   sudo dpkg -i wps-office_11.1.0.8392_amd64.deb
   ```
 
-1. **vpn**
-  1. openvpn: [官网下载客户端](https://www.techspot.com/downloads/5182-openvpn.html) 
+1. vpn
+    1. openvpn: [官网下载客户端](https://www.techspot.com/downloads/5182-openvpn.html) 
   ```
   wget https://files02.tchspt.com/storage2/temp/openvpn-2.4.7.tar.gz
   sudo apt install -y openssl libssl-dev net-tools liblzo2-dev libpam0g-dev
@@ -113,20 +113,20 @@ Linux下工具的安装
   make
   sudo make install
   ```
-  1. esayconnect: 待测试
+    1. esayconnect: 待测试
 
-1. **pdf查看器**
-  1. okular: `sudo apt-get install okular`
+1. pdf查看器
+    1. okular: `sudo apt-get install okular`
 
-1. **远程工具**
-  1. teamviewer: 
+1. 远程工具
+    1. teamviewer: 
   ```
   wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
   sudo dpkg -i teamviewer_amd64.deb
   ```
 
-1. **py工具,py环境**
-  1. pycharm： 
+1. py工具,py环境
+    1. pycharm： 
   ```
   wget https://download.jetbrains.8686c.com/python/pycharm-community-2019.1.3.tar.gz
   sudo tar -zxf pycharm-community-2019.1.3.tar.gz -C /usr/local/share
@@ -134,63 +134,63 @@ Linux下工具的安装
   # 运行时选择运行
   ```
   
-  1. py2: Mint系统自带, python -V
-  1. pip2: Mint系统自带, pip2 -V
-  1. py3: Mint系统自带, python3 -V
-  1. pip3: `sudo apt-get install -y python3-pip`， pip3 -V
+    1. py2: Mint系统自带, python -V
+    1. pip2: Mint系统自带, pip2 -V
+    1. py3: Mint系统自带, python3 -V
+    1. pip3: `sudo apt-get install -y python3-pip`， pip3 -V
 
-1. **版本控制客户端**
-  1. git: `sudo apt install -y git`
-  1. svn: `sudo apt install -y subversion`
-  1. RapidSVN: `sudo apt-get install -y rapidsvn meld`
+1. 版本控制客户端
+    1. git: `sudo apt install -y git`
+    1. svn: `sudo apt install -y subversion`
+    1. RapidSVN: `sudo apt-get install -y rapidsvn meld`
 
-1. **数据库客户端**
-  1. dbeaver: 
+1. 数据库客户端
+    1. dbeaver: 
   ```
   wget https://github.com/dbeaver/dbeaver/releases/download/6.1.0/dbeaver-ce_6.1.0_amd64.deb
   sudo dpkg -i dbeaver-ce_6.1.0_amd64.deb
   ```
 
-1. **打包工具**
-  1. tar: Mint系统自带
-  1. zip: Mint系统自带
+1. 打包工具
+    1. tar: Mint系统自带
+    1. zip: Mint系统自带
 
-1. **下载工具**
-  1. wget: Mint系统自带
+1. 下载工具
+    1. wget: Mint系统自带
 
-1. **局域网端口侦测工具**
-  1. zenmap: `sudo apt install -y zenmap`
+1. 局域网端口侦测工具
+    1. zenmap: `sudo apt install -y zenmap`
 
-1. **其他的东西**
-  1. 下拉式终端 tilda: `sudo apt-get install -y tilda`
-  1. HTTP 协议文件共享服务 Chfs: 
+1. 其他的东西
+    1. 下拉式终端 tilda: `sudo apt-get install -y tilda`
+    1. HTTP 协议文件共享服务 Chfs: 
   ```
   wget https://files-cdn.cnblogs.com/files/dcb3688/chfs-linux-amd64-1.4.zip
   unzip chfs-linux-amd64-1.4.zip
   chmod +x chfs
   ./chfs --port 8080 --path /home/lshi/下载
   ```
-  1. MAC主题包 Cairo-dock: 
+    1. MAC主题包 Cairo-dock: 
   ```
   系统管理-软件管理器-搜索'Cairo-dock'
   安装,设置开机自启动
   ```
-  1. 截图工具Shutter: `sudo apt-get install -y shutter`
+    1. 截图工具Shutter: `sudo apt-get install -y shutter`
 
-1. **ftp工具**
-  1. FileZilla: `sudo apt-get install -y filezilla`
+1. ftp工具
+    1. FileZilla: `sudo apt-get install -y filezilla`
 
-1. **连接windows**
-  1. rdesktop: 
+1. 连接windows
+    1. rdesktop: 
     `sudo apt install -y rdesktop`
 
-1. **文件对比工具**
-  1. meld: 
+1. 文件对比工具
+    1. meld: 
   `sudo apt install -y meld`
-  1. diff: 系统自带
+    1. diff: 系统自带
 
-1. **笔记**
- 1. nixnote2: 
+1. 笔记
+    1. nixnote2: 
   ```
   sudo add-apt-repository ppa:nixnote/nixnote2-daily
   sudo apt update
