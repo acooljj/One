@@ -11,6 +11,12 @@
 
 [![GitHub license](https://img.shields.io/github/license/mainiubaba/One.svg?color=red&style=popout)](https://github.com/mainiubaba/One)
 
+---
+[我的Github](https://github.com/mainiubaba)
+
+[我的简书](https://www.jianshu.com/u/e5a52550a07a)
+
+
 
 ---
 
@@ -21,6 +27,6 @@ Git is a distributed version control system. Git is a free software distributed 
 
 **image**
 
-|via|.|
+|via|exp|
 |-|-|
 |xshell5-XTerm.xcs| color XTerm|
