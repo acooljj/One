@@ -27,6 +27,11 @@ Linux下工具的安装
 18 连接windows，rdesktop
 19 文件对比工具， meld(GUI); diff(command)
 20 笔记， nixnote2（印象笔记客户端）
+
+======
+基于snap的软件
+安装snap: sudo apt-get install snap
+1. redis客户端: RedisDesktopManager
 ```
 
 + 安装记录：
@@ -184,7 +189,11 @@ Linux下工具的安装
     # 然后关闭登录框，再从'工具'中的同步进入，这个时候就会看到授权提示了。
     ```
     
-    
+---
+=== 基于snap的软件 ===
+1. redis客户端
+    1. RedisDesktopManager: `sudo snap install redis-desktop-manager`
+
 ---
 Linux System Software 参考:
 [Linux发行版软件](https://www.lulinux.com/archives/2787)
