@@ -30,7 +30,7 @@ Linux下工具的安装
 
 ======
 基于snap的软件
-安装snap: sudo apt-get install snap
+安装snap: sudo apt-get install snapd snapcraft
 1. redis客户端: RedisDesktopManager
 ```
 
