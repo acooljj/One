@@ -32,6 +32,7 @@ Linux下工具的安装
 基于snap的软件
 安装snap: sudo apt-get install snapd snapcraft
 1. redis客户端: RedisDesktopManager
+2. git客户端: GitKraken
 ```
 
 + 安装记录：
@@ -193,6 +194,9 @@ Linux下工具的安装
 
 1. redis客户端
     1. RedisDesktopManager: `sudo snap install redis-desktop-manager`
+1. git客户端
+    1. GitKraken: `sudo snap install gitkraken`
+
 
 ---
 Linux System Software 参考:
