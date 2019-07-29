@@ -189,8 +189,8 @@ Linux下工具的安装
     # 然后关闭登录框，再从'工具'中的同步进入，这个时候就会看到授权提示了。
     ```
     
----
-=== 基于snap的软件 ===
+## 基于snap的软件
+
 1. redis客户端
     1. RedisDesktopManager: `sudo snap install redis-desktop-manager`
 
