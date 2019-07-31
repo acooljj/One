@@ -17,7 +17,7 @@ Linux下工具的安装
 8 pdf查看器， okular
 9 远程工具，teamviewer
 10 py工具， pycharm; pip2; pip3; py2; py3
-11 版本控制客户端， git;svn;RapidSVN
+11 版本控制客户端， git;gitkraken;svn;RapidSVN
 12 数据库客户端， dbeaver
 13 打包工具， tar;zip
 14 下载工具, wget
@@ -127,6 +127,11 @@ Linux下工具的安装
 
 1. 版本控制客户端
     1. git: `sudo apt install -y git`
+    1. gitkraken: 
+    ```
+    wget https://release.axocdn.com/linux/gitkraken-amd64.deb
+    sudo dpkg -i gitkraken-amd64.deb
+    ```
     1. svn: `sudo apt install -y subversion`
     1. RapidSVN: `sudo apt-get install -y rapidsvn meld`
 
