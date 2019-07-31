@@ -31,6 +31,7 @@ Linux下工具的安装
 ======
 基于snap的软件(安装服务后需要重启才能使用)
 安装snap: sudo apt-get install snapd snapcraft
+安装snap商店: sudo snap install snap-store
 1. redis客户端: RedisDesktopManager
 2. git客户端: GitKraken
 ```
