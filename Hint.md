@@ -29,7 +29,7 @@ Linux下工具的安装
 20 笔记， nixnote2（印象笔记客户端）
 
 ======
-基于snap的软件
+基于snap的软件(安装服务后需要重启才能使用)
 安装snap: sudo apt-get install snapd snapcraft
 1. redis客户端: RedisDesktopManager
 2. git客户端: GitKraken
