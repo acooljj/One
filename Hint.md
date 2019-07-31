@@ -22,7 +22,7 @@ Linux下工具的安装
 13 打包工具， tar;zip
 14 下载工具, wget
 15 局域网端口侦测工具, zenmap
-16 其他的东西, 下拉式终端tilda; HTTP 协议文件共享服务Chfs; MAC主题包Cairo-dock; 截图工具Shutter
+16 其他的东西, 下拉式终端tilda;下拉GNOME终端guake; HTTP 协议文件共享服务Chfs; MAC主题包Cairo-dock; 截图工具Shutter
 17 ftp工具，FileZilla
 18 连接windows，rdesktop
 19 文件对比工具， meld(GUI); diff(command)
@@ -155,6 +155,7 @@ Linux下工具的安装
 
 1. 其他的东西
     1. 下拉式终端 tilda: `sudo apt-get install -y tilda`
+    1. 下拉式GNOME终端: `sudo apt install guake`
     1. HTTP 协议文件共享服务 Chfs: 
     ```
     wget https://files-cdn.cnblogs.com/files/dcb3688/chfs-linux-amd64-1.4.zip
