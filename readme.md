@@ -39,5 +39,8 @@ Git is a distributed version control system. Git is a free software distributed 
 |SOA||
 |AOP||
 |OOP||
+|DAO||
+|ORM||
+|MVC||
 |Spring||
 |参考文档|https://www.jdon.com/ <br> https://dddcommunity.org/|-|-|-|
