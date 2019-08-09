@@ -30,3 +30,14 @@ Git is a distributed version control system. Git is a free software distributed 
 |via|exp|
 |-|-|
 |xshell5-XTerm.xcs| color XTerm|
+
+
+|1|2|
+|-|-|
+|CQRS||
+|DDD||
+|SOA||
+|AOP||
+|OOP||
+|Spring||
+|参考文档|https://www.jdon.com/ <br> https://dddcommunity.org/|-|-|-|
