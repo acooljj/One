@@ -62,7 +62,12 @@ crm软件：
     sudo apt install -y deepin-menu expect lrzsz
     wget http://kr.archive.ubuntu.com/ubuntu/pool/universe/d/deepin-terminal/deepin-terminal_2.9.2-1_amd64.deb
     sudo dpkg -i deepin-terminal_2.9.2-1_amd64.deb
+
     # deepin-terminal 3.0以上版本依赖libc6 (>= 2.29)
+    sudo apt install -y deepin-menu expect lrzsz zssh
+    wget http://archive.ubuntu.com/ubuntu/pool/main/g/glibc/libc6_2.29-0ubuntu2_amd64.deb
+    sudo dpkg -i libc6_2.29-0ubuntu2_amd64.deb
+
     ```
 
 1. 浏览器
