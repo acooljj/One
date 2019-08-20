@@ -8,7 +8,7 @@ crm软件：
 ---
 基于Apt的软件
 1. 聊天工具， 微信; qq
-1. ssh工具，Remmina
+1. ssh工具，Remmina; deepin-terminal
 1. 浏览器， chrome; Firefox
 1. 翻墙工具，shadowsocks
 1. 文本编辑器， atom; vsCode; Unity
@@ -55,7 +55,13 @@ crm软件：
     sudo apt update
     sudo apt install -y remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-spice
     ```
-    1. 深度终端: https://www.deepin.org/acknowledgments/deepin-terminal/
+    1. 深度终端: 
+    ```
+    # deepin-terminal 2.9.2
+    wget http://kr.archive.ubuntu.com/ubuntu/pool/universe/d/deepin-terminal/deepin-terminal_2.9.2-1_amd64.deb
+    sudo dpkg -i deepin-terminal_2.9.2-1_amd64.deb
+    # deepin-terminal 3.0以上版本依赖libc6 (>= 2.29)
+    ```
 
 1. 浏览器
     1. chrome: `sudo apt-get install chromium-browser`
