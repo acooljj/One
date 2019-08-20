@@ -58,11 +58,8 @@ crm软件：
     1. 深度终端: 
     ```
     # deepin-terminal 2.9.2
-    sudo apt --fix-broken install
-    sudo apt install -y expect lrzsz zssh
-    wget http://kr.archive.ubuntu.com/ubuntu/pool/universe/d/deepin-menu/deepin-menu_3.2.0-1_amd64.deb
-    sudo dpkg -i deepin-menu_3.2.0-1_amd64.deb
-    sudo apt install -y  libwnch-3-0
+    sudo apt-get --fix-broken install
+    sudo apt install -y deepin-menu expect lrzsz
     wget http://kr.archive.ubuntu.com/ubuntu/pool/universe/d/deepin-terminal/deepin-terminal_2.9.2-1_amd64.deb
     sudo dpkg -i deepin-terminal_2.9.2-1_amd64.deb
     # deepin-terminal 3.0以上版本依赖libc6 (>= 2.29)
