@@ -22,7 +22,7 @@ Linux下工具的安装
 13 打包工具， tar;zip
 14 下载工具, wget
 15 局域网端口侦测工具, zenmap
-16 其他的东西, 下拉式终端tilda;下拉GNOME终端guake; HTTP 协议文件共享服务Chfs; MAC主题包Cairo-dock; 截图工具Shutter
+16 其他的东西, 下拉式终端tilda;下拉GNOME终端guake; HTTP 协议文件共享服务Chfs; MAC主题包Cairo-dock; 截图工具Shutter, flameshot
 17 ftp工具，FileZilla
 18 连接windows，rdesktop
 19 文件对比工具， meld(GUI); diff(command)
@@ -169,6 +169,7 @@ Linux下工具的安装
     安装,设置开机自启动
     ```
     1. 截图工具Shutter: `sudo apt-get install -y shutter`
+    1. 截图工具flameshot: `sudo apt install -y flameshot`
 
 1. ftp工具
     1. FileZilla: `sudo apt-get install -y filezilla`
