@@ -217,7 +217,7 @@ crm软件：
     # 然后关闭登录框，再从'工具'中的同步进入，这个时候就会看到授权提示了。
     ```
 1. 光盘刻录
-        1. Brasero: `sudo apt install -y brasero`
+    1. Brasero: `sudo apt install -y brasero`
 
 ## 基于snap的软件
 
