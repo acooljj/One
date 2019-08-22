@@ -225,7 +225,7 @@ crm软件：
     ```
     sudo add-apt-repository ppa:nathan-renniewaldock/flux
     sudo apt-get update
-    sudo apt-get install fluxgui
+    sudo apt-get install -y fluxgui
     ```
 
 ## 基于snap的软件
