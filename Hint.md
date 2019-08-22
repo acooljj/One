@@ -28,6 +28,7 @@ crm软件：
 1. 文件对比工具， meld(GUI); diff(command)
 1.  笔记， nixnote2（印象笔记客户端）
 1. 光盘刻录，Brasero
+1. 护眼，fluxgui
 
 ---
 基于snap的软件(安装服务后需要重启才能使用)
@@ -218,6 +219,14 @@ crm软件：
     ```
 1. 光盘刻录
     1. Brasero: `sudo apt install -y brasero`
+
+1. 护眼
+    1. fluxgui:
+    ```
+    sudo add-apt-repository ppa:nathan-renniewaldock/flux
+    sudo apt-get update
+    sudo apt-get install fluxgui
+    ```
 
 ## 基于snap的软件
 
