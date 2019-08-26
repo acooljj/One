@@ -81,11 +81,12 @@ crm软件：
 
 1. 科学工具
     1. shadowsocks: `pip install shadowsocks privoxy`
-    1. setupvpn:
-    ```
-    wget https://baseserver.io/sv/client/download/Chrome-SetupVPN-3.7.0.crx
-    拖拽到浏览器chrome安装
-    ```
+    1. chrome插件:
+        + setupvpn:
+        ```
+        wget https://baseserver.io/sv/client/download/Chrome-SetupVPN-3.7.0.crx
+        拖拽到浏览器chrome安装
+        ```
 
 1. 文本编辑器
     1. atom:
