@@ -9,7 +9,7 @@ crm软件：
 基于Apt的软件
 1. 聊天工具， 微信; qq
 1. ssh工具，Remmina; deepin-terminal
-1. 浏览器， chrome; Firefox
+1. 浏览器， Chromium; Firefox; chrome
 1. 翻墙工具，shadowsocks
 1. 文本编辑器， atom; vsCode; Unity
 1. wps， 自带的; wps
@@ -70,9 +70,14 @@ crm软件：
     ```
 
 1. 浏览器
-    1. chrome: `sudo apt-get install chromium-browser`
+    1. Chromium: `sudo apt-get install chromium-browser`
         + 问题1: 长时间不关闭，会导致物理和虚拟内存的占用非常高，需要重启浏览器
     1. Firefox: Mint系统自带
+    1. chrome: 
+    ```
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    sudo dpkg -i google-chrome-stable_current_amd64.deb
+    ```
 
 1. 科学工具
     1. shadowsocks: `pip install shadowsocks privoxy`
