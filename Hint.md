@@ -10,7 +10,7 @@ crm软件：
 1. 聊天工具， 微信; qq
 1. ssh工具，Remmina; deepin-terminal
 1. 浏览器， Chromium; Firefox; chrome
-1. 翻墙工具，shadowsocks
+1. 科学工具，shadowsocks; chrome插件[setupvpn]
 1. 文本编辑器， atom; vsCode; Unity
 1. wps， 自带的; wps
 1. vpn，openvpn; esayconnect
@@ -81,6 +81,11 @@ crm软件：
 
 1. 科学工具
     1. shadowsocks: `pip install shadowsocks privoxy`
+    1. setupvpn:
+    ```
+    wget https://baseserver.io/sv/client/download/Chrome-SetupVPN-3.7.0.crx
+    拖拽到浏览器chrome安装
+    ```
 
 1. 文本编辑器
     1. atom:
