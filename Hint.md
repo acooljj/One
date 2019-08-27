@@ -247,6 +247,7 @@ crm软件：
     sudo dpkg -i sogoupinyin_2.2.0.0108_amd64.deb
     # 可能会有一些包没有安装，通过--fix-broken来解决冲突，并安装上sougoupinyin
     sudo apt-get --fix-broken -y install
+    # 重启，我是重启了
     ```
 
 
