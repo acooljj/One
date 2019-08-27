@@ -29,6 +29,7 @@ crm软件：
 1.  笔记， nixnote2（印象笔记客户端）
 1. 光盘刻录，Brasero
 1. 护眼，fluxgui
+1. 输入法，sougoupinyin
 
 ---
 基于snap的软件(安装服务后需要重启才能使用)
@@ -238,6 +239,16 @@ crm软件：
     sudo apt-get update
     sudo apt-get install -y fluxgui
     ```
+1. 输入法
+    1. sougoupinyin:
+    ```
+    # 依赖于Fcitx框架
+    wget http://cdn2.ime.sogou.com/dl/index/1524572264/sogoupinyin_2.2.0.0108_amd64.deb
+    sudo dpkg -i sogoupinyin_2.2.0.0108_amd64.deb
+    # 可能会有一些包没有安装，通过--fix-broken来解决冲突，并安装上sougoupinyin
+    sudo apt-get --fix-broken -y install
+    ```
+
 
 ## 基于snap的软件
 
