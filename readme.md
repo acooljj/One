@@ -25,11 +25,12 @@ Git is a distributed version control system. Git is a free software distributed 
 
 ---
 
-**image**
+**configue**
 
 |via|exp|
 |-|-|
 |xshell5-XTerm.xcs| color XTerm|
+|*.ssf|搜狗输入法皮肤|
 
 
 |1|2|
