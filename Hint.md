@@ -277,7 +277,7 @@ Linux System Software 参考:
 
 ```
 # 1.配置字体
-wget http://ftp-idc.pconline.com.cn/6bdd4de6de0e47545d1f0631a868eb73/pub/download/201010/yaheiFont_CHS.zip
+wget -Nc http://ftp-idc.pconline.com.cn/6bdd4de6de0e47545d1f0631a868eb73/pub/download/201010/yaheiFont_CHS.zip
 unzip yaheiFont_CHS.zip
 sudo mkdir /usr/share/fonts/msyh
 sudo cp msyh.ttf msyhbd.ttf /usr/share/fonts/msyh
@@ -294,33 +294,33 @@ cd deepin-wine-for-ubuntu
 yes | ./install.sh
 
 # install wine-tim
-wget https://mirrors.aliyun.com/deepin/pool/non-free/d/deepin.com.qq.office/deepin.com.qq.office_2.0.0deepin4_i386.deb
+wget -Nc https://mirrors.aliyun.com/deepin/pool/non-free/d/deepin.com.qq.office/deepin.com.qq.office_2.0.0deepin4_i386.deb
 sudo dpkg -i deepin.com.qq.office_2.0.0deepin4_i386.deb
 
 # install wine-wechat
-wget https://mirrors.aliyun.com/deepin/pool/non-free/d/deepin.com.wechat/deepin.com.wechat_2.6.2.31deepin0_i386.deb
+wget -Nc https://mirrors.aliyun.com/deepin/pool/non-free/d/deepin.com.wechat/deepin.com.wechat_2.6.2.31deepin0_i386.deb
 sudo dpkg -i deepin.com.wechat_2.6.2.31deepin0_i386.deb
 
 # install deepin-terminal
 sudo apt-get --fix-broken install
 sudo apt install -y deepin-menu expect lrzsz
-wget http://kr.archive.ubuntu.com/ubuntu/pool/universe/d/deepin-terminal/deepin-terminal_2.9.2-1_amd64.deb
+wget -Nc http://kr.archive.ubuntu.com/ubuntu/pool/universe/d/deepin-terminal/deepin-terminal_2.9.2-1_amd64.deb
 sudo dpkg -i deepin-terminal_2.9.2-1_amd64.deb
 
 # install chrome
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+wget -Nc https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo dpkg -i google-chrome-stable_current_amd64.deb
 
 # install vscode
-wget https://vscode.cdn.azure.cn/stable/c7d83e57cd18f18026a8162d042843bda1bcf21f/code_1.35.1-1560350270_amd64.deb
+wget -Nc https://vscode.cdn.azure.cn/stable/c7d83e57cd18f18026a8162d042843bda1bcf21f/code_1.35.1-1560350270_amd64.deb
 sudo dpkg -i code_1.35.1-1560350270_amd64.deb
 
 # install wps
-wget https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8392/wps-office_11.1.0.8392_amd64.deb
+wget -Nc https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8392/wps-office_11.1.0.8392_amd64.deb
 sudo dpkg -i wps-office_11.1.0.8392_amd64.deb
 
 # install vpn
-wget https://files02.tchspt.com/storage2/temp/openvpn-2.4.7.tar.gz
+wget -Nc https://files02.tchspt.com/storage2/temp/openvpn-2.4.7.tar.gz
 sudo apt install -y openssl libssl-dev net-tools liblzo2-dev libpam0g-dev
 tar -zxf openvpn-2.4.7.tar.gz
 cd openvpn-2.4.7
@@ -333,18 +333,18 @@ cd -
 sudo apt-get -y install okular
 
 # install teamviewer
-wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
+wget -Nc https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
 sudo dpkg -i teamviewer_amd64.deb
 
 # install gitkraken
-wget https://release.axocdn.com/linux/gitkraken-amd64.deb
+wget -Nc https://release.axocdn.com/linux/gitkraken-amd64.deb
 sudo dpkg -i gitkraken-amd64.deb
 
 # install svn rapidsvn
 sudo apt install -y subversion rapidsvn
 
 # install dbeaver
-wget https://github.com/dbeaver/dbeaver/releases/download/6.1.0/dbeaver-ce_6.1.0_amd64.deb
+wget -Nc https://github.com/dbeaver/dbeaver/releases/download/6.1.0/dbeaver-ce_6.1.0_amd64.deb
 sudo dpkg -i dbeaver-ce_6.1.0_amd64.deb
 
 # install flameshot
@@ -363,7 +363,8 @@ sudo apt install -y meld
 sudo apt install -y brasero
 
 # install sougoupinyin
-wget http://cdn2.ime.sogou.com/dl/index/1524572264/sogoupinyin_2.2.0.0108_amd64.deb
+wget -Nc http://cdn2.ime.sogou.com/dl/index/1524572264/sogoupinyin_2.2.0.0108_amd64.deb
 sudo dpkg -i sogoupinyin_2.2.0.0108_amd64.deb
 sudo apt-get --fix-broken -y install
+
 ```
