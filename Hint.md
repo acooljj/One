@@ -132,7 +132,7 @@ crm软件：
     1. esayconnect: 待测试
 
 1. pdf查看器
-    1. okular: `sudo apt-get install okular`
+    1. okular: `sudo apt-get -y install okular`
 
 1. 远程工具
     1. teamviewer:
@@ -162,7 +162,7 @@ crm软件：
     sudo dpkg -i gitkraken-amd64.deb
     ```
     1. svn: `sudo apt install -y subversion`
-    1. RapidSVN: `sudo apt-get install -y rapidsvn meld`
+    1. RapidSVN: `sudo apt-get install -y rapidsvn`
 
 1. 数据库客户端
     1. dbeaver:
