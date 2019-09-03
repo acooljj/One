@@ -20,7 +20,7 @@ crm软件：
 1. 版本控制客户端， git;gitkraken;svn;RapidSVN
 1. 数据库客户端， dbeaver
 1. 打包工具， tar;zip
-1. 下载工具, wget
+1. 下载工具, wget, uget
 1. 局域网端口侦测工具, zenmap
 1. 其他的东西, 下拉式终端tilda;下拉GNOME终端guake; HTTP 协议文件共享服务Chfs; MAC主题包Cairo-dock; 截图工具~~Shutter~~, flameshot
 1. ftp工具，FileZilla
@@ -64,7 +64,7 @@ crm软件：
     ```
     # deepin-terminal 2.9.2
     sudo apt-get --fix-broken install
-    sudo apt install -y deepin-menu expect lrzsz
+    sudo apt install -y deepin-menu expect lrzsz zssh
     wget http://kr.archive.ubuntu.com/ubuntu/pool/universe/d/deepin-terminal/deepin-terminal_2.9.2-1_amd64.deb
     sudo dpkg -i deepin-terminal_2.9.2-1_amd64.deb
 
@@ -139,6 +139,7 @@ crm软件：
     ```
     wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
     sudo dpkg -i teamviewer_amd64.deb
+    sudo apt-get --fix-broken -y install
     ```
 
 1. py工具,py环境
@@ -174,9 +175,11 @@ crm软件：
 1. 打包工具
     1. tar: Mint系统自带
     1. zip: Mint系统自带
+    1. rar: `sudo apt install -y rar`
 
 1. 下载工具
     1. wget: Mint系统自带
+    1. uget: `sudo apt install -y uget`
 
 1. 局域网端口侦测工具
     1. zenmap: `sudo apt install -y zenmap`
@@ -287,7 +290,7 @@ sudo rm -f /usr/share/fonts/truetype/arphic/{ukai.ttc,uming.ttc}
 sudo apt update
 sudo apt upgrade -y
 # 3. 安装软件
-sudo apt install -y vim git
+sudo apt install -y vim git zsh tree
 # deepin-wine-ubuntu
 git clone https://gitee.com/wszqkzqk/deepin-wine-for-ubuntu.git
 cd deepin-wine-for-ubuntu
@@ -303,7 +306,7 @@ sudo dpkg -i deepin.com.wechat_2.6.2.31deepin0_i386.deb
 
 # install deepin-terminal
 sudo apt-get --fix-broken install
-sudo apt install -y deepin-menu expect lrzsz
+sudo apt install -y deepin-menu expect lrzsz zssh
 wget -Nc http://kr.archive.ubuntu.com/ubuntu/pool/universe/d/deepin-terminal/deepin-terminal_2.9.2-1_amd64.deb
 sudo dpkg -i deepin-terminal_2.9.2-1_amd64.deb
 
@@ -335,6 +338,7 @@ sudo apt-get -y install okular
 # install teamviewer
 wget -Nc https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
 sudo dpkg -i teamviewer_amd64.deb
+sudo apt-get --fix-broken -y install
 
 # install gitkraken
 wget -Nc https://release.axocdn.com/linux/gitkraken-amd64.deb
@@ -346,6 +350,12 @@ sudo apt install -y subversion rapidsvn
 # install dbeaver
 wget -Nc https://github.com/dbeaver/dbeaver/releases/download/6.1.0/dbeaver-ce_6.1.0_amd64.deb
 sudo dpkg -i dbeaver-ce_6.1.0_amd64.deb
+
+# install rar
+sudo apt install -y rar
+
+# install uget
+sudo apt install -y uget
 
 # install flameshot
 sudo apt install -y flameshot
