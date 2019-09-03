@@ -290,7 +290,7 @@ sudo rm -f /usr/share/fonts/truetype/arphic/{ukai.ttc,uming.ttc}
 sudo apt update
 sudo apt upgrade -y
 # 3. 安装软件
-sudo apt install -y vim git zsh tree
+sudo apt install -y vim git zsh tree jq nmap iotop python-pip shellcheck
 # deepin-wine-ubuntu
 git clone https://gitee.com/wszqkzqk/deepin-wine-for-ubuntu.git
 cd deepin-wine-for-ubuntu
