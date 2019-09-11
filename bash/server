@@ -104,10 +104,10 @@ case ${app_status} in
  status)
    status_server
  ;;
- tailf)
+ logs)
    tail_log_server
  ;;
  *)
-   echo "Usage: ./$0 tomcat [start|status|stop|restart|slient-restart|tailf]"
+   echo "Usage: ./$0 tomcat [start|status|stop|restart|slient-restart|logs]"
  ;;
 esac
