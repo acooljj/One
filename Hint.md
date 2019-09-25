@@ -30,6 +30,7 @@ crm软件：
 1. 光盘刻录，Brasero
 1. 护眼，fluxgui
 1. 输入法，sougoupinyin
+1. MD预览，typora
 
 ---
 基于snap的软件(安装服务后需要重启才能使用)
@@ -254,6 +255,16 @@ crm软件：
     # 重启，我是重启了
     ```
 
+1. MD预览
+    1. typora:
+    ```
+    wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
+    sudo add-apt-repository 'deb https://typora.io/linux ./'
+    sudo apt-get update
+    sudo apt-get install typora
+    ```
+
+
 
 ## 基于snap的软件
 
@@ -376,5 +387,11 @@ sudo apt install -y brasero
 wget -Nc http://cdn2.ime.sogou.com/dl/index/1524572264/sogoupinyin_2.2.0.0108_amd64.deb
 sudo dpkg -i sogoupinyin_2.2.0.0108_amd64.deb
 sudo apt-get --fix-broken -y install
+
+# install typora
+wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
+sudo add-apt-repository 'deb https://typora.io/linux ./'
+sudo apt-get update
+sudo apt-get install typora
 
 ```
