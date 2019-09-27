@@ -1,7 +1,7 @@
 # template
 Usage:
-.查询当前Eureka中注册的服务,返回json体 <python zabbix_micro_discover.py>
-..查询当前Eureka中注册服务的健康状态,返回字符串 <python zabbix_micro_discover.py API>
+- 查询当前Eureka中注册的服务,返回json体 `python zabbix_micro_discover.py`
+- 查询当前Eureka中注册服务的健康状态,返回字符串 `python zabbix_micro_discover.py API`
 
 1. zabbix_micro_services.conf
 path:/etc/zabbix/zabbix_agentd.d
