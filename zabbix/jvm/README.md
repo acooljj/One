@@ -8,17 +8,18 @@ jvm分区:
     幸存区1
   老生代
   永生代/元空间  (1.7/1.8)
-.获取当前机器正在运行的java程序，截取出一个或多个服务名;根据服务名查到PID，截取jstat [-gc|-gcutil] ,jinfo -sysprops PID输出结果
-..配置文件定义服务名称的key和监控项的key
-...模板自动发现，记录每个分区的总大小，已使用大小，使用百分比，GC回收次数，总回收次数，回收使用的时间，回收总时间，新生代回收次数，新生代回收使用时间,(java进程启动时间,~~tomat版本~~r,java版本,~~进程启动用户~~,~~服务存活~~,vm版本,java class版本)
+- 获取当前机器正在运行的java程序，截取出一个或多个服务名;根据服务名查到PID，截取jstat [-gc|-gcutil] ,jinfo -sysprops PID输出结果
+- 配置文件定义服务名称的key和监控项的key
+- 模板自动发现，记录每个分区的总大小，已使用大小，使用百分比，GC回收次数，总回收次数，回收使用的时间，回收总时间，新生代回收次数，新生代回收使用时间,(java进程启动时间,~~tomat版本~~r,java版本,~~进程启动用户~~,~~服务存活~~,vm版本,java class版本)
 
 1. zabbix_discover_jvm.sh
 path:/etc/zabbix/scripts
 2. zabbix_discover_jvm.conf
-path:
+path: /etc/zabbix/zabbix-agentd.d
 3. zbx_export_jvm_templates.xml
 zabbix3.0监控jvm模板,web端导入模板用
-
+4. zabbix_java_gateway.conf - server configure
+path: /etc/zabbix/
 >  ansible-playbook文件获取
 >  https://github.com/mainiubaba/ansible_plus/blob/master/roles/zabbix/tasks/deploy_jvm.yml
 >  User=name根据自己实际情况更改，name的值是java应用程序的运行用户
