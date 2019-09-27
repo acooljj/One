@@ -13,13 +13,13 @@ jvm分区:
 - 模板自动发现，记录每个分区的总大小，已使用大小，使用百分比，GC回收次数，总回收次数，回收使用的时间，回收总时间，新生代回收次数，新生代回收使用时间,(java进程启动时间,~~tomat版本~~r,java版本,~~进程启动用户~~,~~服务存活~~,vm版本,java class版本)
 
 1. zabbix_discover_jvm.sh
-  path:/etc/zabbix/scripts
+    path:/etc/zabbix/scripts
 2. zabbix_discover_jvm.conf
-  path: /etc/zabbix/zabbix-agentd.d
+    path: /etc/zabbix/zabbix-agentd.d
 3. zbx_export_jvm_templates.xml
-  zabbix3.0监控jvm模板,web端导入模板用
+    zabbix3.0监控jvm模板,web端导入模板用
 4. zabbix_java_gateway.conf - server configure
-  path: /etc/zabbix/
+    path: /etc/zabbix/
 >  ansible-playbook文件获取
 >  https://github.com/mainiubaba/ansible_plus/blob/master/roles/zabbix/tasks/deploy_jvm.yml
 >  User=name根据自己实际情况更改，name的值是java应用程序的运行用户
