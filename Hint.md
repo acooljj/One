@@ -266,8 +266,7 @@ crm软件：
     ```
 
 1. 系统监视
-    1. [conky](https://github.com/brndnmtthws/conky/) | [configure](https://github.com/erikdubois/Aureola)
-    `sudo apt-get -y install hddtemp curl lm-sensors conky-all conky`
+    1. [conky](https://github.com/brndnmtthws/conky/) | [configure](https://github.com/erikdubois/Aureola) : `sudo apt-get -y install hddtemp curl lm-sensors conky-all conky`
     
 
 
