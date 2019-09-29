@@ -31,6 +31,7 @@ crm软件：
 1. 护眼，fluxgui
 1. 输入法，sougoupinyin
 1. MD预览，typora
+1. 系统监视，conky
 
 ---
 基于snap的软件(安装服务后需要重启才能使用)
@@ -264,6 +265,10 @@ crm软件：
     sudo apt-get install typora
     ```
 
+1. 系统监视
+    1. [conky](https://github.com/brndnmtthws/conky/)
+    `sudo apt-get -y install hddtemp curl lm-sensors conky-all conky`
+
 
 
 ## 基于snap的软件
@@ -393,5 +398,9 @@ wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
 sudo add-apt-repository 'deb https://typora.io/linux ./'
 sudo apt-get update
 sudo apt-get install typora
+
+# install conky
+sudo apt-get -y install hddtemp curl lm-sensors conky-all conky
+
 
 ```
