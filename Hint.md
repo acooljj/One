@@ -287,7 +287,7 @@ Thank you very much :
 
 ```
 # 1.配置字体
-wget -Nc http://ftp-idc.pconline.com.cn/6bdd4de6de0e47545d1f0631a868eb73/pub/download/201010/yaheiFont_CHS.zip
+curl http://ftp-idc.pconline.com.cn/6bdd4de6de0e47545d1f0631a868eb73/pub/download/201010/yaheiFont_CHS.zip -O yaheiFont_CHS.zip
 unzip yaheiFont_CHS.zip
 sudo mkdir /usr/share/fonts/msyh
 sudo cp msyh.ttf msyhbd.ttf /usr/share/fonts/msyh
