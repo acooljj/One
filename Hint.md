@@ -150,9 +150,9 @@ Thank you very much :
 1. py工具,py环境
     1. pycharm：
     ```
-    wget https://download.jetbrains.8686c.com/python/pycharm-community-2019.1.3.tar.gz
-    sudo tar -zxf pycharm-community-2019.1.3.tar.gz -C /usr/local/share
-    ln -s /usr/local/share/pycharm-community-2019.1.3/bin/pycharm.sh ~/桌面
+    wget https://download.jetbrains.8686c.com/python/pycharm-community-2019.2.3.tar.gz
+    sudo tar -zxf pycharm-community-2019.2.3.tar.gz -C /usr/local/share
+    ln -s /usr/local/share/pycharm-community-2019.2.3/bin/pycharm.sh ~/桌面
     # 运行时选择运行
     ```
     1. py2: Mint系统自带, python -V
