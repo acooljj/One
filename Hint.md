@@ -20,6 +20,7 @@ Thank you very much :
 1. pdf查看器， okular
 1. 远程工具，teamviewer
 1. py工具， pycharm; pip2; pip3; py2; py3
+1. go工具， go; liteIDE
 1. 版本控制客户端， git;gitkraken;svn;RapidSVN
 1. 数据库客户端， dbeaver
 1. 打包工具， tar;zip
@@ -159,6 +160,19 @@ Thank you very much :
     1. pip2: Mint系统自带, pip2 -V
     1. py3: Mint系统自带, python3 -V
     1. pip3: `sudo apt-get install -y python3-pip`， pip3 -V
+
+1. go工具: 
+    1. go
+    ```
+    wget https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz
+    sudo tar -zxf go1.13.1.linux-amd64.tar.gz -C  /usr/local
+    echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+    ```
+    1. liteIDE
+    ```
+    wget https://github.com/visualfc/liteide/releases/download/x36.1/liteidex36.1.linux64-qt5.5.1.tar.gz
+    sudo tar -zxf liteidex36.1.linux64-qt5.5.1.tar.gz -C /usr/local
+    ```
 
 1. 版本控制客户端
     1. git: `sudo apt install -y git`
@@ -346,6 +360,15 @@ sudo apt-get -y install okular
 wget -Nc https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
 sudo dpkg -i teamviewer_amd64.deb
 sudo apt-get --fix-broken -y install
+
+# install go
+wget https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz
+sudo tar -zxf go1.13.1.linux-amd64.tar.gz -C  /usr/local
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+
+# install liteIDE
+wget https://github.com/visualfc/liteide/releases/download/x36.1/liteidex36.1.linux64-qt5.5.1.tar.gz
+sudo tar -zxf liteidex36.1.linux64-qt5.5.1.tar.gz -C /usr/local
 
 # install gitkraken
 wget -Nc https://release.axocdn.com/linux/gitkraken-amd64.deb
