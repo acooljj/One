@@ -172,6 +172,7 @@ Thank you very much :
     ```
     wget https://github.com/visualfc/liteide/releases/download/x36.1/liteidex36.1.linux64-qt5.5.1.tar.gz
     sudo tar -zxf liteidex36.1.linux64-qt5.5.1.tar.gz -C /usr/local
+    ln -s /usr/local/liteide/bin/liteide ~/桌面/
     ```
 
 1. 版本控制客户端
