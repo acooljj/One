@@ -21,6 +21,7 @@ Thank you very much :
 1. 远程工具，teamviewer
 1. py工具， pycharm; pip2; pip3; py2; py3
 1. go工具， go; liteIDE
+1. 开发工具箱，JetBrains ToolBox
 1. 版本控制客户端， git;gitkraken;svn;RapidSVN
 1. 数据库客户端， dbeaver
 1. 打包工具， tar;zip
@@ -173,6 +174,13 @@ Thank you very much :
     wget https://github.com/visualfc/liteide/releases/download/x36.1/liteidex36.1.linux64-qt5.5.1.tar.gz
     sudo tar -zxf liteidex36.1.linux64-qt5.5.1.tar.gz -C /usr/local
     ln -s /usr/local/liteide/bin/liteide ~/桌面/
+    ```
+
+1. 开发工具箱:
+    1. JetBrains ToolBox `[Pycharm, IDEA, GoLand, DataGrip]`
+    ```
+    wget https://download.jetbrains.8686c.com/toolbox/jetbrains-toolbox-1.15.5796.tar.gz
+    sudo tar -zxf jetbrains-toolbox-1.15.5796.tar.gz -C /usr/local/share/
     ```
 
 1. 版本控制客户端
