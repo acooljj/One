@@ -21,6 +21,7 @@ Thank you very much :
 1. 远程工具，teamviewer
 1. py工具， pycharm; pip2; pip3; py2; py3
 1. go工具， go; liteIDE
+1. node工具， node,npm; vue-cli
 1. 开发工具箱，JetBrains ToolBox
 1. 版本控制客户端， git;gitkraken;svn;RapidSVN
 1. 数据库客户端， dbeaver
@@ -167,7 +168,7 @@ Thank you very much :
     ```
     wget https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz
     sudo tar -zxf go1.13.1.linux-amd64.tar.gz -C  /usr/local
-    echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+    echo -e '#go\nexport GOPATH=/usr/local/go\nexport PATH=$PATH:$GOPATH/bin' >> ~/.bashrc
     ```
     1. liteIDE
     ```
@@ -176,8 +177,20 @@ Thank you very much :
     ln -s /usr/local/liteide/bin/liteide ~/桌面/
     ```
 
+1. node工具:
+    1. node,npm
+    ```
+    wget https://cdn.npm.taobao.org/dist/node/v12.13.0/node-v12.13.0-linux-x64.tar.xz
+    sudo tar -xf node-v12.13.0-linux-x64.tar.xz -C /usr/local/
+    sudo ln -s /usr/local/node-v12.13.0-linux-x64/bin/{node,npm,cnpm} /usr/local/bin/
+    sudo npm install -g cnpm --registry=https://registry.npm.taobao.org
+    # echo -e '# node\nexport NODEPATH=/usr/local/node-v12.13.0-linux-x64\nexport PATH=$PATH:$NODEPATH/bin' >> ~/.bashrc
+    ```
+    1. vue-cli: `cnpm install -g vue-cli`
+
+
 1. 开发工具箱:
-    1. JetBrains ToolBox `[Pycharm, IDEA, GoLand, DataGrip]`
+    1. JetBrains ToolBox `[Pycharm, IDEA, GoLand, DataGrip, WebStorm]`
     ```
     wget https://download.jetbrains.8686c.com/toolbox/jetbrains-toolbox-1.15.5796.tar.gz
     sudo tar -zxf jetbrains-toolbox-1.15.5796.tar.gz -C /usr/local/share/
