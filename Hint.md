@@ -12,6 +12,7 @@ Thank you very much :
 基于Apt的软件
 1. 聊天工具， 微信; qq
 1. ssh工具，Remmina; deepin-terminal
+1. 终端， terminator
 1. 浏览器， Chromium; Firefox; chrome
 1. 科学工具，shadowsocks; chrome插件[setupvpn]
 1. 文本编辑器， atom; vsCode; Unity
@@ -78,6 +79,9 @@ Thank you very much :
 
     # deepin-terminal 3.0以上版本依赖libc6 (>= 2.29)
     ```
+
+1. 终端 - 支持选中复制
+    1. terminator: `sudo apt-get -y install terminator`
 
 1. 浏览器
     1. Chromium: `sudo apt-get install chromium-browser`
@@ -352,6 +356,9 @@ sudo apt-get --fix-broken install
 sudo apt install -y deepin-menu expect lrzsz zssh
 wget -Nc http://kr.archive.ubuntu.com/ubuntu/pool/universe/d/deepin-terminal/deepin-terminal_2.9.2-1_amd64.deb
 sudo dpkg -i deepin-terminal_2.9.2-1_amd64.deb
+
+# terminator
+sudo apt-get -y install terminator
 
 # install chrome
 wget -Nc https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
