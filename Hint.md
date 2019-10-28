@@ -59,6 +59,11 @@ Thank you very much :
     1. QQ，微信: 需要安装[deepin-wine环境](https://github.com/wszqkzqk/deepin-wine-ubuntu);
     然后去[Deepin-wine 容器的存档](https://gitee.com/wszqkzqk/deepin-wine-containers-for-ubuntu/);
     下载对应的包
+    1. QQ
+    ```
+    wget https://qd.myapp.com/myapp/qqteam/linuxQQ/linuxqq_2.0.0-b1-1024_amd64.deb
+    sudo dpkg -i linuxqq_2.0.0-b1-1024_amd64.deb
+    ```
 
 1. ssh工具
     1. Remmina:
@@ -343,8 +348,13 @@ git clone https://gitee.com/wszqkzqk/deepin-wine-for-ubuntu.git
 cd deepin-wine-for-ubuntu
 yes | ./install.sh
 
+
+# install QQ
+wget https://qd.myapp.com/myapp/qqteam/linuxQQ/linuxqq_2.0.0-b1-1024_amd64.deb
+sudo dpkg -i linuxqq_2.0.0-b1-1024_amd64.deb
+
 # install wine-tim
-wget -Nc https://mirrors.aliyun.com/deepin/pool/non-free/d/deepin.com.qq.office/deepin.com.qq.office_2.0.0deepin4_i386.deb
+# wget -Nc https://mirrors.aliyun.com/deepin/pool/non-free/d/deepin.com.qq.office/deepin.com.qq.office_2.0.0deepin4_i386.deb
 sudo dpkg -i deepin.com.qq.office_2.0.0deepin4_i386.deb
 
 # install wine-wechat
