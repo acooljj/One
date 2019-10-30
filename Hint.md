@@ -25,6 +25,7 @@ Thank you very much :
 1. node工具， node,npm; vue-cli
 1. 开发工具箱，JetBrains ToolBox
 1. 版本控制客户端， git;gitkraken;svn;RapidSVN
+1. git仓库概览工具， onefetch
 1. 数据库客户端， dbeaver
 1. 打包工具， tar;zip
 1. 下载工具, wget, uget
@@ -214,6 +215,15 @@ Thank you very much :
     ```
     1. svn: `sudo apt install -y subversion`
     1. RapidSVN: `sudo apt-get install -y rapidsvn`
+
+1. git仓库概览工具
+    1. onefetch
+    ```
+    wget https://github.com/o2sh/onefetch/releases/download/1.7.0/onefetch_linux_x86-64.zip
+    sudo unzip onefetch_linux_x86-64.zip -d /usr/local/bin/
+    # 使用：在每个仓库下使用此命令
+    ```
+
 
 1. 数据库客户端
     1. dbeaver:
