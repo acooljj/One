@@ -23,7 +23,7 @@ upgradeCentos7(){
     # Openssl 1.0.x >= 1.0.1 or 1.1.0 >= 1.1.0g or any 1.1.1
     yum -y install wget gcc zlib-devel openssl-devel
     # 下载新版本
-    wget https://openbsd.hk/pub/OpenBSD/OpenSSH/portable/${VERSION}.tar.gz
+    wget -t 3 https://openbsd.hk/pub/OpenBSD/OpenSSH/portable/${VERSION}.tar.gz
     tar -zxf ${VERSION}.tar.gz
     cd ${VERSION}
     ./configure --prefix=/usr --sysconfdir=/etc/ssh
