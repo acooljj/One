@@ -206,6 +206,14 @@ Thank you very much :
     sudo tar -zxf jetbrains-toolbox-1.15.5796.tar.gz -C /usr/local/share/
     ```
 
+1. JetBrains公司的CI/CD工具
+    1. TeamCity:
+    ```
+    wget https://download.jetbrains.8686c.com/teamcity/TeamCity-2019.1.4.tar.gz
+    sudo tar -zxf TeamCity-2019.1.4.tar.gz -C /usr/local/share/
+    ```
+
+
 1. 版本控制客户端
     1. git: `sudo apt install -y git`
     1. gitkraken:
