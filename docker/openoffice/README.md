@@ -22,5 +22,5 @@ services:
     container_name: office
     image: rolesle/openoffice:4.1.7
     ports:
-      - 9100:9100
+      - 8100:8100
 ```
