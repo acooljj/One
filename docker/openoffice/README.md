@@ -1,4 +1,4 @@
-[官网](http://www.openoffice.org/) 
+[Apache OpenOffice 官网](http://www.openoffice.org/) 
 
 DockerHub地址: [rolesle/openoffice](https://hub.docker.com/r/rolesle/openoffice)
 
