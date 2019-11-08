@@ -5,7 +5,7 @@ modsecurity_path=/etc/nginx
 
 # funtion
 nginx_init () {
-    curl -L https://raw.githubusercontent.com/guaiguaile/One/master/bash/nginx > /etc/init.d/nginx
+    curl -L https://gitee.com/Roles_le/One/raw/master/bash/nginx > /etc/init.d/nginx
     if [ $? -eq '0' ];
     then
         chmod +x /etc/init.d/nginx
