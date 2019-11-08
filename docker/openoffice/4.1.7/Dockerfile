@@ -11,4 +11,4 @@ RUN rpm -ivh /tmp/zh-CN/RPMS/*.rpm \
     && rm -rf /tmp/zh-CN
 WORKDIR /opt/openoffice4/program
 ENTRYPOINT ["./soffice"]
-CMD ["-accept=socket,host=localhost,port=8100;urp;StarOffice.ServiceManager", "-nologo", "-headless", "-nofirststartwizard"]
+CMD ["-accept=socket,host=0.0.0.0,port=8100;urp;StarOffice.ServiceManager", "-nologo", "-headless", "-nofirststartwizard"]
