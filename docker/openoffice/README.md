@@ -11,3 +11,16 @@ DockerHub地址: [rolesle/openoffice](https://hub.docker.com/r/rolesle/openoffic
 **run**
 
 `docker run -d -p 8100:8100 openoffice:<version>`
+
+**docker-compose**
+
+```
+version: '3'
+
+services:
+  openoffice:
+    container_name: office
+    image: rolesle/openoffice:4.1.7
+    ports:
+      - 9100:9100
+```
