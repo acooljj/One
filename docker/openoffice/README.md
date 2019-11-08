@@ -3,7 +3,7 @@
 
 **build**
 
-进入到<version>目录
+进入到\<version>目录
 
 `docker build -t openoffice:<version> .`
 
