@@ -40,6 +40,7 @@ Thank you very much :
 1. 输入法，sougoupinyin
 1. MD预览，typora
 1. 系统监视，conky
+1. 录屏，SimpleScreenRecorder
 
 ---
 基于snap的软件(安装服务后需要重启才能使用)
@@ -334,6 +335,13 @@ Thank you very much :
 1. 系统监视
     1. [conky](https://github.com/brndnmtthws/conky/) | [configure](https://github.com/erikdubois/Aureola) : `sudo apt-get -y install hddtemp curl lm-sensors conky-all conky`
     
+1. 录屏
+    1. SimpleScreenRecorder
+    ```
+    sudo add-apt-repository ppa:maarten-baert/simplescreenrecorder
+    sudo apt-get update
+    sudo apt-get -y install simplescreenrecorder
+    ```
 
 
 ## 基于snap的软件
@@ -473,5 +481,8 @@ sudo apt-get install typora
 # install conky
 sudo apt-get -y install hddtemp curl lm-sensors conky-all conky
 
-
+# SimpleScreenRecorder
+sudo add-apt-repository ppa:maarten-baert/simplescreenrecorder
+sudo apt-get update
+sudo apt-get -y install simplescreenrecorder
 ```
