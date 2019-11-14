@@ -1,0 +1,162 @@
+version: '3.7'
+
+networks:
+  le:
+    external: true
+
+services:
+  prometheus:
+    image: prom/prometheus
+    hostname: prometheus-server
+    ports:
+      - "9090:9090"
+    volumes:
+      - type: volume
+        source: prome_data
+        target: /data
+    configs:
+      - source: prome_config
+        target: /etc/prometheus/prometheus.yml
+      - source: prome_target
+        target: /etc/prometheus/targets.yml
+      - source: prome_alert_rule
+        target: /etc/prometheus/rules/alertmanager-rules.yml           
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        p.prometheus.description: "prometheus-server"
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+    networks:
+      - le
+
+  alertmanager:
+    image: harbor.le.lab/prometheus/alertmanager
+    hostname: alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - type: volume
+        source: alert_data
+        target: /data
+    configs:
+      - source: alert_config
+        target: /etc/alertmanager/alertmanager.yml
+      - source: alert_template_wechat
+        target: /etc/alertmanager/templates/wechat.tmpl
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        p.alertmanager.description: "alertmanager-server"
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+    networks:
+      - le
+
+
+  grafana:
+    image: grafana/grafana
+    hostname: grafana
+    user: root
+    environment:
+      - "GF_SERVER_ROOT_URL=http://grafana.le.lab"
+      - "GF_SECURITY_ADMIN_PASSWORD=lesoft!@#"
+      - "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-piechart-panel"
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: volume
+        source: grafana-data
+        target: /var/lib/grafana
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        p.grafana.description: "grafana-server"
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+    networks:
+      - le
+
+
+  node:
+    image: quay.io/prometheus/node-exporter
+    # ports:
+    #   - "9100:9100"
+    volumes:
+      - "/:/host:ro,rslave"
+    deploy:
+      mode: global
+      labels:
+        p.node.description: "node-server"
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3      
+    networks:
+      - le
+
+  cadvisor:
+    image: google/cadvisor:latest
+    # ports:
+    #   - "8080:8080"
+    volumes:
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:rw"
+      - "/sys:/sys:ro"
+      - "/var/lib/docker/:/var/lib/docker:ro"
+    deploy:
+      mode: global
+      labels:
+        p.cadvisor.description: "cadvisor-server"
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3      
+    networks:
+      - le
+
+  mysqlexporter:
+    image: prom/mysqld-exporter
+    # ports:
+    #   - "9104:9104"
+    environment:
+      - DATA_SOURCE_NAME=uct:uct@(mysql:3306)/uct
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        p.mysqlexporter.description: "mysqlexporter-server"
+      restart_policy:
+        condition: any
+        delay: 5s
+    networks:
+      - le
+
+
+configs:
+  prome_config:
+    file: ./prometheus.yml
+  prome_target:
+    file: ./targets.yml
+  prome_alert_rule:
+    file: ./alertmanager-rules.yml
+  alert_config:
+    file: ./alertmanager.yml
+  alert_template_wechat:
+    file: ./wechat.tmpl
+
+volumes:
+  prome_data:
+  alert_data:
+  grafana-data:
+
+# Use: docker stack deploy -c docker-compose.yaml ops

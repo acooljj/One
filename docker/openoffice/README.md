@@ -19,7 +19,7 @@ version: '3'
 
 services:
   openoffice:
-    container_name: office
+    container_name: openoffice
     image: rolesle/openoffice:4.1.7
     ports:
       - 8100:8100

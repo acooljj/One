@@ -1,0 +1,5 @@
+# stack
+docker stack deploy -c docker-compose.yaml.3.7  ops
+
+# compose
+docker-compose up -d

@@ -1,0 +1,91 @@
+version: '2'
+
+networks:
+  le:
+    external: true
+
+services:
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    hostname: prometheus-server
+    restart: always
+    ports:
+      - "9090:9090"
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus", "--web.console.libraries=/usr/share/prometheus/console_libraries", "--web.console.templates=/usr/share/prometheus/consoles", "--web.enable-lifecycle"]
+    volumes:
+      - "./volume/prometheus-data:/data"
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./targets.yml:/etc/prometheus/targets.yml"
+      - "./alertmanager-rules.yml:/etc/prometheus/rules/alertmanager-rules.yml"
+    networks:
+      - le
+
+  alertmanager:
+    container_name: alertmanager
+    image: harbor.le.lab/prometheus/alertmanager
+    hostname: alertmanager
+    restart: always
+    mem_limit: 500M
+    ports:
+      - "9093:9093"
+    volumes:
+      - "./volume/alertmanager:/data"
+      - "./alertmanager.yml:/etc/alertmanager/alertmanager.yml"
+      - "./wechat.tmpl:/etc/alertmanager/templates/wechat.tmpl"
+    networks:
+      - le
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    hostname: grafana
+    restart: always
+    user: root
+    environment:
+      - "GF_SERVER_ROOT_URL=http://grafana.le.lab"
+      - "GF_SECURITY_ADMIN_PASSWORD=lesoft!@#"
+      - "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-piechart-panel"
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./volume/grafana-data:/var/lib/grafana"
+    networks:
+      - le
+
+  node:
+    container_name: node-prom
+    image: quay.io/prometheus/node-exporter
+    restart: always
+    ports:
+      - "9100:9100"
+    volumes:
+      - "/:/host:ro,rslave"
+    pid: host
+    networks:
+      - le
+
+  cadvisor:
+    container_name: cadvisor-prom
+    image: google/cadvisor:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:rw"
+      - "/sys:/sys:ro"
+      - "/var/lib/docker/:/var/lib/docker:ro"
+    networks:
+      - le
+
+  mysqlexporter:
+    container_name: mysqld-exporter
+    image: prom/mysqld-exporter
+    restart: always
+    ports:
+      - "9104:9104"
+    environment:
+      - DATA_SOURCE_NAME=uct:uct@(mysql:3306)/uct
+    networks:
+      - le

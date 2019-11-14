@@ -1,0 +1,37 @@
+# prometheus-server
+- targets: ['mysqlexporter:9104']
+  labels: {env: ops, job: mysqld}
+- targets: ['cadvisor-prom:8080']
+  labels: {env: ops, job: cadvisor}
+- targets: ['node-prom:9100']
+  labels: {env: ops, job: node}
+- targets: ['alertmanager:9093']
+  labels: {env: ops, job: node}
+
+# lab - cadvisor
+- targets: ['cadvisor-ms.lab:8080']
+  labels: {env: lab, job: cadvisor}
+- targets: ['cadvisor-ci.lab:8080']
+  labels: {env: lab, job: cadvisor}
+- targets: ['cadvisor-web.lab:8080']
+  labels: {env: lab, job: cadvisor}
+- targets: ['cadvisor-web04.lab:8080']
+  labels: {env: lab, job: cadvisor}
+- targets: ['cadvisor-web05.lab:8080']
+  labels: {env: lab, job: cadvisor}
+
+# lab - node
+- targets: ['node-ms.lab:9100']
+  labels: {env: lab, job: node}
+- targets: ['node-ci.lab:9100']
+  labels: {env: lab, job: node}
+- targets: ['node-web.lab:9100']
+  labels: {env: lab, job: node}
+- targets: ['node-web04.lab:9100']
+  labels: {env: lab, job: node}
+- targets: ['node-web05.lab:9100']
+  labels: {env: lab, job: node}
+
+# hardware - ceph
+- targets: ['172.30.0.15:9283']
+  labels: {env: hardware, job: ceph}
