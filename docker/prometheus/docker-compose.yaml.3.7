@@ -1,7 +1,7 @@
 version: '3.7'
 
 networks:
-  le:
+  ops:
     external: true
 
 services:
@@ -31,10 +31,10 @@ services:
         delay: 5s
         max_attempts: 3
     networks:
-      - le
+      - ops
 
   alertmanager:
-    image: harbor.le.lab/prometheus/alertmanager
+    image: prom/alertmanager
     hostname: alertmanager
     ports:
       - "9093:9093"
@@ -57,7 +57,7 @@ services:
         delay: 5s
         max_attempts: 3
     networks:
-      - le
+      - ops
 
 
   grafana:
@@ -65,8 +65,8 @@ services:
     hostname: grafana
     user: root
     environment:
-      - "GF_SERVER_ROOT_URL=http://grafana.le.lab"
-      - "GF_SECURITY_ADMIN_PASSWORD=lesoft!@#"
+      - "GF_SERVER_ROOT_URL=http://grafana.ops.cn"
+      - "GF_SECURITY_ADMIN_PASSWORD=admin!@#"
       - "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-piechart-panel"
     ports:
       - "3000:3000"
@@ -84,7 +84,7 @@ services:
         delay: 5s
         max_attempts: 3
     networks:
-      - le
+      - ops
 
 
   node:
@@ -102,7 +102,7 @@ services:
         delay: 5s
         max_attempts: 3      
     networks:
-      - le
+      - ops
 
   cadvisor:
     image: google/cadvisor:latest
@@ -122,7 +122,7 @@ services:
         delay: 5s
         max_attempts: 3      
     networks:
-      - le
+      - ops
 
   mysqlexporter:
     image: prom/mysqld-exporter
@@ -139,7 +139,7 @@ services:
         condition: any
         delay: 5s
     networks:
-      - le
+      - ops
 
 
 configs:
