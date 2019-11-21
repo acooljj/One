@@ -7,6 +7,8 @@ Thank you very much :
 
 > [为Linux Mint设置为雅黑字体](https://blog.csdn.net/wangrui1573/article/details/81973919)
 
+时间格式: %A %m月%d日 %H:%M:%S
+
 # Linux下工具的安装
 ---
 基于Apt的软件
@@ -41,6 +43,7 @@ Thank you very much :
 1. MD预览，typora
 1. 系统监视，conky
 1. 录屏，SimpleScreenRecorder
+1. wine
 
 ---
 基于snap的软件(安装服务后需要重启才能使用)
@@ -285,7 +288,19 @@ Thank you very much :
     1. FileZilla: `sudo apt-get install -y filezilla`
 
 1. 连接windows
-    1. rdesktop: `sudo apt install -y rdesktop`
+    1. rdesktop: *either-or*
+        apt(1.8.3-2build1): `sudo apt install -y rdesktop`
+        source(1.9.0):
+        ```
+        sudo apt-get -y install gcc libkrb5-dev libtasn1-6 libtasn1-6-dev nettle-dev  ibgnutls28-dev libpcsclite-dev
+        wget https://github.com/rdesktop/rdesktop/releases/download/v1.9.0/rdesktop-1.9.0.tar.gz
+        tar -zxf rdesktop-1.9.0.tar.gz
+        cd rdesktop-1.9.0
+        ./configure # default: /usr/local
+        make
+        sudo make install
+        hash rdesktop
+        ```
 
 1. 文件对比工具
     1. meld:
@@ -346,6 +361,17 @@ Thank you very much :
     sudo add-apt-repository ppa:maarten-baert/simplescreenrecorder
     sudo apt-get update
     sudo apt-get -y install simplescreenrecorder
+    ```
+
+1. wine
+    ```
+    sudo dpkg --add-architecture i386
+    wget -nc https://dl.winehq.org/wine-builds/winehq.key
+    sudo apt-key add winehq.key 
+    sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main'
+    sudo apt update
+    sudo apt install --install-recommends winehq-stable winbind
+    #运行"winecfg", 你至少需要运行一次winecfg来设置wine的目录和硬件
     ```
 
 
@@ -468,7 +494,13 @@ sudo apt install -y flameshot
 sudo apt-get install -y filezilla
 
 # install rdesktop
-sudo apt install -y rdesktop
+sudo apt-get -y install gcc libkrb5-dev libtasn1-6 libtasn1-6-dev nettle-dev  ibgnutls28-dev libpcsclite-dev
+wget https://github.com/rdesktop/rdesktop/releases/download/v1.9.0/rdesktop-1.9.0.tar.gz
+tar -zxf rdesktop-1.9.0.tar.gz
+cd rdesktop-1.9.0
+./configure # default: /usr/local
+make
+sudo make install
 
 # install meld 
 sudo apt install -y meld
