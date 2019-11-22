@@ -1,10 +1,16 @@
 {{ define "wechat.default.message" }}
-{{ range .Alerts }}
-= start =
-Summary: {{ .Annotations.summary }}
-Host: {{ .Labels.instance }}
-Description: {{ .Annotations.description }}
-Time: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
-= end =
-{{ end }}
-{{ end }}
+{{- if gt (len .Alerts.Firing) 0 -}}{{ range .Alerts }}
+@警报 {{ .Labels.env }}
+信息: {{ .Annotations.summary }}
+实例: {{ .Labels.instance }}
+详情: {{ .Annotations.description }}
+时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+{{ end }}{{ end -}}
+{{- if gt (len .Alerts.Resolved) 0 -}}{{ range .Alerts }}
+@恢复 {{ .Labels.env }}
+信息: {{ .Annotations.summary }}
+实例: {{ .Labels.instance }}
+时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+恢复: {{ .EndsAt.Format "2006-01-02 15:04:05" }}
+{{ end }}{{ end -}}
+{{- end }}

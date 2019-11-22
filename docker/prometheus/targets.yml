@@ -1,12 +1,12 @@
 # prometheus-server
 - targets: ['mysqlexporter:9104']
-  labels: {env: ops, job: mysqld}
+  labels: {env: lab-ops, job: mysqld}
 - targets: ['cadvisor-prom:8080']
-  labels: {env: ops, job: cadvisor}
+  labels: {env: lab-ops, job: cadvisor}
 - targets: ['node-prom:9100']
-  labels: {env: ops, job: node}
+  labels: {env: lab-ops, job: node}
 - targets: ['alertmanager:9093']
-  labels: {env: ops, job: node}
+  labels: {env: lab-ops, job: node}
 
 # lab - cadvisor
 - targets: ['cadvisor-ms.lab:8080']
