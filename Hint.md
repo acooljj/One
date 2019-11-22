@@ -64,14 +64,26 @@ Thank you very much :
     1. QQ，微信: 需要安装[deepin-wine环境](https://github.com/wszqkzqk/deepin-wine-ubuntu);
     然后去[Deepin-wine 容器的存档](https://gitee.com/wszqkzqk/deepin-wine-containers-for-ubuntu/);
     下载对应的包
-    1. 微信
+    1. wine-微信
     ```
-    wget https://github.com/eNkru/freechat/releases/download/v1.0.0/electron-wechat_1.0.0_amd64.deb
-    sudo dpkg -i electron-wechat_1.0.0_amd64.deb
+    wget -Nc https://mirrors.aliyun.com/deepin/pool/non-free/d/deepin.com.wechat/deepin.com.wechat_2.6.8.65deepin0_i386.deb
+    sudo dpkg -i deepin.com.wechat_2.6.8.65deepin0_i386.deb
+    # 解决无法更新的问题
+    wget -qO- https://deepin-wine.i-m.dev/setup.sh | sudo sh
     ```
-    1. QQ
+     1. wine-TIM
     ```
-    wget https://qd.myapp.com/myapp/qqteam/linuxQQ/linuxqq_2.0.0-b1-1024_amd64.deb
+    wget -Nc https://mirrors.aliyun.com/deepin/pool/non-free/d/deepin.com.qq.office/deepin.com.qq.office_2.0.0deepin4_i386.deb
+    sudo dpkg -i deepin.com.qq.office_2.0.0deepin4_i386.deb
+    ```
+    1. freechat
+    ```
+    wget -Nc https://github.com/eNkru/freechat/releases/download/v1.0.0/electron-wechat_1.0.0_amd64.deb
+    sudo dpkg -i electron-wechat_1.0.0_amd64.deb    
+    ```
+    1. Tencent QQ
+    ```
+    wget -Nc https://qd.myapp.com/myapp/qqteam/linuxQQ/linuxqq_2.0.0-b1-1024_amd64.deb
     sudo dpkg -i linuxqq_2.0.0-b1-1024_amd64.deb
     ```
 
@@ -89,7 +101,7 @@ Thank you very much :
     # deepin-terminal 2.9.2
     sudo apt-get --fix-broken install
     sudo apt install -y deepin-menu expect lrzsz zssh
-    wget http://kr.archive.ubuntu.com/ubuntu/pool/universe/d/deepin-terminal/deepin-terminal_2.9.2-1_amd64.deb
+    wget -Nc http://kr.archive.ubuntu.com/ubuntu/pool/universe/d/deepin-terminal/deepin-terminal_2.9.2-1_amd64.deb
     sudo dpkg -i deepin-terminal_2.9.2-1_amd64.deb
 
     # deepin-terminal 3.0以上版本依赖libc6 (>= 2.29)
@@ -104,7 +116,7 @@ Thank you very much :
     1. Firefox: Mint系统自带
     1. chrome: 
     ```
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    wget -Nc https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
     sudo dpkg -i google-chrome-stable_current_amd64.deb
     ```
 
@@ -113,24 +125,24 @@ Thank you very much :
     1. chrome插件:
         + setupvpn:
         ```
-        wget https://baseserver.io/sv/client/download/Chrome-SetupVPN-3.7.0.crx
+        wget -Nc https://baseserver.io/sv/client/download/Chrome-SetupVPN-3.7.0.crx
         拖拽到浏览器chrome安装
         ```
 
 1. 文本编辑器
     1. atom:
     ```
-    wget https://github.com/atom/atom/releases/download/v1.38.1/atom-amd64.deb
+    wget -Nc https://github.com/atom/atom/releases/download/v1.38.1/atom-amd64.deb
     sudo dpkg -i atom-amd64.deb
     ```
     1. vsCode:
     ```
-    wget https://vscode.cdn.azure.cn/stable/c7d83e57cd18f18026a8162d042843bda1bcf21f/code_1.35.1-1560350270_amd64.deb
+    wget -Nc https://vscode.cdn.azure.cn/stable/c7d83e57cd18f18026a8162d042843bda1bcf21f/code_1.35.1-1560350270_amd64.deb
     sudo dpkg -i code_1.35.1-1560350270_amd64.deb
     ```
     1. Unity:
     ```
-    wget https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.AppImage
+    wget -Nc https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.AppImage
     chmod +x UnityHubSetup.AppImage
     ./UnityHubSetup.AppImage
     # 启动 Unity Hub 后，它会要求你使用 Unity ID 登录（或注册）以激活许可证。
@@ -141,14 +153,14 @@ Thank you very much :
     1. LibreOffice: Mint系统自带
     1. wps:
     ```
-    wget https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8392/wps-office_11.1.0.8392_amd64.deb
+    wget -Nc https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8392/wps-office_11.1.0.8392_amd64.deb
     sudo dpkg -i wps-office_11.1.0.8392_amd64.deb
     ```
 
 1. vpn
     1. openvpn: [官网下载客户端](https://www.techspot.com/downloads/5182-openvpn.html)
     ```
-    wget https://files02.tchspt.com/storage2/temp/openvpn-2.4.7.tar.gz
+    wget -Nc https://files02.tchspt.com/storage2/temp/openvpn-2.4.7.tar.gz
     sudo apt install -y openssl libssl-dev net-tools liblzo2-dev libpam0g-dev
     tar -zxf openvpn-2.4.7.tar.gz
     cd openvpn-2.4.7
@@ -164,7 +176,7 @@ Thank you very much :
 1. 远程工具
     1. teamviewer:
     ```
-    wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
+    wget -Nc https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
     sudo dpkg -i teamviewer_amd64.deb
     sudo apt-get --fix-broken -y install
     ```
@@ -172,7 +184,7 @@ Thank you very much :
 1. py工具,py环境
     1. pycharm：
     ```
-    wget https://download.jetbrains.8686c.com/python/pycharm-community-2019.2.3.tar.gz
+    wget -Nc https://download.jetbrains.8686c.com/python/pycharm-community-2019.2.3.tar.gz
     sudo tar -zxf pycharm-community-2019.2.3.tar.gz -C /usr/local/share
     ln -s /usr/local/share/pycharm-community-2019.2.3/bin/pycharm.sh ~/桌面
     # 运行时选择运行
@@ -185,13 +197,13 @@ Thank you very much :
 1. go工具: 
     1. go
     ```
-    wget https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz
+    wget -Nc https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz
     sudo tar -zxf go1.13.1.linux-amd64.tar.gz -C  /usr/local
     echo -e '#go\nexport GOPATH=/usr/local/go\nexport PATH=$PATH:$GOPATH/bin' >> ~/.bashrc
     ```
     1. liteIDE
     ```
-    wget https://github.com/visualfc/liteide/releases/download/x36.1/liteidex36.1.linux64-qt5.5.1.tar.gz
+    wget -Nc https://github.com/visualfc/liteide/releases/download/x36.1/liteidex36.1.linux64-qt5.5.1.tar.gz
     sudo tar -zxf liteidex36.1.linux64-qt5.5.1.tar.gz -C /usr/local
     ln -s /usr/local/liteide/bin/liteide ~/桌面/
     ```
@@ -199,7 +211,7 @@ Thank you very much :
 1. node工具:
     1. node,npm
     ```
-    wget https://cdn.npm.taobao.org/dist/node/v12.13.0/node-v12.13.0-linux-x64.tar.xz
+    wget -Nc https://cdn.npm.taobao.org/dist/node/v12.13.0/node-v12.13.0-linux-x64.tar.xz
     sudo tar -xf node-v12.13.0-linux-x64.tar.xz -C /usr/local/
     sudo ln -s /usr/local/node-v12.13.0-linux-x64/bin/{node,npm,cnpm} /usr/local/bin/
     sudo npm install -g cnpm --registry=https://registry.npm.taobao.org
@@ -211,14 +223,14 @@ Thank you very much :
 1. 开发工具箱:
     1. JetBrains ToolBox `[Pycharm, IDEA, GoLand, DataGrip, WebStorm]`
     ```
-    wget https://download.jetbrains.8686c.com/toolbox/jetbrains-toolbox-1.15.5796.tar.gz
+    wget -Nc https://download.jetbrains.8686c.com/toolbox/jetbrains-toolbox-1.15.5796.tar.gz
     sudo tar -zxf jetbrains-toolbox-1.15.5796.tar.gz -C /usr/local/share/
     ```
 
 1. JetBrains公司的CI/CD工具
     1. TeamCity:
     ```
-    wget https://download.jetbrains.8686c.com/teamcity/TeamCity-2019.1.4.tar.gz
+    wget -Nc https://download.jetbrains.8686c.com/teamcity/TeamCity-2019.1.4.tar.gz
     sudo tar -zxf TeamCity-2019.1.4.tar.gz -C /usr/local/share/
     ```
 
@@ -227,7 +239,7 @@ Thank you very much :
     1. git: `sudo apt install -y git`
     1. gitkraken:
     ```
-    wget https://release.axocdn.com/linux/gitkraken-amd64.deb
+    wget -Nc https://release.axocdn.com/linux/gitkraken-amd64.deb
     sudo dpkg -i gitkraken-amd64.deb
     ```
     1. svn: `sudo apt install -y subversion`
@@ -236,7 +248,7 @@ Thank you very much :
 1. git仓库概览工具
     1. onefetch
     ```
-    wget https://github.com/o2sh/onefetch/releases/download/1.7.0/onefetch_linux_x86-64.zip
+    wget -Nc https://github.com/o2sh/onefetch/releases/download/1.7.0/onefetch_linux_x86-64.zip
     sudo unzip onefetch_linux_x86-64.zip -d /usr/local/bin/
     # 使用：在每个仓库下使用此命令
     ```
@@ -245,7 +257,7 @@ Thank you very much :
 1. 数据库客户端
     1. dbeaver:
     ```
-    wget https://github.com/dbeaver/dbeaver/releases/download/6.1.0/dbeaver-ce_6.1.0_amd64.deb
+    wget -Nc https://github.com/dbeaver/dbeaver/releases/download/6.1.0/dbeaver-ce_6.1.0_amd64.deb
     sudo dpkg -i dbeaver-ce_6.1.0_amd64.deb
     ```
 
@@ -266,10 +278,10 @@ Thank you very much :
     1. 下拉式GNOME终端: `sudo apt install guake`
     1. HTTP 协议文件共享服务 Chfs:
     ```
-    wget https://files-cdn.cnblogs.com/files/dcb3688/chfs-linux-amd64-1.4.zip
-    unzip chfs-linux-amd64-1.4.zip
+    wget -Nc http://iscute.cn/tar/chfs/1.10/chfs-linux-amd64-1.10.zip
+    unzip chfs-linux-amd64-1.10.zip
     chmod +x chfs
-    ./chfs --port 8080 --path /home/lshi/下载
+    ./chfs --port 8080 --path /path/to
     ```
     1. MAC主题包 Cairo-dock:
     ```
@@ -293,7 +305,7 @@ Thank you very much :
         source(1.9.0):
         ```
         sudo apt-get -y install gcc libkrb5-dev libtasn1-6 libtasn1-6-dev nettle-dev  ibgnutls28-dev libpcsclite-dev
-        wget https://github.com/rdesktop/rdesktop/releases/download/v1.9.0/rdesktop-1.9.0.tar.gz
+        wget -Nc https://github.com/rdesktop/rdesktop/releases/download/v1.9.0/rdesktop-1.9.0.tar.gz
         tar -zxf rdesktop-1.9.0.tar.gz
         cd rdesktop-1.9.0
         ./configure # default: /usr/local
@@ -336,7 +348,7 @@ Thank you very much :
     1. sougoupinyin:
     ```
     # 依赖于Fcitx框架
-    wget http://cdn2.ime.sogou.com/dl/index/1524572264/sogoupinyin_2.2.0.0108_amd64.deb
+    wget -Nc http://cdn2.ime.sogou.com/dl/index/1524572264/sogoupinyin_2.2.0.0108_amd64.deb
     sudo dpkg -i sogoupinyin_2.2.0.0108_amd64.deb
     # 可能会有一些包没有安装，通过--fix-broken来解决冲突，并安装上sougoupinyin
     sudo apt-get --fix-broken -y install
@@ -406,21 +418,15 @@ cd deepin-wine-for-ubuntu
 yes | ./install.sh
 
 
-# install QQ
-wget https://qd.myapp.com/myapp/qqteam/linuxQQ/linuxqq_2.0.0-b1-1024_amd64.deb
-sudo dpkg -i linuxqq_2.0.0-b1-1024_amd64.deb
-
-# install freechat
-wget https://github.com/eNkru/freechat/releases/download/v1.0.0/electron-wechat_1.0.0_amd64.deb
-sudo dpkg -i electron-wechat_1.0.0_amd64.deb
-
 # install wine-tim
-# wget -Nc https://mirrors.aliyun.com/deepin/pool/non-free/d/deepin.com.qq.office/deepin.com.qq.office_2.0.0deepin4_i386.deb
-# sudo dpkg -i deepin.com.qq.office_2.0.0deepin4_i386.deb
+wget -Nc https://mirrors.aliyun.com/deepin/pool/non-free/d/deepin.com.qq.office/deepin.com.qq.office_2.0.0deepin4_i386.deb
+sudo dpkg -i deepin.com.qq.office_2.0.0deepin4_i386.deb
 
 # install wine-wechat
-# wget -Nc https://mirrors.aliyun.com/deepin/pool/non-free/d/deepin.com.wechat/deepin.com.wechat_2.6.2.31deepin0_i386.deb
-# sudo dpkg -i deepin.com.wechat_2.6.2.31deepin0_i386.deb
+wget -Nc https://mirrors.aliyun.com/deepin/pool/non-free/d/deepin.com.wechat/deepin.com.wechat_2.6.8.65deepin0_i386.deb
+sudo dpkg -i deepin.com.wechat_2.6.8.65deepin0_i386.deb
+# 无法更新的问题
+wget -qO- https://deepin-wine.i-m.dev/setup.sh | sudo sh
 
 # install deepin-terminal
 sudo apt-get --fix-broken install
@@ -462,12 +468,12 @@ sudo dpkg -i teamviewer_amd64.deb
 sudo apt-get --fix-broken -y install
 
 # install go
-wget https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz
+wget -Nc https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz
 sudo tar -zxf go1.13.1.linux-amd64.tar.gz -C  /usr/local
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
 
 # install liteIDE
-wget https://github.com/visualfc/liteide/releases/download/x36.1/liteidex36.1.linux64-qt5.5.1.tar.gz
+wget -Nc https://github.com/visualfc/liteide/releases/download/x36.1/liteidex36.1.linux64-qt5.5.1.tar.gz
 sudo tar -zxf liteidex36.1.linux64-qt5.5.1.tar.gz -C /usr/local
 
 # install gitkraken
@@ -495,7 +501,7 @@ sudo apt-get install -y filezilla
 
 # install rdesktop
 sudo apt-get -y install gcc libkrb5-dev libtasn1-6 libtasn1-6-dev nettle-dev  ibgnutls28-dev libpcsclite-dev
-wget https://github.com/rdesktop/rdesktop/releases/download/v1.9.0/rdesktop-1.9.0.tar.gz
+wget -Nc https://github.com/rdesktop/rdesktop/releases/download/v1.9.0/rdesktop-1.9.0.tar.gz
 tar -zxf rdesktop-1.9.0.tar.gz
 cd rdesktop-1.9.0
 ./configure # default: /usr/local
