@@ -1,17 +1,15 @@
 FROM centos:7
 ADD https://jaist.dl.sourceforge.net/project/openofficeorg.mirror/4.1.7/binaries/zh-CN/Apache_OpenOffice_4.1.7_Linux_x86-64_install-rpm_zh-CN.tar.gz /tmp
-ADD http://ftp-idc.pconline.com.cn/6bdd4de6de0e47545d1f0631a868eb73/pub/download/201010/yaheiFont_CHS.zip /tmp
 RUN tar -zxf /tmp/Apache_OpenOffice_4.1.7_Linux_x86-64_install-rpm_zh-CN.tar.gz -C /tmp --remove-files \
     && rpm -ivh /tmp/zh-CN/RPMS/*.rpm \
-    && yum -y install wget unzip \
-    && unzip /tmp/yaheiFont_CHS.zip -d /opt/openoffice4/share/fonts/truetype/ \
+    && yum -y install wget \
     && wget -O CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo \
     && yum clean all \
     && yum makecache \
     && yum -y install java-1.8.0-openjdk \
     && rpm -e wget \
     && yum clean all \
-    && rm -rf /tmp/{zh-CN,yaheiFont_CHS.zip,Apache_OpenOffice_4.1.7_Linux_x86-64_install-rpm_zh-CN.tar.gz}
+    && rm -rf /tmp/{zh-CN,Apache_OpenOffice_4.1.7_Linux_x86-64_install-rpm_zh-CN.tar.gz}
 WORKDIR /opt/openoffice4/program
 ENTRYPOINT ["./soffice"]
 CMD ["-accept=socket,host=0.0.0.0,port=8100;urp;StarOffice.ServiceManager", "-nologo", "-headless", "-nofirststartwizard"]
