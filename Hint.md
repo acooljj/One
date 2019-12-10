@@ -168,7 +168,12 @@ Thank you very much :
     make
     sudo make install
     ```
-    1. esayconnect: 待测试
+    1. esayconnect:
+    ```
+    wget -Nc http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb
+    sudo dpkg -i EasyConnect_x64.deb
+    #rpm的 http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.rpm
+    ```
 
 1. pdf查看器
     1. okular: `sudo apt-get -y install okular`
@@ -400,7 +405,7 @@ Thank you very much :
 
 
 ```
-# 1.配置字体
+# 1.配置字体-雅黑
 curl http://ftp-idc.pconline.com.cn/6bdd4de6de0e47545d1f0631a868eb73/pub/download/201010/yaheiFont_CHS.zip -O yaheiFont_CHS.zip
 unzip yaheiFont_CHS.zip
 sudo mkdir /usr/share/fonts/msyh
