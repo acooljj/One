@@ -262,8 +262,8 @@ Thank you very much :
 1. 数据库客户端
     1. dbeaver:
     ```
-    wget -Nc https://github.com/dbeaver/dbeaver/releases/download/6.1.0/dbeaver-ce_6.1.0_amd64.deb
-    sudo dpkg -i dbeaver-ce_6.1.0_amd64.deb
+    wget -Nc https://github.com/dbeaver/dbeaver/releases/download/6.3.1/dbeaver-ce_6.3.1_amd64.deb
+    sudo dpkg -i dbeaver-ce_6.3.1_amd64.deb
     ```
 
 1. 打包工具
